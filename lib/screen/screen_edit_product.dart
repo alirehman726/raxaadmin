@@ -994,6 +994,7 @@ class _ScreenEditProductState extends State<ScreenEditProduct> {
                               ),
                             ],
                           )
+                        
                         ],
                       ),
                     ),

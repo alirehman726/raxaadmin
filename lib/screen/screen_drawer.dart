@@ -2,6 +2,8 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:raxaadmin/Widgets/logoutDialog.dart';
+import 'package:raxaadmin/screen/screen_dealer.dart';
+import 'package:raxaadmin/screen/screen_order_master.dart';
 import 'package:raxaadmin/screen/screen_product.dart';
 import 'package:raxaadmin/screen/screen_products_details.dart';
 import 'package:raxaadmin/utils/color.dart';
@@ -28,12 +30,12 @@ class _ScreenDrawerState extends State<ScreenDrawer>
     {
       "icon": Images.DRAWER_3,
       "title": "Dealer Master",
-      "route": () => ScreenDrawer(),
+      "route": () => ScreenDealer(),
     },
     {
       "icon": Images.DRAWER_4,
       "title": "Order Master",
-      "route": () => ScreenDrawer(),
+      "route": () => ScreenOrderMaster(),
     },
     {
       "icon": Images.DRAWER_5,

@@ -1,21 +1,76 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:raxaadmin/Widgets/logoutDialog.dart';
-import 'package:raxaadmin/screen/screen_add_products.dart';
-import 'package:raxaadmin/screen/screen_dealer.dart';
+import 'package:raxaadmin/screen/screen_add_dealer.dart';
 import 'package:raxaadmin/screen/screen_drawer.dart';
-import 'package:raxaadmin/screen/screen_edit_product.dart';
+import 'package:raxaadmin/screen/screen_edit_dealer.dart';
 import 'package:raxaadmin/screen/screen_order_master.dart';
+import 'package:raxaadmin/screen/screen_product.dart';
 import 'package:raxaadmin/utils/color.dart';
 import 'package:raxaadmin/utils/images.dart';
 
-class ScreenProduct extends StatefulWidget {
+class ScreenDealer extends StatefulWidget {
   @override
-  _ScreenProductState createState() => _ScreenProductState();
+  _ScreenDealerState createState() => _ScreenDealerState();
 }
 
-class _ScreenProductState extends State<ScreenProduct>
+class _ScreenDealerState extends State<ScreenDealer>
     with SingleTickerProviderStateMixin {
+  List<Map<String, dynamic>> dealerData = [
+    {
+      "name": "Aditya Darji",
+      "desc": "RAXADEAL001",
+      "active": 1,
+    },
+    {
+      "name": "Aditya Darji",
+      "desc": "RAXADEAL002",
+      "active": 0,
+    },
+    {
+      "name": "Jay Darji",
+      "desc": "RAXADEAL003",
+      "active": 1,
+    },
+    {
+      "name": "Pratik Darji",
+      "desc": "RAXADEAL004",
+      "active": 0,
+    },
+    {
+      "name": "Bhautik Darji",
+      "desc": "RAXADEAL005",
+      "active": 0,
+    },
+    {
+      "name": "Smit Darji",
+      "desc": "RAXADEAL006",
+      "active": 1,
+    },
+    {
+      "name": "Smit Darji",
+      "desc": "RAXADEAL007",
+      "active": 1,
+    },
+    {
+      "name": "Bhautik Darji",
+      "desc": "RAXADEAL008",
+      "active": 1,
+    },
+    {
+      "name": "Jay Darji",
+      "desc": "RAXADEAL009",
+      "active": 0,
+    },
+    {
+      "name": "Aditya Darji",
+      "desc": "RAXADEAL010",
+      "active": 0,
+    },
+  ];
+
   List<Map<String, dynamic>> menuItems = [
     {
       "icon": Images.DRAWER_1,
@@ -50,6 +105,7 @@ class _ScreenProductState extends State<ScreenProduct>
   ];
 
   int selectedIndex = 0;
+  bool isSwitched = false;
 
   @override
   Widget build(BuildContext context) {
@@ -59,7 +115,7 @@ class _ScreenProductState extends State<ScreenProduct>
         centerTitle: true,
         backgroundColor: Color(0xff01B8FA),
         title: Text(
-          "PRODUCT PAGE",
+          "Dealer Page",
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.w400),
         ),
         actions: [
@@ -166,7 +222,6 @@ class _ScreenProductState extends State<ScreenProduct>
                             height: 23,
                             width: 23,
                             color: primaryColor,
-                            // color: isSelected ? Colors.red : Colors.black54,
                           ),
                           title: Text(
                             menuItems[index]["title"],
@@ -174,7 +229,6 @@ class _ScreenProductState extends State<ScreenProduct>
                               color: Color(0xff3C3D86),
                               fontSize: 15,
                               fontWeight: FontWeight.w700,
-                              // color: isSelected ? Colors.red : Colors.black54,
                             ),
                           ),
                           trailing: Icon(
@@ -240,17 +294,8 @@ class _ScreenProductState extends State<ScreenProduct>
             ),
             child: Container(
               decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(25), // Rounded corners
-                  color: Color(0xff2596BE)
-                  // gradient: LinearGradient(
-                  //   colors: [
-                  //     Colors.blue,
-                  //     Colors.lightBlueAccent
-                  //   ], // Gradient background
-                  //   begin: Alignment.centerLeft,
-                  //   end: Alignment.centerRight,
-                  // ),
-                  ),
+                  borderRadius: BorderRadius.circular(25),
+                  color: Color(0xff2596BE)),
               padding: EdgeInsets.only(left: 20, right: 20),
               margin: EdgeInsets.only(left: 20, right: 20),
               child: Row(
@@ -260,12 +305,12 @@ class _ScreenProductState extends State<ScreenProduct>
                       decoration: InputDecoration(
                         hintText: "Search Product",
                         hintStyle: TextStyle(color: Colors.white70),
-                        border: InputBorder.none, // No underline
+                        border: InputBorder.none,
                       ),
                       style: TextStyle(color: Colors.white),
                     ),
                   ),
-                  Icon(Icons.search, color: Colors.white), // Search Icon
+                  Icon(Icons.search, color: Colors.white),
                 ],
               ),
             ),
@@ -288,7 +333,7 @@ class _ScreenProductState extends State<ScreenProduct>
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'All Product’s',
+                          'Show All Dealer’s',
                           style: TextStyle(
                             fontSize: 20,
                             fontStyle: FontStyle.italic,
@@ -308,7 +353,7 @@ class _ScreenProductState extends State<ScreenProduct>
                     ),
                     InkWell(
                       onTap: () {
-                        Get.to(() => ScreenAddProducts());
+                        Get.to(() => ScreenAddDealer());
                       },
                       child: Container(
                         padding: EdgeInsets.all(10),
@@ -332,7 +377,7 @@ class _ScreenProductState extends State<ScreenProduct>
                             ),
                             const SizedBox(width: 10),
                             Text(
-                              'ADD NEW PRODUCT',
+                              'ADD NEW DILLER',
                               style:
                                   TextStyle(color: Colors.white, fontSize: 11),
                             ),
@@ -346,63 +391,80 @@ class _ScreenProductState extends State<ScreenProduct>
             ),
           ),
           Expanded(
-            child: ListView.builder(
-              itemCount: 10,
-              itemBuilder: (context, index) {
-                return Column(
-                  children: [
-                    Container(
-                      margin: const EdgeInsets.only(
-                          left: 20, right: 20, top: 10, bottom: 10),
-                      height: 100,
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Row(
+            child: Container(
+              decoration: BoxDecoration(
+                color: Color(0xffe6f8ff),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              margin: const EdgeInsets.only(
+                  left: 20, right: 20, top: 10, bottom: 10),
+              padding: const EdgeInsets.only(
+                  left: 20, right: 20, top: 10, bottom: 10),
+              child: ListView.builder(
+                itemCount: dealerData.length,
+                itemBuilder: (context, index) {
+                  return Column(
+                    children: [
+                      Row(
                         children: [
                           Expanded(
                             flex: 1,
                             child: Container(
-                              alignment: Alignment.center,
-                              decoration: BoxDecoration(
-                                // color: Colors.red,
-                                borderRadius: BorderRadius.only(
-                                  topLeft: Radius.circular(10),
-                                  bottomLeft: Radius.circular(10),
+                              height: 60,
+                              width: 60,
+                              child: CircleAvatar(
+                                radius: 60,
+                                backgroundColor: (() {
+                                  Color randomColor = getRandomColor();
+                                  return randomColor.withOpacity(0.5);
+                                })(),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8),
+                                  child: ClipOval(
+                                    child: CircleAvatar(
+                                      radius: 50,
+                                      backgroundColor: (() {
+                                        Color randomColor = getRandomColor();
+                                        return randomColor;
+                                      })(),
+                                      child: Text(
+                                        'AD',
+                                        style: TextStyle(
+                                            fontSize: 20,
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ),
+                                  ),
                                 ),
-                              ),
-                              child: Image.asset(
-                                Images.ALL_PRODUCTS,
-                                fit: BoxFit.cover,
                               ),
                             ),
                           ),
                           Expanded(
                             flex: 2,
                             child: Container(
-                              padding: EdgeInsets.all(5),
-                              // color: Colors.yellow,
+                              height: 50,
+                              width: 50,
                               child: Column(
                                 mainAxisAlignment:
-                                    MainAxisAlignment.spaceAround,
+                                    MainAxisAlignment.spaceBetween,
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    "JPSR Prabhu Shriram Bloom International Perfume Incense Sticks",
+                                    dealerData[index]['name'],
                                     style: TextStyle(
-                                        color: Color(0xff3C3D86),
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.w200),
+                                      fontSize: 17,
+                                      fontWeight: FontWeight.bold,
+                                      color: Color(0xff3C3E89),
+                                    ),
                                   ),
                                   Text(
-                                    "IN Stock : YES",
+                                    dealerData[index]['desc'],
                                     style: TextStyle(
-                                        color: Color(0xff01B8FA),
-                                        fontStyle: FontStyle.italic,
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.w200),
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w200,
+                                      color: Color(0xff3C3E89),
+                                    ),
                                   ),
                                 ],
                               ),
@@ -411,79 +473,55 @@ class _ScreenProductState extends State<ScreenProduct>
                           Expanded(
                             flex: 1,
                             child: Container(
-                              padding: EdgeInsets.only(left: 10, right: 10),
-                              decoration: BoxDecoration(
-                                // color: Colors.pink,
-                                borderRadius: BorderRadius.only(
-                                    topRight: Radius.circular(10),
-                                    bottomRight: Radius.circular(10)),
-                              ),
                               child: Column(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
-                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
                                   InkWell(
                                     onTap: () {
-                                      Get.to(() => ScreenEditProduct());
+                                      Get.to(() => ScreenEditDealer());
                                     },
-                                    child: Container(
-                                      padding: EdgeInsets.all(5),
-                                      decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        border: Border.all(
-                                          color: Colors.black,
-                                          width: 1.5,
-                                        ),
-                                        borderRadius: BorderRadius.circular(5),
-                                      ),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text(
-                                            "Edit",
-                                            style: TextStyle(
-                                                color: Color(0xff3C3D86),
-                                                fontSize: 10,
-                                                fontWeight: FontWeight.w800),
-                                          ),
-                                          Icon(
-                                            Icons.edit,
-                                            color: Color(0xff01B8FA),
-                                            size: 15,
-                                          )
-                                        ],
+                                    child: Text(
+                                      "Edit",
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w100,
+                                        color: Color(0xff3C3E89),
                                       ),
                                     ),
                                   ),
-                                  Container(
-                                    padding: EdgeInsets.all(5),
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      border: Border.all(
-                                        color: Colors.black,
-                                        width: 1.5,
-                                      ),
-                                      borderRadius: BorderRadius.circular(5),
+                                  const SizedBox(height: 10),
+                                  Text(
+                                    dealerData[index]['active'] == 1
+                                        ? "Active"
+                                        : "Deactive",
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w100,
+                                      color: dealerData[index]['active'] == 1
+                                          ? Color(0xff3C3D86)
+                                          : Color(0xff3C3D86),
                                     ),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text(
-                                          "Delete",
-                                          style: TextStyle(
-                                              color: Color(0xff3C3D86),
-                                              fontSize: 10,
-                                              fontWeight: FontWeight.w800),
-                                        ),
-                                        Icon(
-                                          Icons.delete,
-                                          color: Colors.red,
-                                          size: 15,
-                                        )
-                                      ],
+                                  ),
+                                  Transform.scale(
+                                    scale: 0.8,
+                                    child: Container(
+                                      child: Switch(
+                                        value: dealerData[index]['active'] == 1,
+                                        onChanged: (value) {
+                                          setState(() {
+                                            dealerData[index]['active'] =
+                                                value ? 1 : 0;
+                                          });
+                                        },
+                                        activeColor: Colors.green,
+                                        activeTrackColor: Colors.white,
+                                        inactiveThumbColor: Color(0xffADBABF),
+                                        inactiveTrackColor: Colors.white,
+                                        trackOutlineColor:
+                                            MaterialStateProperty.all(
+                                                Colors.transparent),
+                                      ),
                                     ),
                                   ),
                                 ],
@@ -492,14 +530,30 @@ class _ScreenProductState extends State<ScreenProduct>
                           ),
                         ],
                       ),
-                    ),
-                  ],
-                );
-              },
+                      const SizedBox(height: 10),
+                      Divider(
+                        color: Colors.black,
+                        height: 2,
+                      ),
+                      const SizedBox(height: 10),
+                    ],
+                  );
+                },
+              ),
             ),
           )
         ],
       ),
     );
   }
+}
+
+Color getRandomColor() {
+  final Random random = Random();
+  return Color.fromARGB(
+    255,
+    random.nextInt(256),
+    random.nextInt(256),
+    random.nextInt(256),
+  );
 }
