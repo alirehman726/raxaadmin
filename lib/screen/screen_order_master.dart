@@ -5,9 +5,9 @@ import 'package:get/get.dart';
 import 'package:raxaadmin/Widgets/logoutDialog.dart';
 import 'package:raxaadmin/screen/screen_dealer.dart';
 import 'package:raxaadmin/screen/screen_drawer.dart';
-import 'package:raxaadmin/screen/screen_edit_dealer.dart';
 import 'package:raxaadmin/screen/screen_product.dart';
 import 'package:raxaadmin/screen/screen_report.dart';
+import 'package:raxaadmin/screen/screen_view_order.dart';
 import 'package:raxaadmin/utils/color.dart';
 import 'package:raxaadmin/utils/images.dart';
 
@@ -550,7 +550,7 @@ class _ScreenOrderMasterState extends State<ScreenOrderMaster>
                                 children: [
                                   InkWell(
                                     onTap: () {
-                                      Get.to(() => ScreenEditDealer());
+                                      Get.to(() => ScreenViewOrder());
                                     },
                                     child: Text(
                                       "View",
