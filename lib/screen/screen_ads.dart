@@ -1,23 +1,88 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:raxaadmin/Widgets/logoutDialog.dart';
-import 'package:raxaadmin/screen/screen_add_products.dart';
-import 'package:raxaadmin/screen/screen_ads.dart';
 import 'package:raxaadmin/screen/screen_dealer.dart';
 import 'package:raxaadmin/screen/screen_drawer.dart';
-import 'package:raxaadmin/screen/screen_edit_product.dart';
 import 'package:raxaadmin/screen/screen_order_master.dart';
-import 'package:raxaadmin/screen/screen_report.dart';
+import 'package:raxaadmin/screen/screen_product.dart';
+import 'package:raxaadmin/screen/screen_view_ads.dart';
 import 'package:raxaadmin/utils/color.dart';
 import 'package:raxaadmin/utils/images.dart';
 
-class ScreenProduct extends StatefulWidget {
+import 'screen_report.dart';
+
+class ScreenAds extends StatefulWidget {
   @override
-  _ScreenProductState createState() => _ScreenProductState();
+  _ScreenAdsState createState() => _ScreenAdsState();
 }
 
-class _ScreenProductState extends State<ScreenProduct>
+class _ScreenAdsState extends State<ScreenAds>
     with SingleTickerProviderStateMixin {
+  List<Map<String, dynamic>> orderMasterData = [
+    {
+      "name": "Aditya Darji",
+      "date": "DATE : 03/01/2025",
+      "time": "TIME : 03:07 AM",
+      "active": 1,
+    },
+    {
+      "name": "Aditya Darji",
+      "date": "DATE : 03/01/2025",
+      "time": "TIME : 03:07 AM",
+      "active": 0,
+    },
+    {
+      "name": "Jay Darji",
+      "date": "DATE : 03/01/2025",
+      "time": "TIME : 03:07 AM",
+      "active": 1,
+    },
+    {
+      "name": "Pratik Darji",
+      "date": "DATE : 03/01/2025",
+      "time": "TIME : 03:07 AM",
+      "active": 0,
+    },
+    {
+      "name": "Bhautik Darji",
+      "date": "DATE : 03/01/2025",
+      "time": "TIME : 03:07 AM",
+      "active": 0,
+    },
+    {
+      "name": "Smit Darji",
+      "date": "DATE : 03/01/2025",
+      "time": "TIME : 03:07 AM",
+      "active": 1,
+    },
+    {
+      "name": "Smit Darji",
+      "date": "DATE : 03/01/2025",
+      "time": "TIME : 03:07 AM",
+      "active": 1,
+    },
+    {
+      "name": "Bhautik Darji",
+      "date": "DATE : 03/01/2025",
+      "time": "TIME : 03:07 AM",
+      "active": 1,
+    },
+    {
+      "name": "Jay Darji",
+      "date": "DATE : 03/01/2025",
+      "time": "TIME : 03:07 AM",
+      "active": 0,
+    },
+    {
+      "name": "Aditya Darji",
+      "date": "DATE : 03/01/2025",
+      "time": "TIME : 03:07 AM",
+      "active": 0,
+    },
+  ];
+
   List<Map<String, dynamic>> menuItems = [
     {
       "icon": Images.DRAWER_1,
@@ -52,6 +117,7 @@ class _ScreenProductState extends State<ScreenProduct>
   ];
 
   int selectedIndex = 0;
+  bool isSwitched = false;
 
   @override
   Widget build(BuildContext context) {
@@ -61,7 +127,7 @@ class _ScreenProductState extends State<ScreenProduct>
         centerTitle: true,
         backgroundColor: Color(0xff01B8FA),
         title: Text(
-          "PRODUCT PAGE",
+          "Approve Ads",
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.w400),
         ),
         iconTheme: IconThemeData(color: Colors.white),
@@ -169,7 +235,6 @@ class _ScreenProductState extends State<ScreenProduct>
                             height: 23,
                             width: 23,
                             color: primaryColor,
-                            // color: isSelected ? Colors.red : Colors.black54,
                           ),
                           title: Text(
                             menuItems[index]["title"],
@@ -177,7 +242,6 @@ class _ScreenProductState extends State<ScreenProduct>
                               color: Color(0xff3C3D86),
                               fontSize: 15,
                               fontWeight: FontWeight.w700,
-                              // color: isSelected ? Colors.red : Colors.black54,
                             ),
                           ),
                           trailing: Icon(
@@ -243,17 +307,8 @@ class _ScreenProductState extends State<ScreenProduct>
             ),
             child: Container(
               decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(25), // Rounded corners
-                  color: Color(0xff2596BE)
-                  // gradient: LinearGradient(
-                  //   colors: [
-                  //     Colors.blue,
-                  //     Colors.lightBlueAccent
-                  //   ], // Gradient background
-                  //   begin: Alignment.centerLeft,
-                  //   end: Alignment.centerRight,
-                  // ),
-                  ),
+                  borderRadius: BorderRadius.circular(25),
+                  color: Color(0xff2596BE)),
               padding: EdgeInsets.only(left: 20, right: 20),
               margin: EdgeInsets.only(left: 20, right: 20),
               child: Row(
@@ -263,12 +318,12 @@ class _ScreenProductState extends State<ScreenProduct>
                       decoration: InputDecoration(
                         hintText: "Search Product",
                         hintStyle: TextStyle(color: Colors.white70),
-                        border: InputBorder.none, // No underline
+                        border: InputBorder.none,
                       ),
                       style: TextStyle(color: Colors.white),
                     ),
                   ),
-                  Icon(Icons.search, color: Colors.white), // Search Icon
+                  Icon(Icons.search, color: Colors.white),
                 ],
               ),
             ),
@@ -291,7 +346,7 @@ class _ScreenProductState extends State<ScreenProduct>
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'All Product’s',
+                          'Show All Ads Status',
                           style: TextStyle(
                             fontSize: 20,
                             fontStyle: FontStyle.italic,
@@ -309,103 +364,85 @@ class _ScreenProductState extends State<ScreenProduct>
                         )
                       ],
                     ),
-                    InkWell(
-                      onTap: () {
-                        Get.to(() => ScreenAddProducts());
-                      },
-                      child: Container(
-                        padding: EdgeInsets.all(10),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.all(Radius.circular(20.0)),
-                          color: Color(0xff3C3E89),
-                        ),
-                        child: Row(
-                          children: [
-                            Container(
-                              decoration: BoxDecoration(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(20.0)),
-                                color: Colors.white,
-                              ),
-                              child: Icon(
-                                Icons.add,
-                                color: Color(0xff3C3E89),
-                                size: 20,
-                              ),
-                            ),
-                            const SizedBox(width: 10),
-                            Text(
-                              'ADD NEW PRODUCT',
-                              style:
-                                  TextStyle(color: Colors.white, fontSize: 11),
-                            ),
-                          ],
-                        ),
-                      ),
-                    )
                   ],
                 ),
               ],
             ),
           ),
           Expanded(
-            child: ListView.builder(
-              itemCount: 10,
-              itemBuilder: (context, index) {
-                return Column(
-                  children: [
-                    Container(
-                      margin: const EdgeInsets.only(
-                          left: 20, right: 20, top: 10, bottom: 10),
-                      height: 100,
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Row(
+            child: Container(
+              decoration: BoxDecoration(
+                color: Color(0xffe6f8ff),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              margin: const EdgeInsets.only(
+                  left: 20, right: 20, top: 10, bottom: 10),
+              padding: const EdgeInsets.only(
+                  left: 20, right: 20, top: 10, bottom: 10),
+              child: ListView.builder(
+                itemCount: orderMasterData.length,
+                itemBuilder: (context, index) {
+                  return Column(
+                    children: [
+                      Row(
                         children: [
                           Expanded(
                             flex: 1,
                             child: Container(
-                              alignment: Alignment.center,
-                              decoration: BoxDecoration(
-                                // color: Colors.red,
-                                borderRadius: BorderRadius.only(
-                                  topLeft: Radius.circular(10),
-                                  bottomLeft: Radius.circular(10),
+                              height: 60,
+                              width: 60,
+                              child: CircleAvatar(
+                                radius: 60,
+                                backgroundColor: (() {
+                                  Color randomColor = getRandomColor();
+                                  return randomColor.withOpacity(0.5);
+                                })(),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8),
+                                  child: ClipOval(
+                                    child: CircleAvatar(
+                                      radius: 50,
+                                      backgroundColor: (() {
+                                        Color randomColor = getRandomColor();
+                                        return randomColor;
+                                      })(),
+                                      child: Text(
+                                        'AD',
+                                        style: TextStyle(
+                                            fontSize: 20,
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ),
+                                  ),
                                 ),
-                              ),
-                              child: Image.asset(
-                                Images.ALL_PRODUCTS,
-                                fit: BoxFit.cover,
                               ),
                             ),
                           ),
                           Expanded(
                             flex: 2,
                             child: Container(
-                              padding: EdgeInsets.all(5),
-                              // color: Colors.yellow,
                               child: Column(
                                 mainAxisAlignment:
-                                    MainAxisAlignment.spaceAround,
+                                    MainAxisAlignment.spaceBetween,
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    "JPSR Prabhu Shriram Bloom International Perfume Incense Sticks",
+                                    orderMasterData[index]['name'],
                                     style: TextStyle(
-                                        color: Color(0xff3C3D86),
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.w200),
+                                      fontSize: 17,
+                                      fontWeight: FontWeight.bold,
+                                      color: Color(0xff3C3E89),
+                                    ),
                                   ),
+                                  const SizedBox(height: 15),
                                   Text(
-                                    "IN Stock : YES",
+                                    orderMasterData[index]['date'],
                                     style: TextStyle(
-                                        color: Color(0xff01B8FA),
-                                        fontStyle: FontStyle.italic,
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.w200),
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w200,
+                                      color: Color(0xff3C3E89),
+                                    ),
                                   ),
                                 ],
                               ),
@@ -414,79 +451,31 @@ class _ScreenProductState extends State<ScreenProduct>
                           Expanded(
                             flex: 1,
                             child: Container(
-                              padding: EdgeInsets.only(left: 10, right: 10),
-                              decoration: BoxDecoration(
-                                // color: Colors.pink,
-                                borderRadius: BorderRadius.only(
-                                    topRight: Radius.circular(10),
-                                    bottomRight: Radius.circular(10)),
-                              ),
                               child: Column(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
-                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
                                   InkWell(
                                     onTap: () {
-                                      Get.to(() => ScreenEditProduct());
+                                      Get.to(() => ScreenViewAds());
                                     },
-                                    child: Container(
-                                      padding: EdgeInsets.all(5),
-                                      decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        border: Border.all(
-                                          color: Colors.black,
-                                          width: 1.5,
-                                        ),
-                                        borderRadius: BorderRadius.circular(5),
-                                      ),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text(
-                                            "Edit",
-                                            style: TextStyle(
-                                                color: Color(0xff3C3D86),
-                                                fontSize: 10,
-                                                fontWeight: FontWeight.w800),
-                                          ),
-                                          Icon(
-                                            Icons.edit,
-                                            color: Color(0xff01B8FA),
-                                            size: 15,
-                                          )
-                                        ],
+                                    child: Text(
+                                      "View",
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w100,
+                                        color: Color(0xff0158FA),
                                       ),
                                     ),
                                   ),
-                                  Container(
-                                    padding: EdgeInsets.all(5),
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      border: Border.all(
-                                        color: Colors.black,
-                                        width: 1.5,
-                                      ),
-                                      borderRadius: BorderRadius.circular(5),
-                                    ),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text(
-                                          "Delete",
-                                          style: TextStyle(
-                                              color: Color(0xff3C3D86),
-                                              fontSize: 10,
-                                              fontWeight: FontWeight.w800),
-                                        ),
-                                        Icon(
-                                          Icons.delete,
-                                          color: Colors.red,
-                                          size: 15,
-                                        )
-                                      ],
+                                  const SizedBox(height: 10),
+                                  Text(
+                                    "Approve/Reject/Pending",
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w200,
+                                      color: Color(0xff3C3D86),
                                     ),
                                   ),
                                 ],
@@ -495,14 +484,30 @@ class _ScreenProductState extends State<ScreenProduct>
                           ),
                         ],
                       ),
-                    ),
-                  ],
-                );
-              },
+                      const SizedBox(height: 10),
+                      Divider(
+                        color: Colors.black,
+                        height: 2,
+                      ),
+                      const SizedBox(height: 10),
+                    ],
+                  );
+                },
+              ),
             ),
           )
         ],
       ),
     );
   }
+}
+
+Color getRandomColor() {
+  final Random random = Random();
+  return Color.fromARGB(
+    255,
+    random.nextInt(256),
+    random.nextInt(256),
+    random.nextInt(256),
+  );
 }

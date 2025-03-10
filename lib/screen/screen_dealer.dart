@@ -4,12 +4,15 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:raxaadmin/Widgets/logoutDialog.dart';
 import 'package:raxaadmin/screen/screen_add_dealer.dart';
+import 'package:raxaadmin/screen/screen_ads.dart';
 import 'package:raxaadmin/screen/screen_drawer.dart';
 import 'package:raxaadmin/screen/screen_edit_dealer.dart';
 import 'package:raxaadmin/screen/screen_order_master.dart';
 import 'package:raxaadmin/screen/screen_product.dart';
 import 'package:raxaadmin/utils/color.dart';
 import 'package:raxaadmin/utils/images.dart';
+
+import 'screen_report.dart';
 
 class ScreenDealer extends StatefulWidget {
   @override
@@ -95,12 +98,12 @@ class _ScreenDealerState extends State<ScreenDealer>
     {
       "icon": Images.DRAWER_5,
       "title": "Approve Ads",
-      "route": () => ScreenDrawer(),
+      "route": () => ScreenAds(),
     },
     {
       "icon": Images.DRAWER_6,
       "title": "Dealer Report",
-      "route": () => ScreenDrawer(),
+      "route": () => ScreenReport(),
     },
   ];
 
@@ -118,6 +121,7 @@ class _ScreenDealerState extends State<ScreenDealer>
           "Dealer Page",
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.w400),
         ),
+        iconTheme: IconThemeData(color: Colors.white),
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: 10),

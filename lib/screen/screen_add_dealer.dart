@@ -323,6 +323,7 @@ class _ScreenAddDealerState extends State<ScreenAddDealer> {
                       ),
                     ],
                   )
+                
                 ],
               ),
             ),

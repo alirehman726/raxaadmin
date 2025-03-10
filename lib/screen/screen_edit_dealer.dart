@@ -62,6 +62,7 @@ class _ScreenEditDealerState extends State<ScreenEditDealer> {
           ),
         ),
       ),
+      
       body: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment:

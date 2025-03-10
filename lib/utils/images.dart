@@ -70,4 +70,5 @@ class Images {
   static const String DRAWER_7 = "assets/drawer-7.png";
   static const String PRODUCTS = "assets/products.png";
   static const String ALL_PRODUCTS = "assets/all_products.png";
+  static const String ADS = "assets/ads.png";
 }

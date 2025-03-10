@@ -7,8 +7,11 @@ import 'package:raxaadmin/screen/screen_dealer.dart';
 import 'package:raxaadmin/screen/screen_drawer.dart';
 import 'package:raxaadmin/screen/screen_edit_dealer.dart';
 import 'package:raxaadmin/screen/screen_product.dart';
+import 'package:raxaadmin/screen/screen_report.dart';
 import 'package:raxaadmin/utils/color.dart';
 import 'package:raxaadmin/utils/images.dart';
+
+import 'screen_ads.dart';
 
 class ScreenOrderMaster extends StatefulWidget {
   @override
@@ -17,7 +20,7 @@ class ScreenOrderMaster extends StatefulWidget {
 
 class _ScreenOrderMasterState extends State<ScreenOrderMaster>
     with SingleTickerProviderStateMixin {
-  String selectedValue = "January"; // Default selected value
+  String selectedValue = "January";
   List<String> options = [
     "January",
     "February",
@@ -32,6 +35,7 @@ class _ScreenOrderMasterState extends State<ScreenOrderMaster>
     "November",
     "December"
   ];
+
   List<Map<String, dynamic>> orderMasterData = [
     {
       "name": "Aditya Darji",
@@ -119,12 +123,12 @@ class _ScreenOrderMasterState extends State<ScreenOrderMaster>
     {
       "icon": Images.DRAWER_5,
       "title": "Approve Ads",
-      "route": () => ScreenDrawer(),
+      "route": () => ScreenAds(),
     },
     {
       "icon": Images.DRAWER_6,
       "title": "Dealer Report",
-      "route": () => ScreenDrawer(),
+      "route": () => ScreenReport(),
     },
   ];
 
@@ -142,6 +146,7 @@ class _ScreenOrderMasterState extends State<ScreenOrderMaster>
           "Order Master",
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.w400),
         ),
+        iconTheme: IconThemeData(color: Colors.white),
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: 10),

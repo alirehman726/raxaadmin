@@ -6,8 +6,11 @@ import 'package:raxaadmin/screen/screen_dealer.dart';
 import 'package:raxaadmin/screen/screen_order_master.dart';
 import 'package:raxaadmin/screen/screen_product.dart';
 import 'package:raxaadmin/screen/screen_products_details.dart';
+import 'package:raxaadmin/screen/screen_report.dart';
 import 'package:raxaadmin/utils/color.dart';
 import 'package:raxaadmin/utils/images.dart';
+
+import 'screen_ads.dart';
 
 class ScreenDrawer extends StatefulWidget {
   @override
@@ -40,12 +43,12 @@ class _ScreenDrawerState extends State<ScreenDrawer>
     {
       "icon": Images.DRAWER_5,
       "title": "Approve Ads",
-      "route": () => ScreenDrawer(),
+      "route": () => ScreenAds(),
     },
     {
       "icon": Images.DRAWER_6,
       "title": "Dealer Report",
-      "route": () => ScreenDrawer(),
+      "route": () => ScreenReport(),
     },
   ];
 
