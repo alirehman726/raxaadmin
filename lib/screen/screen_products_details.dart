@@ -1,13 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:raxaadmin/Controller/controller_OneProducts.dart';
 import 'package:raxaadmin/utils/images.dart';
 
 class ScreenProductsDetails extends StatefulWidget {
+  final int productsId;
+  const ScreenProductsDetails({super.key, required this.productsId});
   @override
   _ScreenProductsDetailsState createState() => _ScreenProductsDetailsState();
 }
 
 class _ScreenProductsDetailsState extends State<ScreenProductsDetails> {
+  final controllerOneProducts = Get.find<ControllerOneproducts>();
+
+  @override
+  void initState() {
+    super.initState();
+    print(widget.productsId);
+
+    controllerOneProducts.controllerOneProducts(widget.productsId);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -29,107 +42,130 @@ class _ScreenProductsDetailsState extends State<ScreenProductsDetails> {
         backgroundColor: Color(0xff01B8FA),
       ),
       backgroundColor: Colors.white,
-      body: LayoutBuilder(
-        builder: (context, constraints) => SingleChildScrollView(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(
-                height: constraints.maxHeight * .4 + 90,
-                child: Stack(
-                  children: [
-                    Positioned(
-                      child: Container(
-                        decoration: const BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: [
-                              Color(0xff01B8FA),
-                              Color(0xff3C3E89),
-                            ], // 2 colors mix
-                            begin: Alignment.topCenter,
-                            end: Alignment.bottomCenter,
+      body: Obx(
+        () {
+          if (controllerOneProducts.loading.value) {
+            return Center(child: CircularProgressIndicator(color: Colors.red));
+          }
+
+          if (controllerOneProducts.oneProducts.isEmpty) {
+            return Center(
+              child: Text(
+                "No product data available",
+                style: TextStyle(color: Colors.red, fontSize: 16),
+              ),
+            );
+          }
+
+          return LayoutBuilder(
+            builder: (context, constraints) => SingleChildScrollView(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(
+                    height: constraints.maxHeight * .4 + 90,
+                    child: Stack(
+                      children: [
+                        Positioned(
+                          child: Container(
+                            decoration: const BoxDecoration(
+                              gradient: LinearGradient(
+                                colors: [
+                                  Color(0xff01B8FA),
+                                  Color(0xff3C3E89),
+                                ],
+                                begin: Alignment.topCenter,
+                                end: Alignment.bottomCenter,
+                              ),
+                            ),
+                            width: constraints.maxWidth,
+                            height: constraints.maxHeight * 0.3,
                           ),
                         ),
-                        width: constraints.maxWidth,
-                        height: constraints.maxHeight * 0.3,
-                      ),
-                    ),
-                    Positioned(
-                      top: constraints.maxHeight * .01,
-                      left: 30,
-                      right: 30,
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.all(Radius.circular(20.0)),
-                        child: Container(
-                          height: constraints.maxHeight * 0.50,
-                          decoration: BoxDecoration(
+                        Positioned(
+                          top: constraints.maxHeight * .01,
+                          left: 30,
+                          right: 30,
+                          child: ClipRRect(
                             borderRadius:
                                 BorderRadius.all(Radius.circular(20.0)),
-                            image: DecorationImage(
-                              image: AssetImage(Images.PRODUCTS),
-                              fit: BoxFit.cover,
+                            child: Container(
+                              height: constraints.maxHeight * 0.50,
+                              decoration: BoxDecoration(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(20.0)),
+                                image: DecorationImage(
+                                  image: AssetImage(Images.PRODUCTS),
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
                             ),
                           ),
                         ),
-                      ),
+                      ],
                     ),
-                  ],
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(left: 30, right: 30, top: 10),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'JAL ( RAXA AGARBATTI )',
+                  ),
+                  Padding(
+                    padding:
+                        const EdgeInsets.only(left: 30, right: 30, top: 10),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "${controllerOneProducts.oneProducts[0].productName} (${controllerOneProducts.oneProducts[0].discription})",
+                          style: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w800,
+                            color: Color(0xff3C3E89),
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        Text(
+                          '₹ ${controllerOneProducts.oneProducts[0].price}',
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w800,
+                            color: Color(0xff01B8FA),
+                          ),
+                        ),
+                        const SizedBox(height: 15),
+                      ],
+                    ),
+                  ),
+                  Divider(),
+                  Container(
+                    alignment: Alignment.center,
+                    child: Text(
+                      'PRODUCT INFORMATION',
                       style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w800,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
                         color: Color(0xff3C3E89),
                       ),
                     ),
-                    const SizedBox(height: 10),
-                    Text(
-                      '₹ 250.00',
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w800,
-                        color: Color(0xff01B8FA),
-                      ),
-                    ),
-                    const SizedBox(height: 15),
-                  ],
-                ),
-              ),
-              Divider(),
-              Container(
-                alignment: Alignment.center,
-                child: Text(
-                  'PRODUCT INFORMATION',
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xff3C3E89),
                   ),
-                ),
+                  Divider(),
+                  SizedBox(height: 10),
+                  productInfoRow("Weight",
+                      "${controllerOneProducts.oneProducts[0].weight}"),
+                  SizedBox(height: 10),
+                  productInfoRow("Packing",
+                      "${controllerOneProducts.oneProducts[0].packingType}"),
+                  SizedBox(height: 10),
+                  productInfoRow(
+                      "MRP", "₹ ${controllerOneProducts.oneProducts[0].price}"),
+                  SizedBox(height: 10),
+                  productInfoRow("Flavour",
+                      "${controllerOneProducts.oneProducts[0].flavour}"),
+                  SizedBox(height: 10),
+                  productInfoRow(
+                      "Stock", "${controllerOneProducts.oneProducts[0].stock}"),
+                ],
               ),
-              Divider(),
-              SizedBox(height: 10),
-              productInfoRow("Weight", "110 Gm"),
-              SizedBox(height: 10),
-              productInfoRow("Packing", "Zipper Pack"),
-              SizedBox(height: 10),
-              productInfoRow("MRP", "58 Rs"),
-              SizedBox(height: 10),
-              productInfoRow("Flavour", "Miracal"),
-              SizedBox(height: 10),
-              productInfoRow("Burning Time", "45 Minutes"),
-            ],
-          ),
-        ),
+            ),
+          );
+        },
       ),
     );
   }

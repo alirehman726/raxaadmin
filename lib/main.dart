@@ -4,9 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:raxaadmin/Controller/menu_controller.dart';
-import 'package:raxaadmin/Controller/order_history_controller.dart';
-import 'package:raxaadmin/Controller/table_controller.dart';
+import 'package:raxaadmin/Controller/controller_OneProducts.dart';
+import 'package:raxaadmin/Controller/controller_allProducts.dart';
 import 'package:raxaadmin/screen/LacaleString.dart';
 import 'package:raxaadmin/screen/splash_screen.dart';
 import 'package:raxaadmin/utils/color.dart';
@@ -19,9 +18,8 @@ void main() async {
   HttpOverrides.global = MyHttpOverrides();
 
   // Get.put(DashboardController());
-  Get.put(TableController());
-  Get.put(Menu_tvs_Controller());
-  Get.put(OrderHistoryController());
+  Get.put(ControllerAllproducts());
+  Get.put(ControllerOneproducts());
   runApp(const MyApp());
 }
 

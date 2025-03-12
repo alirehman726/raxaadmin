@@ -82,9 +82,11 @@ class AuthApis {
     }
   }
 
-  static Future<dio.Response?> deleteOrderApi(dio.FormData body) async {
-    dio.Response res = await formService.postRequest(
-        "https://thevegstory.com/tvsadmin/api/remove-order", body, null, null);
+  static Future<dio.Response?> deleteOrderApi(int id) async {
+    dio.Response res = await formService.deleteRequest(
+        "https://raxaspread.com/API/api/delete_product/${id}", null);
+    print(id);
+    print('id');
     if (res.statusCode! >= 200 && res.statusCode! <= 210) {
       return res;
     } else if (res.statusCode! >= 400 && res.statusCode! <= 403) {
