@@ -23,6 +23,16 @@ class _ScreenViewOrderState extends State<ScreenViewOrder> {
     print(widget.id);
 
     controllerViewProducts.controllerViewOrder(widget.id.toString());
+
+    String status = controllerViewProducts.viewOrder[0].status;
+
+    if (status == "pending") {
+      selectedValue = "pending";
+      options = ["pending", "dispatch"];
+    } else if (status == "dispatch") {
+      selectedValue = "dispatch";
+      options = ["dispatch", "pending"];
+    }
   }
 
   final List<Map<String, String>> data = [
@@ -32,11 +42,13 @@ class _ScreenViewOrderState extends State<ScreenViewOrder> {
     {"name": "Bhautik Shah", "quntity": "25", "sales": "₹8000"},
   ];
 
+  // String selectedValue = "January";
+  // List<String> options = [
+  //   "January",
+  //   "February"
+  // ];
   String selectedValue = "pending";
-  List<String> options = [
-    "pending",
-    "dispatch",
-  ];
+  List<String> options = ["pending", "dispatch"];
 
   @override
   Widget build(BuildContext context) {
@@ -424,7 +436,7 @@ class _ScreenViewOrderState extends State<ScreenViewOrder> {
                                   borderRadius: BorderRadius.circular(10),
                                 ),
                                 child: Text(
-                                  controllerViewProducts.viewOrder[0].paymentId
+                                  controllerViewProducts.viewOrder[0].actionBy
                                       .toString(),
                                   // 'RAXADEAL001',
                                   style: TextStyle(

@@ -2,6 +2,8 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
+import 'package:raxaadmin/Controller/controller_allOrder.dart';
 import 'package:raxaadmin/Widgets/logoutDialog.dart';
 import 'package:raxaadmin/screen/screen_dealer.dart';
 import 'package:raxaadmin/screen/screen_drawer.dart';
@@ -20,6 +22,15 @@ class ScreenOrderMaster extends StatefulWidget {
 
 class _ScreenOrderMasterState extends State<ScreenOrderMaster>
     with SingleTickerProviderStateMixin {
+  final controllerAllOrder = Get.find<ControllerAllOrder>();
+
+  @override
+  void initState() {
+    super.initState();
+
+    controllerAllOrder.controllerAllOrder();
+  }
+
   String selectedValue = "January";
   List<String> options = [
     "January",
@@ -455,139 +466,158 @@ class _ScreenOrderMasterState extends State<ScreenOrderMaster>
               ],
             ),
           ),
-          Expanded(
-            child: Container(
-              decoration: BoxDecoration(
-                color: Color(0xffe6f8ff),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              margin: const EdgeInsets.only(
-                  left: 20, right: 20, top: 10, bottom: 10),
-              padding: const EdgeInsets.only(
-                  left: 20, right: 20, top: 10, bottom: 10),
-              child: ListView.builder(
-                itemCount: orderMasterData.length,
-                itemBuilder: (context, index) {
-                  return Column(
-                    children: [
-                      Row(
-                        children: [
-                          Expanded(
-                            flex: 1,
-                            child: Container(
-                              height: 60,
-                              width: 60,
-                              child: CircleAvatar(
-                                radius: 60,
-                                backgroundColor: (() {
-                                  Color randomColor = getRandomColor();
-                                  return randomColor.withOpacity(0.5);
-                                })(),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8),
-                                  child: ClipOval(
-                                    child: CircleAvatar(
-                                      radius: 50,
-                                      backgroundColor: (() {
-                                        Color randomColor = getRandomColor();
-                                        return randomColor;
-                                      })(),
-                                      child: Text(
-                                        'AD',
-                                        style: TextStyle(
-                                            fontSize: 20,
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.bold),
+          Obx(() {
+            if (controllerAllOrder.loading.value) {
+              return Center(
+                  child: CircularProgressIndicator(color: Colors.red));
+            }
+
+            if (controllerAllOrder.allOrder.isEmpty) {
+              return Center(
+                child: Text(
+                  "No product data available",
+                  style: TextStyle(color: Colors.red, fontSize: 16),
+                ),
+              );
+            }
+            return Expanded(
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Color(0xffe6f8ff),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                margin: const EdgeInsets.only(
+                    left: 20, right: 20, top: 10, bottom: 10),
+                padding: const EdgeInsets.only(
+                    left: 20, right: 20, top: 10, bottom: 10),
+                child: ListView.builder(
+                  itemCount: controllerAllOrder.allOrder.length,
+                  itemBuilder: (context, index) {
+                    return Column(
+                      children: [
+                        Row(
+                          children: [
+                            Expanded(
+                              flex: 1,
+                              child: Container(
+                                height: 60,
+                                width: 60,
+                                child: CircleAvatar(
+                                  radius: 60,
+                                  backgroundColor: (() {
+                                    Color randomColor = getRandomColor();
+                                    return randomColor.withOpacity(0.5);
+                                  })(),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8),
+                                    child: ClipOval(
+                                      child: CircleAvatar(
+                                        radius: 50,
+                                        backgroundColor: (() {
+                                          Color randomColor = getRandomColor();
+                                          return randomColor;
+                                        })(),
+                                        child: Text(
+                                          'AD',
+                                          style: TextStyle(
+                                              fontSize: 20,
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.bold),
+                                        ),
                                       ),
                                     ),
                                   ),
                                 ),
                               ),
                             ),
-                          ),
-                          Expanded(
-                            flex: 2,
-                            child: Container(
-                              child: Column(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    orderMasterData[index]['name'],
-                                    style: TextStyle(
-                                      fontSize: 17,
-                                      fontWeight: FontWeight.bold,
-                                      color: Color(0xff3C3E89),
-                                    ),
-                                  ),
-                                  Text(
-                                    orderMasterData[index]['date'],
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w200,
-                                      color: Color(0xff3C3E89),
-                                    ),
-                                  ),
-                                  Text(
-                                    orderMasterData[index]['time'],
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w200,
-                                      color: Color(0xff3C3E89),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                          Expanded(
-                            flex: 1,
-                            child: Container(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  InkWell(
-                                    onTap: () {
-                                      Get.to(() => ScreenViewOrder());
-                                    },
-                                    child: Text(
-                                      "View",
+                            Expanded(
+                              flex: 2,
+                              child: Container(
+                                child: Column(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      controllerAllOrder
+                                          .allOrder[index].actionBy,
                                       style: TextStyle(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w100,
-                                        color: Color(0xff0158FA),
+                                        fontSize: 17,
+                                        fontWeight: FontWeight.bold,
+                                        color: Color(0xff3C3E89),
                                       ),
                                     ),
-                                  ),
-                                  const SizedBox(height: 10),
-                                  Text(
-                                    "Dispatch",
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w600,
-                                      color: Color(0xff3C3D86),
+                                    Text(
+                                      "DATE : ${DateFormat('MM/dd/yyyy').format(controllerAllOrder.allOrder[index].orderDate)}",
+                                      
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w200,
+                                        color: Color(0xff3C3E89),
+                                      ),
                                     ),
-                                  ),
-                                ],
+                                    Text(
+                                      "TIME : ${controllerAllOrder.allOrder[index].time.toString()}",
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w200,
+                                        color: Color(0xff3C3E89),
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 10),
-                      Divider(
-                        color: Colors.black,
-                        height: 2,
-                      ),
-                      const SizedBox(height: 10),
-                    ],
-                  );
-                },
+                            Expanded(
+                              flex: 1,
+                              child: Container(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    InkWell(
+                                      onTap: () {
+                                        Get.to(() => ScreenViewOrder(
+                                            id: controllerAllOrder
+                                                .allOrder[index].id));
+                                      },
+                                      child: Text(
+                                        "View",
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w100,
+                                          color: Color(0xff0158FA),
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(height: 10),
+                                    Text(
+                                      "${controllerAllOrder.allOrder[index].status.toString()}",
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w600,
+                                        color: Color(0xff3C3D86),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 10),
+                        Divider(
+                          color: Colors.black,
+                          height: 2,
+                        ),
+                        const SizedBox(height: 10),
+                      ],
+                    );
+                  },
+                ),
               ),
-            ),
-          )
+            );
+          }),
         ],
       ),
     );

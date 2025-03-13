@@ -5,10 +5,14 @@ import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:raxaadmin/Controller/controller_OneProducts.dart';
+import 'package:raxaadmin/Controller/controller_allAds.dart';
+import 'package:raxaadmin/Controller/controller_allOrder.dart';
 import 'package:raxaadmin/Controller/controller_allProducts.dart';
 import 'package:raxaadmin/screen/LacaleString.dart';
 import 'package:raxaadmin/screen/splash_screen.dart';
 import 'package:raxaadmin/utils/color.dart';
+
+import 'Controller/controller_view_order.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -20,6 +24,9 @@ void main() async {
   // Get.put(DashboardController());
   Get.put(ControllerAllproducts());
   Get.put(ControllerOneproducts());
+  Get.put(ControllerAllOrder());
+  Get.put(ControllerViewOrder());
+  Get.put(ControllerAllAds());
   runApp(const MyApp());
 }
 

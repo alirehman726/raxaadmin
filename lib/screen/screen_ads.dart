@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:raxaadmin/Controller/controller_allAds.dart';
 import 'package:raxaadmin/Widgets/logoutDialog.dart';
 import 'package:raxaadmin/screen/screen_dealer.dart';
 import 'package:raxaadmin/screen/screen_drawer.dart';
@@ -20,68 +21,14 @@ class ScreenAds extends StatefulWidget {
 
 class _ScreenAdsState extends State<ScreenAds>
     with SingleTickerProviderStateMixin {
-  List<Map<String, dynamic>> orderMasterData = [
-    {
-      "name": "Aditya Darji",
-      "date": "DATE : 03/01/2025",
-      "time": "TIME : 03:07 AM",
-      "active": 1,
-    },
-    {
-      "name": "Aditya Darji",
-      "date": "DATE : 03/01/2025",
-      "time": "TIME : 03:07 AM",
-      "active": 0,
-    },
-    {
-      "name": "Jay Darji",
-      "date": "DATE : 03/01/2025",
-      "time": "TIME : 03:07 AM",
-      "active": 1,
-    },
-    {
-      "name": "Pratik Darji",
-      "date": "DATE : 03/01/2025",
-      "time": "TIME : 03:07 AM",
-      "active": 0,
-    },
-    {
-      "name": "Bhautik Darji",
-      "date": "DATE : 03/01/2025",
-      "time": "TIME : 03:07 AM",
-      "active": 0,
-    },
-    {
-      "name": "Smit Darji",
-      "date": "DATE : 03/01/2025",
-      "time": "TIME : 03:07 AM",
-      "active": 1,
-    },
-    {
-      "name": "Smit Darji",
-      "date": "DATE : 03/01/2025",
-      "time": "TIME : 03:07 AM",
-      "active": 1,
-    },
-    {
-      "name": "Bhautik Darji",
-      "date": "DATE : 03/01/2025",
-      "time": "TIME : 03:07 AM",
-      "active": 1,
-    },
-    {
-      "name": "Jay Darji",
-      "date": "DATE : 03/01/2025",
-      "time": "TIME : 03:07 AM",
-      "active": 0,
-    },
-    {
-      "name": "Aditya Darji",
-      "date": "DATE : 03/01/2025",
-      "time": "TIME : 03:07 AM",
-      "active": 0,
-    },
-  ];
+  final controllerAllAds = Get.find<ControllerAllAds>();
+
+  @override
+  void initState() {
+    super.initState();
+
+    controllerAllAds.controllerAllAds();
+  }
 
   List<Map<String, dynamic>> menuItems = [
     {
@@ -369,133 +316,152 @@ class _ScreenAdsState extends State<ScreenAds>
               ],
             ),
           ),
-          Expanded(
-            child: Container(
-              decoration: BoxDecoration(
-                color: Color(0xffe6f8ff),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              margin: const EdgeInsets.only(
-                  left: 20, right: 20, top: 10, bottom: 10),
-              padding: const EdgeInsets.only(
-                  left: 20, right: 20, top: 10, bottom: 10),
-              child: ListView.builder(
-                itemCount: orderMasterData.length,
-                itemBuilder: (context, index) {
-                  return Column(
-                    children: [
-                      Row(
-                        children: [
-                          Expanded(
-                            flex: 1,
-                            child: Container(
-                              height: 60,
-                              width: 60,
-                              child: CircleAvatar(
-                                radius: 60,
-                                backgroundColor: (() {
-                                  Color randomColor = getRandomColor();
-                                  return randomColor.withOpacity(0.5);
-                                })(),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8),
-                                  child: ClipOval(
-                                    child: CircleAvatar(
-                                      radius: 50,
-                                      backgroundColor: (() {
-                                        Color randomColor = getRandomColor();
-                                        return randomColor;
-                                      })(),
-                                      child: Text(
-                                        'AD',
-                                        style: TextStyle(
-                                            fontSize: 20,
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.bold),
+          Obx(() {
+            if (controllerAllAds.loading.value) {
+              return Center(
+                  child: CircularProgressIndicator(color: Colors.red));
+            }
+
+            if (controllerAllAds.allAds.isEmpty) {
+              return Center(
+                child: Text(
+                  "No Ads data available",
+                  style: TextStyle(color: Colors.red, fontSize: 16),
+                ),
+              );
+            }
+            return Expanded(
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Color(0xffe6f8ff),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                margin: const EdgeInsets.only(
+                    left: 20, right: 20, top: 10, bottom: 10),
+                padding: const EdgeInsets.only(
+                    left: 20, right: 20, top: 10, bottom: 10),
+                child: ListView.builder(
+                  itemCount: controllerAllAds.allAds.length,
+                  itemBuilder: (context, index) {
+                    return Column(
+                      children: [
+                        Row(
+                          children: [
+                            Expanded(
+                              flex: 1,
+                              child: Container(
+                                height: 60,
+                                width: 60,
+                                child: CircleAvatar(
+                                  radius: 60,
+                                  backgroundColor: (() {
+                                    Color randomColor = getRandomColor();
+                                    return randomColor.withOpacity(0.5);
+                                  })(),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8),
+                                    child: ClipOval(
+                                      child: CircleAvatar(
+                                        radius: 50,
+                                        backgroundColor: (() {
+                                          Color randomColor = getRandomColor();
+                                          return randomColor;
+                                        })(),
+                                        child: Text(
+                                          'AD',
+                                          style: TextStyle(
+                                              fontSize: 20,
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.bold),
+                                        ),
                                       ),
                                     ),
                                   ),
                                 ),
                               ),
                             ),
-                          ),
-                          Expanded(
-                            flex: 2,
-                            child: Container(
-                              child: Column(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    orderMasterData[index]['name'],
-                                    style: TextStyle(
-                                      fontSize: 17,
-                                      fontWeight: FontWeight.bold,
-                                      color: Color(0xff3C3E89),
-                                    ),
-                                  ),
-                                  const SizedBox(height: 15),
-                                  Text(
-                                    orderMasterData[index]['date'],
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w200,
-                                      color: Color(0xff3C3E89),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                          Expanded(
-                            flex: 1,
-                            child: Container(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  InkWell(
-                                    onTap: () {
-                                      Get.to(() => ScreenViewAds());
-                                    },
-                                    child: Text(
-                                      "View",
+                            Expanded(
+                              flex: 2,
+                              child: Container(
+                                child: Column(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      controllerAllAds.allAds[index].userName,
+                                      // orderMasterData[index]['name'],
                                       style: TextStyle(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w100,
-                                        color: Color(0xff0158FA),
+                                        fontSize: 17,
+                                        fontWeight: FontWeight.bold,
+                                        color: Color(0xff3C3E89),
                                       ),
                                     ),
-                                  ),
-                                  const SizedBox(height: 10),
-                                  Text(
-                                    "Approve/Reject/Pending",
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w200,
-                                      color: Color(0xff3C3D86),
+                                    const SizedBox(height: 15),
+                                    Text(
+                                      "DATE : ${controllerAllAds.allAds[index].date.toString()}",
+                                      // "DATE : ${DateFormat('MM/dd/yyyy').format(controllerAllAds.allAds[index].date)}",
+
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w200,
+                                        color: Color(0xff3C3E89),
+                                      ),
                                     ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
                             ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 10),
-                      Divider(
-                        color: Colors.black,
-                        height: 2,
-                      ),
-                      const SizedBox(height: 10),
-                    ],
-                  );
-                },
+                            Expanded(
+                              flex: 1,
+                              child: Container(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    InkWell(
+                                      onTap: () {
+                                        Get.to(() => ScreenViewAds());
+                                      },
+                                      child: Text(
+                                        "View",
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w100,
+                                          color: Color(0xff0158FA),
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(height: 10),
+                                    Text(
+                                      controllerAllAds.allAds[index].status,
+                                      // "Approve/Reject/Pending",
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w200,
+                                        color: Color(0xff3C3D86),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 10),
+                        Divider(
+                          color: Colors.black,
+                          height: 2,
+                        ),
+                        const SizedBox(height: 10),
+                      ],
+                    );
+                  },
+                ),
               ),
-            ),
-          )
+            );
+          })
         ],
       ),
     );
