@@ -1,7 +1,12 @@
+import 'dart:convert';
 import 'dart:math';
 
+import 'package:dio/dio.dart' as dio;
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
+import 'package:raxaadmin/Apis/auth_apis.dart';
+import 'package:raxaadmin/Controller/controller_AllDealer.dart';
 import 'package:raxaadmin/Widgets/logoutDialog.dart';
 import 'package:raxaadmin/screen/screen_add_dealer.dart';
 import 'package:raxaadmin/screen/screen_ads.dart';
@@ -21,6 +26,15 @@ class ScreenDealer extends StatefulWidget {
 
 class _ScreenDealerState extends State<ScreenDealer>
     with SingleTickerProviderStateMixin {
+  final controllerAllDealer = Get.find<ControllerAllDealer>();
+
+  @override
+  void initState() {
+    super.initState();
+
+    controllerAllDealer.controllerAllDealer();
+  }
+
   List<Map<String, dynamic>> dealerData = [
     {
       "name": "Aditya Darji",
@@ -109,6 +123,63 @@ class _ScreenDealerState extends State<ScreenDealer>
 
   int selectedIndex = 0;
   bool isSwitched = false;
+
+  Future<void> doCallAPILogin(int id, String status) async {
+    doStartLoader(true);
+
+    dio.FormData body = dio.FormData.fromMap({
+      "user_id": id.toString(),
+      "status": status.toString(),
+    });
+    var res = await AuthApis.changeStatusAPI(body);
+
+    if (res != null) {
+      Map<String, dynamic> response = json.decode(res.toString());
+      print(response);
+      print(response['status']);
+      if (response['status'] == true) {
+        Fluttertoast.showToast(
+          msg: response['message'].toString(),
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 1,
+          textColor: Colors.white,
+          fontSize: 16.0,
+        );
+      } else {
+        doStartLoader(false);
+        // SnackbarCustom.error("Error", response['message']);
+        Fluttertoast.showToast(
+          msg: response['message'].toString(),
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 1,
+          textColor: Colors.white,
+          fontSize: 16.0,
+        );
+      }
+    } else {
+      doStartLoader(false);
+      Fluttertoast.showToast(
+        msg: "Something Error ",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.CENTER,
+        timeInSecForIosWeb: 1,
+        textColor: Colors.white,
+        fontSize: 16.0,
+      );
+      // SnackbarCustom.error("Error",
+      //     "Unable_to_login_at_the_moment_Please_try_again_after_sometime");
+    }
+  }
+
+  bool isLoading = false;
+
+  doStartLoader(bool val) {
+    setState(() {
+      isLoading = val;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -394,158 +465,193 @@ class _ScreenDealerState extends State<ScreenDealer>
               ],
             ),
           ),
-          Expanded(
-            child: Container(
-              decoration: BoxDecoration(
-                color: Color(0xffe6f8ff),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              margin: const EdgeInsets.only(
-                  left: 20, right: 20, top: 10, bottom: 10),
-              padding: const EdgeInsets.only(
-                  left: 20, right: 20, top: 10, bottom: 10),
-              child: ListView.builder(
-                itemCount: dealerData.length,
-                itemBuilder: (context, index) {
-                  return Column(
-                    children: [
-                      Row(
-                        children: [
-                          Expanded(
-                            flex: 1,
-                            child: Container(
-                              height: 60,
-                              width: 60,
-                              child: CircleAvatar(
-                                radius: 60,
-                                backgroundColor: (() {
-                                  Color randomColor = getRandomColor();
-                                  return randomColor.withOpacity(0.5);
-                                })(),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8),
-                                  child: ClipOval(
-                                    child: CircleAvatar(
-                                      radius: 50,
-                                      backgroundColor: (() {
-                                        Color randomColor = getRandomColor();
-                                        return randomColor;
-                                      })(),
-                                      child: Text(
-                                        'AD',
-                                        style: TextStyle(
-                                            fontSize: 20,
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.bold),
+          Obx(() {
+            if (controllerAllDealer.loading.value) {
+              return Center(
+                  child: CircularProgressIndicator(color: Colors.red));
+            }
+
+            if (controllerAllDealer.allDealer.isEmpty) {
+              return Center(
+                child: Text(
+                  "No Dealer data available",
+                  style: TextStyle(color: Colors.red, fontSize: 16),
+                ),
+              );
+            }
+            return Expanded(
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Color(0xffe6f8ff),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                margin: const EdgeInsets.only(
+                    left: 20, right: 20, top: 10, bottom: 10),
+                padding: const EdgeInsets.only(
+                    left: 20, right: 20, top: 10, bottom: 10),
+                child: ListView.builder(
+                  itemCount: controllerAllDealer.allDealer.length,
+                  itemBuilder: (context, index) {
+                    return Column(
+                      children: [
+                        Row(
+                          children: [
+                            Expanded(
+                              flex: 1,
+                              child: Container(
+                                height: 60,
+                                width: 60,
+                                child: CircleAvatar(
+                                  radius: 60,
+                                  backgroundColor: (() {
+                                    Color randomColor = getRandomColor();
+                                    return randomColor.withOpacity(0.5);
+                                  })(),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8),
+                                    child: ClipOval(
+                                      child: CircleAvatar(
+                                        radius: 50,
+                                        backgroundColor: (() {
+                                          Color randomColor = getRandomColor();
+                                          return randomColor;
+                                        })(),
+                                        child: Text(
+                                          'AD',
+                                          style: TextStyle(
+                                              fontSize: 20,
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.bold),
+                                        ),
                                       ),
                                     ),
                                   ),
                                 ),
                               ),
                             ),
-                          ),
-                          Expanded(
-                            flex: 2,
-                            child: Container(
-                              height: 50,
-                              width: 50,
-                              child: Column(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    dealerData[index]['name'],
-                                    style: TextStyle(
-                                      fontSize: 17,
-                                      fontWeight: FontWeight.bold,
-                                      color: Color(0xff3C3E89),
-                                    ),
-                                  ),
-                                  Text(
-                                    dealerData[index]['desc'],
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w200,
-                                      color: Color(0xff3C3E89),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                          Expanded(
-                            flex: 1,
-                            child: Container(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  InkWell(
-                                    onTap: () {
-                                      Get.to(() => ScreenEditDealer());
-                                    },
-                                    child: Text(
-                                      "Edit",
+                            Expanded(
+                              flex: 2,
+                              child: Container(
+                                height: 50,
+                                width: 50,
+                                child: Column(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      controllerAllDealer.allDealer[index].name,
+                                      // dealerData[index]['name'],
                                       style: TextStyle(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w100,
+                                        fontSize: 17,
+                                        fontWeight: FontWeight.bold,
                                         color: Color(0xff3C3E89),
                                       ),
                                     ),
-                                  ),
-                                  const SizedBox(height: 10),
-                                  Text(
-                                    dealerData[index]['active'] == 1
-                                        ? "Active"
-                                        : "Deactive",
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w100,
-                                      color: dealerData[index]['active'] == 1
-                                          ? Color(0xff3C3D86)
-                                          : Color(0xff3C3D86),
-                                    ),
-                                  ),
-                                  Transform.scale(
-                                    scale: 0.8,
-                                    child: Container(
-                                      child: Switch(
-                                        value: dealerData[index]['active'] == 1,
-                                        onChanged: (value) {
-                                          setState(() {
-                                            dealerData[index]['active'] =
-                                                value ? 1 : 0;
-                                          });
-                                        },
-                                        activeColor: Colors.green,
-                                        activeTrackColor: Colors.white,
-                                        inactiveThumbColor: Color(0xffADBABF),
-                                        inactiveTrackColor: Colors.white,
-                                        trackOutlineColor:
-                                            MaterialStateProperty.all(
-                                                Colors.transparent),
+                                    Text(
+                                      controllerAllDealer
+                                          .allDealer[index].username,
+                                      // dealerData[index]['desc'],
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w200,
+                                        color: Color(0xff3C3E89),
                                       ),
                                     ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
                             ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 10),
-                      Divider(
-                        color: Colors.black,
-                        height: 2,
-                      ),
-                      const SizedBox(height: 10),
-                    ],
-                  );
-                },
+                            Expanded(
+                              flex: 1,
+                              child: Container(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    InkWell(
+                                      onTap: () {
+                                        Get.to(() => ScreenEditDealer(
+                                            id: controllerAllDealer
+                                                .allDealer[index].id));
+                                      },
+                                      child: Text(
+                                        "Edit",
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w100,
+                                          color: Color(0xff3C3E89),
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(height: 10),
+                                    Text(
+                                      controllerAllDealer
+                                                  .allDealer[index].status ==
+                                              "1"
+                                          ? "Active"
+                                          : "Deactive",
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w100,
+                                        color: controllerAllDealer
+                                                    .allDealer[index].status ==
+                                                "1"
+                                            ? Color(0xff3C3D86)
+                                            : Color(0xff3C3D86),
+                                      ),
+                                    ),
+                                    Transform.scale(
+                                      scale: 0.8,
+                                      child: Container(
+                                        child: Switch(
+                                          value: controllerAllDealer
+                                                  .allDealer[index].status ==
+                                              "1",
+                                          onChanged: (value) {
+                                            setState(() {
+                                              controllerAllDealer
+                                                  .allDealer[index]
+                                                  .status = value ? "1" : "0";
+                                              print(controllerAllDealer
+                                                  .allDealer[index].status);
+                                              print("AAAAAAAA");
+                                              doCallAPILogin(
+                                                  controllerAllDealer
+                                                      .allDealer[index].id,
+                                                  controllerAllDealer
+                                                      .allDealer[index].status);
+                                            });
+                                          },
+                                          activeColor: Colors.green,
+                                          activeTrackColor: Colors.white,
+                                          inactiveThumbColor: Color(0xffADBABF),
+                                          inactiveTrackColor: Colors.white,
+                                          trackOutlineColor:
+                                              MaterialStateProperty.all(
+                                                  Colors.transparent),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 10),
+                        Divider(
+                          color: Colors.black,
+                          height: 2,
+                        ),
+                        const SizedBox(height: 10),
+                      ],
+                    );
+                  },
+                ),
               ),
-            ),
-          )
+            );
+          })
         ],
       ),
     );

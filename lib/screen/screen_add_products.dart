@@ -112,7 +112,7 @@ class _ScreenAddProductsState extends State<ScreenAddProducts> {
                     Padding(
                       padding: EdgeInsets.only(left: 20, right: 20, top: 20),
                       child: Text(
-                        'Add Product',
+                        'Add New Product',
                         style: TextStyle(
                           fontSize: 20,
                           fontStyle: FontStyle.italic,
@@ -184,7 +184,7 @@ class _ScreenAddProductsState extends State<ScreenAddProducts> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  'Add Product',
+                                  'Mandatory',
                                   style: TextStyle(
                                     fontSize: 17,
                                     fontWeight: FontWeight.bold,

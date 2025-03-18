@@ -1,17 +1,36 @@
+import 'dart:convert';
+
+import 'package:dio/dio.dart' as dio;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:raxaadmin/Apis/auth_apis.dart';
+import 'package:raxaadmin/Controller/controller_allAds.dart';
+import 'package:raxaadmin/Controller/controller_viewAds.dart';
+import 'package:raxaadmin/screen/screen_ads.dart';
 import 'package:raxaadmin/utils/images.dart';
 
+import '../Widgets/myToasts.dart';
+
 class ScreenViewAds extends StatefulWidget {
-  const ScreenViewAds({super.key});
+  final int id;
+  final String name, date;
+
+  const ScreenViewAds(
+      {super.key, required this.id, required this.name, required this.date});
 
   @override
   State<ScreenViewAds> createState() => _ScreenViewAdsState();
 }
 
 class _ScreenViewAdsState extends State<ScreenViewAds> {
-  String selectedValue = "Yes"; // Default selected value
-  List<String> options = ["Yes", "No"];
+  final controllerViewAds = Get.find<ControllerViewAds>();
+
+  @override
+  void initState() {
+    super.initState();
+
+    controllerViewAds.controllerViewAds(widget.id.toString());
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -71,7 +90,9 @@ class _ScreenViewAdsState extends State<ScreenViewAds> {
           children: [
             InkWell(
               onTap: () {
-                Get.back();
+                // accept,reject
+                doCallAPILogin("accept");
+                // Get.back();
               },
               child: Container(
                 alignment: Alignment.center,
@@ -94,7 +115,9 @@ class _ScreenViewAdsState extends State<ScreenViewAds> {
             ),
             InkWell(
               onTap: () {
-                Get.back();
+                // accept,reject
+                doCallAPILogin("reject");
+                // Get.back();
               },
               child: Container(
                 alignment: Alignment.center,
@@ -117,7 +140,6 @@ class _ScreenViewAdsState extends State<ScreenViewAds> {
             ),
           ],
         ),
-      
       ),
       body: Column(
         children: [
@@ -141,7 +163,7 @@ class _ScreenViewAdsState extends State<ScreenViewAds> {
                       ),
                     ),
                     Text(
-                      'Aditya Darji',
+                      '${widget.name}',
                       style: TextStyle(
                         fontSize: 18,
                         fontStyle: FontStyle.italic,
@@ -166,7 +188,7 @@ class _ScreenViewAdsState extends State<ScreenViewAds> {
                       ),
                     ),
                     Text(
-                      '03/01/2025',
+                      '${widget.date}',
                       style: TextStyle(
                         fontSize: 18,
                         fontStyle: FontStyle.italic,
@@ -179,36 +201,105 @@ class _ScreenViewAdsState extends State<ScreenViewAds> {
               ],
             ),
           ),
-          Expanded(
-            child: ListView.builder(
-              itemCount: 10,
-              itemBuilder: (context, index) {
-                return Column(
-                  children: [
-                    Container(
-                      margin: const EdgeInsets.only(
-                          left: 20, right: 20, top: 10, bottom: 10),
-                      height: 150,
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(10),
-                        child: Image.asset(
-                          Images.ADS,
-                          fit: BoxFit.cover,
+          Obx(() {
+            if (controllerViewAds.loading.value) {
+              return Center(
+                  child: CircularProgressIndicator(color: Colors.red));
+            }
+
+            if (controllerViewAds.viewAds.isEmpty) {
+              return Center(
+                child: Text(
+                  "No Ads data available",
+                  style: TextStyle(color: Colors.red, fontSize: 16),
+                ),
+              );
+            }
+            return Expanded(
+              child: ListView.builder(
+                itemCount: controllerViewAds.viewAds.length,
+                itemBuilder: (context, index) {
+                  return Column(
+                    children: [
+                      Container(
+                        margin: const EdgeInsets.only(
+                            left: 20, right: 20, top: 10, bottom: 10),
+                        height: 150,
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(10),
+                          child: Image.network(
+                            controllerViewAds.viewAds[index].image,
+                            fit: BoxFit.cover,
+                          ),
+                          // child: Image.asset(
+                          //   Images.ADS,
+                          //   fit: BoxFit.cover,
+                          // ),
                         ),
                       ),
-                    ),
-                  ],
-                );
-              },
-            ),
-          )
+                    ],
+                  );
+                },
+              ),
+            );
+          }),
         ],
       ),
     );
   }
+
+  Future<void> doCallAPILogin(String status) async {
+    doStartLoader(true);
+
+    dio.FormData body = dio.FormData.fromMap({
+      "ads_id": widget.id,
+      'status': status.toString(),
+    });
+
+    body.fields.forEach((field) {
+      print("${field.key}: ${field.value}");
+    });
+
+    var res = await AuthApis.changeStatus(body);
+
+    if (res != null) {
+      Map<String, dynamic> response = json.decode(res.toString());
+      print(response);
+      print(response['status']);
+      print('Hello TVS');
+      if (response['status'] == true) {
+        print('Rehmanali');
+        print(response['message']);
+        doStartLoader(false);
+        SnackbarCustom.success("Success", response['message'].toString());
+
+        Get.offAll(() => ScreenAds());
+
+        final controllerAllAds = Get.find<ControllerAllAds>();
+
+        await controllerAllAds.controllerAllAds();
+        controllerAllAds.update();
+      } else {
+        doStartLoader(false);
+        SnackbarCustom.error("Error", response['message']);
+      }
+    } else {
+      doStartLoader(false);
+      SnackbarCustom.error("Error",
+          "Unable_to_login_at_the_moment_Please_try_again_after_sometime");
+    }
+  }
+
+  doStartLoader(bool val) {
+    setState(() {
+      isLoading = val;
+    });
+  }
+
+  bool isLoading = false;
 }

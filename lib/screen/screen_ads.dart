@@ -421,7 +421,17 @@ class _ScreenAdsState extends State<ScreenAds>
                                   children: [
                                     InkWell(
                                       onTap: () {
-                                        Get.to(() => ScreenViewAds());
+                                        Get.to(
+                                          () => ScreenViewAds(
+                                            id: controllerAllAds
+                                                .allAds[index].id,
+                                            name: controllerAllAds
+                                                .allAds[index].userName,
+                                            date: controllerAllAds
+                                                .allAds[index].date
+                                                .toString(),
+                                          ),
+                                        );
                                       },
                                       child: Text(
                                         "View",
@@ -438,8 +448,8 @@ class _ScreenAdsState extends State<ScreenAds>
                                       // "Approve/Reject/Pending",
                                       textAlign: TextAlign.center,
                                       style: TextStyle(
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.w200,
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w800,
                                         color: Color(0xff3C3D86),
                                       ),
                                     ),

@@ -32,6 +32,45 @@ class AuthApis {
     }
   }
 
+  static Future<dio.Response?> changeStatusAPI(dio.FormData body) async {
+    dio.Response res = await formService.postRequest(
+        "https://raxaspread.com/API/api/change-user-stauts", body, null, null);
+    print(res.data);
+    print('res.data_________________________________');
+    print("URL: HIT");
+    if (res.statusCode! >= 200 && res.statusCode! <= 210) {
+      return res;
+    } else if (res.statusCode! >= 400 && res.statusCode! <= 403) {
+      return null;
+    }
+  }
+
+  static Future<dio.Response?> addDealerAPI(dio.FormData body) async {
+    dio.Response res = await formService.postRequest(
+        "https://raxaspread.com/API/api/signup", body, null, null);
+    print(res.data);
+    print('res.data_____________Add Dealer____________________');
+    print("URL: HIT");
+    if (res.statusCode! >= 200 && res.statusCode! <= 210) {
+      return res;
+    } else if (res.statusCode! >= 400 && res.statusCode! <= 403) {
+      return null;
+    }
+  }
+
+  static Future<dio.Response?> editDealerAPI(dio.FormData body, int id) async {
+    dio.Response res = await formService.postRequest(
+        "https://raxaspread.com/API/api/edit_user/${id}", body, null, null);
+    print(res.data);
+    print('res.data_____________Edit Dealer____________________');
+    print("URL: HIT");
+    if (res.statusCode! >= 200 && res.statusCode! <= 210) {
+      return res;
+    } else if (res.statusCode! >= 400 && res.statusCode! <= 403) {
+      return null;
+    }
+  }
+
   static Future<dio.Response?> change_tableApi(dio.FormData body) async {
     dio.Response res = await formService.postRequest(
         "https://thevegstory.com/tvsadmin/api/change-table", body, null, null);
@@ -72,9 +111,9 @@ class AuthApis {
     }
   }
 
-  static Future<dio.Response?> confirmOrderApi(dio.FormData body) async {
+  static Future<dio.Response?> changeStatus(dio.FormData body) async {
     dio.Response res = await formService.postRequest(
-        "https://thevegstory.com/tvsadmin/api/order", body, null, null);
+        "https://raxaspread.com/API/api/changeStatus", body, null, null);
     if (res.statusCode! >= 200 && res.statusCode! <= 210) {
       return res;
     } else if (res.statusCode! >= 400 && res.statusCode! <= 403) {

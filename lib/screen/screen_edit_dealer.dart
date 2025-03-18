@@ -1,23 +1,129 @@
+import 'dart:convert';
+
+import 'package:dio/dio.dart' as dio;
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
+import 'package:raxaadmin/Apis/auth_apis.dart';
+import 'package:raxaadmin/Controller/controller_AllDealer.dart';
+import 'package:raxaadmin/Controller/controller_EditDealer.dart';
+import 'package:raxaadmin/Widgets/myToasts.dart';
 import 'package:raxaadmin/screen/screen_dealer.dart';
 import 'package:raxaadmin/utils/images.dart';
 
 class ScreenEditDealer extends StatefulWidget {
-  const ScreenEditDealer({super.key});
+  final int id;
+  const ScreenEditDealer({super.key, required this.id});
 
   @override
   State<ScreenEditDealer> createState() => _ScreenEditDealerState();
 }
 
 class _ScreenEditDealerState extends State<ScreenEditDealer> {
-  String selectedValue = "Yes"; // Default selected value
+  String selectedValue = "Yes";
   List<String> options = ["Yes", "No"];
+  bool isEditButton = false;
+
+  final controllerEditDealer = Get.find<ControllerEditDealer>();
+  final TextEditingController nameController = TextEditingController();
+  final TextEditingController phoneController = TextEditingController();
+  final TextEditingController addressController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController usernameController = TextEditingController();
+
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
+  @override
+  void initState() {
+    super.initState();
+    controllerEditDealer.controllerEditDealer(widget.id);
+  }
+
+  void toggleEdit() {
+    setState(() {
+      isEditButton = !isEditButton;
+      if (isEditButton) {
+        nameController.text = controllerEditDealer.editDealer[0].name;
+        phoneController.text = controllerEditDealer.editDealer[0].phnNumber;
+        addressController.text = controllerEditDealer.editDealer[0].address;
+        emailController.text = controllerEditDealer.editDealer[0].email;
+        usernameController.text = controllerEditDealer.editDealer[0].username;
+      }
+    });
+  }
+
+  void submitData(int id) async {
+    if (_formKey.currentState!.validate()) {
+      dio.FormData body = dio.FormData.fromMap({
+        "name": nameController.text,
+        "email": emailController.text,
+        "phone": phoneController.text,
+        "address": addressController.text,
+        "username": usernameController.text,
+      });
+      var res = await AuthApis.editDealerAPI(body, id);
+
+      if (res != null) {
+        Map<String, dynamic> response = json.decode(res.toString());
+        print(response);
+        print(response['status']);
+        if (response['status'] == true) {
+          Fluttertoast.showToast(
+            msg: response['message'].toString(),
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 1,
+            textColor: Colors.white,
+            fontSize: 16.0,
+          );
+          Get.offAll(() => ScreenDealer());
+
+          final controllerAllDealer = Get.find<ControllerAllDealer>();
+
+          await controllerAllDealer.controllerAllDealer();
+          controllerAllDealer.update();
+        } else {
+          doStartLoader(false);
+          // SnackbarCustom.error("Error", response['message']);
+          Fluttertoast.showToast(
+            msg: response['message'].toString(),
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 1,
+            textColor: Colors.white,
+            fontSize: 16.0,
+          );
+        }
+      } else {
+        doStartLoader(false);
+        Fluttertoast.showToast(
+          msg: "Something Error ",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 1,
+          textColor: Colors.white,
+          fontSize: 16.0,
+        );
+        // SnackbarCustom.error("Error",
+        //     "Unable_to_login_at_the_moment_Please_try_again_after_sometime");
+      }
+    } else {
+      longToastMessage("Please Enter Valid Mobile Number!");
+    }
+  }
+
+  bool isLoading = false;
+
+  doStartLoader(bool val) {
+    setState(() {
+      isLoading = val;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset: true, // Prevents keyboard overflow
+      resizeToAvoidBottomInset: true,
       backgroundColor: Color(0xffccf1fe),
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(kToolbarHeight),
@@ -33,8 +139,8 @@ class _ScreenEditDealerState extends State<ScreenEditDealer> {
             ),
           ),
           child: AppBar(
-            backgroundColor: Colors.transparent, // Make AppBar transparent
-            elevation: 0, // Remove shadow
+            backgroundColor: Colors.transparent,
+            elevation: 0,
             actions: [
               Padding(
                 padding: const EdgeInsets.only(right: 10),
@@ -62,44 +168,33 @@ class _ScreenEditDealerState extends State<ScreenEditDealer> {
           ),
         ),
       ),
-      
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment:
-            CrossAxisAlignment.start, // ✅ Align everything to start
-        children: [
-          Container(
-            padding: EdgeInsets.only(left: 20, right: 20, bottom: 20, top: 20),
-            margin: EdgeInsets.only(left: 20, right: 20, bottom: 30, top: 30),
-            width: double.infinity,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(15),
-              color: Color(0xffe6f8ff),
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Center(
-                  child: Container(
-                    alignment: Alignment.center,
-                    height: 80,
-                    width: 80,
-                    child: CircleAvatar(
-                      radius: 60,
-                      backgroundColor: (() {
-                        Color randomColor = getRandomColor();
-                        return randomColor.withOpacity(0.5);
-                      })(),
-                      child: Padding(
-                        padding: const EdgeInsets.all(8),
-                        child: ClipOval(
+      body: Obx(
+        () {
+          if (controllerEditDealer.loading.value) {
+            return Center(child: CircularProgressIndicator(color: Colors.red));
+          }
+          return SingleChildScrollView(
+            child: Form(
+              key: _formKey,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    padding: EdgeInsets.all(20),
+                    margin: EdgeInsets.all(30),
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(15),
+                      color: Color(0xffe6f8ff),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Center(
                           child: CircleAvatar(
-                            radius: 50,
-                            backgroundColor: (() {
-                              Color randomColor = getRandomColor();
-                              return randomColor;
-                            })(),
+                            radius: 40,
+                            backgroundColor: Colors.blue.withOpacity(0.5),
                             child: Text(
                               'AD',
                               style: TextStyle(
@@ -110,159 +205,161 @@ class _ScreenEditDealerState extends State<ScreenEditDealer> {
                             ),
                           ),
                         ),
-                      ),
+                        SizedBox(height: 20),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            isEditButton
+                                ? Expanded(
+                                    child: TextFormField(
+                                      controller: nameController,
+                                      decoration:
+                                          InputDecoration(labelText: 'Name'),
+                                    ),
+                                  )
+                                : Text(
+                                    controllerEditDealer.editDealer[0].name,
+                                    style: TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold,
+                                      color: Color(0xff3C3E89),
+                                    ),
+                                  ),
+                            SizedBox(width: 15),
+                            InkWell(
+                              onTap: toggleEdit,
+                              child: Icon(
+                                Icons.edit,
+                                color: Color(0xff0158FA),
+                              ),
+                            )
+                          ],
+                        ),
+                        SizedBox(height: 30),
+                        buildEditableField("Phone no.", phoneController,
+                            controllerEditDealer.editDealer[0].phnNumber),
+                        buildEditableField("Address", addressController,
+                            controllerEditDealer.editDealer[0].address),
+                        buildEditableField("Email ID", emailController,
+                            controllerEditDealer.editDealer[0].email),
+                        buildEditableField("Username", usernameController,
+                            controllerEditDealer.editDealer[0].username),
+                        SizedBox(height: 30),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            InkWell(
+                              onTap: toggleEdit,
+                              child: Container(
+                                alignment: Alignment.center,
+                                width: 70,
+                                padding: EdgeInsets.all(10),
+                                decoration: BoxDecoration(
+                                  color: Color(0xff3C3D86),
+                                  borderRadius: BorderRadius.circular(5),
+                                ),
+                                child: Text(
+                                  isEditButton ? 'Save' : 'Edit',
+                                  style: TextStyle(
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            // InkWell(
+                            //   onTap: () {},
+                            //   child: Container(
+                            //     alignment: Alignment.center,
+                            //     width: 70,
+                            //     padding: EdgeInsets.all(10),
+                            //     decoration: BoxDecoration(
+                            //       color: Color(0xff01B8FA),
+                            //       borderRadius: BorderRadius.circular(5),
+                            //     ),
+                            //     child: Text(
+                            //       'Submit',
+                            //       style: TextStyle(
+                            //         fontSize: 10,
+                            //         fontWeight: FontWeight.bold,
+                            //         color: Colors.white,
+                            //       ),
+                            //     ),
+                            //   ),
+                            // ),
+                            InkWell(
+                              onTap: () {
+                                submitData(
+                                    controllerEditDealer.editDealer[0].id);
+                              },
+                              child: Container(
+                                alignment: Alignment.center,
+                                width: 70,
+                                padding: EdgeInsets.all(10),
+                                decoration: BoxDecoration(
+                                  color: Color(0xff01B8FA),
+                                  borderRadius: BorderRadius.circular(5),
+                                ),
+                                child: Text(
+                                  'Submit',
+                                  style: TextStyle(
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        )
+                      ],
                     ),
                   ),
-                ),
-                const SizedBox(height: 20),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      "Aditya Darji",
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xff3C3E89),
-                      ),
-                    ),
-                    const SizedBox(width: 15),
-                    Icon(
-                      Icons.edit,
-                      color: Color(0xff0158FA),
-                    )
-                  ],
-                ),
-                const SizedBox(height: 30),
-                Text(
-                  "Phone no.",
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xff737c80),
-                  ),
-                ),
-                const SizedBox(height: 5),
-                Text(
-                  "+91 1234567890",
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xff404042),
-                  ),
-                ),
-                const SizedBox(height: 30),
-                Text(
-                  "Phone no",
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xff737c80),
-                  ),
-                ),
-                const SizedBox(height: 5),
-                Text(
-                  "Rasana Mota, Deesa, B.K, Gujrat-385535",
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xff404042),
-                  ),
-                ),
-                const SizedBox(height: 30),
-                Text(
-                  "Email ID",
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xff737c80),
-                  ),
-                ),
-                const SizedBox(height: 5),
-                Text(
-                  "aditya@design-blitz.com",
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xff404042),
-                  ),
-                ),
-                const SizedBox(height: 30),
-                Text(
-                  "Username",
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xff737c80),
-                  ),
-                ),
-                const SizedBox(height: 5),
-                Text(
-                  "RAXADEAL001",
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xff404042),
-                  ),
-                ),
-                const SizedBox(height: 30),
-                const SizedBox(height: 17),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    InkWell(
-                      onTap: () {
-                        Get.back();
-                      },
-                      child: Container(
-                        alignment: Alignment.center,
-                        width: 70,
-                        padding: EdgeInsets.only(
-                            left: 10, right: 10, top: 10, bottom: 10),
-                        decoration: BoxDecoration(
-                          color: Color(0xff3C3D86),
-                          borderRadius: BorderRadius.circular(5),
-                        ),
-                        child: Text(
-                          'Edit',
-                          style: TextStyle(
-                            fontSize: 10,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                    ),
-                    InkWell(
-                      onTap: () {
-                        Get.back();
-                      },
-                      child: Container(
-                        alignment: Alignment.center,
-                        width: 70,
-                        padding: EdgeInsets.only(
-                            left: 10, right: 10, top: 10, bottom: 10),
-                        decoration: BoxDecoration(
-                          color: Color(0xff01B8FA),
-                          borderRadius: BorderRadius.circular(5),
-                        ),
-                        child: Text(
-                          'Submit',
-                          style: TextStyle(
-                            fontSize: 10,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                )
-              ],
+                ],
+              ),
             ),
-          ),
-        ],
+          );
+        },
       ),
+    );
+  }
+
+  Widget buildEditableField(
+      String label, TextEditingController controller, String value) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+            color: Color(0xff737c80),
+          ),
+        ),
+        SizedBox(height: 5),
+        isEditButton
+            ? TextFormField(
+                controller: controller,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'This field cannot be empty';
+                  }
+                  return null;
+                },
+                decoration: InputDecoration(border: OutlineInputBorder()),
+              )
+            : Text(
+                value,
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xff404042),
+                ),
+              ),
+        SizedBox(height: 30),
+      ],
     );
   }
 }
