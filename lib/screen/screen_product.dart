@@ -493,7 +493,22 @@ class _ScreenProductState extends State<ScreenProduct>
                                   children: [
                                     InkWell(
                                       onTap: () {
-                                        Get.to(() => ScreenEditProduct());
+                                        // print(controllerAllProducts
+                                        //     .allProducts[index]);
+                                        // Get.to(() => ScreenEditProduct(
+                                        //     product: controllerAllProducts
+                                        //         .allProducts[index]));
+                                        if (controllerAllProducts
+                                            .allProducts.isNotEmpty) {
+                                          print(controllerAllProducts
+                                              .allProducts[index]);
+                                          Get.to(() => ScreenEditProduct(
+                                              product: controllerAllProducts
+                                                  .allProducts[index]));
+                                        } else {
+                                          print(
+                                              "Product list is empty or not loaded yet.");
+                                        }
                                       },
                                       child: Container(
                                         padding: EdgeInsets.all(5),
