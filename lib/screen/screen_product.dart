@@ -24,11 +24,18 @@ class ScreenProduct extends StatefulWidget {
 class _ScreenProductState extends State<ScreenProduct>
     with SingleTickerProviderStateMixin {
   final controllerAllProducts = Get.find<ControllerAllproducts>();
+  TextEditingController searchController = TextEditingController();
+  RxString searchQuery = "".obs;
+
+  void updateSearchQuery(String query) {
+    setState(() {
+      searchQuery.value = query.toLowerCase();
+    });
+  }
 
   @override
   void initState() {
     super.initState();
-
     controllerAllProducts.controllerAllProducts();
   }
 
@@ -273,145 +280,157 @@ class _ScreenProductState extends State<ScreenProduct>
           ],
         ),
       ),
-      body: Obx(() {
-        if (controllerAllProducts.loading.value) {
-          return Center(child: CircularProgressIndicator(color: Colors.red));
-        }
-
-        if (controllerAllProducts.allProducts.isEmpty) {
-          return Center(
-            child: Text(
-              "No product data available",
-              style: TextStyle(color: Colors.red, fontSize: 16),
+      body: Column(
+        children: [
+          Container(
+            padding: EdgeInsets.only(top: 5, bottom: 20),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  Color(0xff01B8FA),
+                  Color(0xff2596be),
+                ],
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+              ),
             ),
-          );
-        }
-        return Column(
-          children: [
-            Container(
-              padding: EdgeInsets.only(top: 5, bottom: 20),
+            child: Container(
               decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    Color(0xff01B8FA),
-                    Color(0xff2596be),
-                  ],
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                ),
-              ),
-              child: Container(
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(25), // Rounded corners
-                    color: Color(0xff2596BE)
-                    // gradient: LinearGradient(
-                    //   colors: [
-                    //     Colors.blue,
-                    //     Colors.lightBlueAccent
-                    //   ], // Gradient background
-                    //   begin: Alignment.centerLeft,
-                    //   end: Alignment.centerRight,
-                    // ),
-                    ),
-                padding: EdgeInsets.only(left: 20, right: 20),
-                margin: EdgeInsets.only(left: 20, right: 20),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: TextField(
-                        decoration: InputDecoration(
-                          hintText: "Search Product",
-                          hintStyle: TextStyle(color: Colors.white70),
-                          border: InputBorder.none, // No underline
-                        ),
-                        style: TextStyle(color: Colors.white),
-                      ),
-                    ),
-                    Icon(Icons.search, color: Colors.white), // Search Icon
-                  ],
-                ),
-              ),
-            ),
-            Container(
-              padding: EdgeInsets.all(5),
-              color: Color(0xff01B8FA),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'All Product’s',
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontStyle: FontStyle.italic,
-                              fontWeight: FontWeight.bold,
-                              color: Color(0xff3C3E89),
-                            ),
-                          ),
-                          SizedBox(
-                            width: 100,
-                            child: Divider(
-                              color: Color(0xff01B8FA),
-                              height: 2,
-                              thickness: 3,
-                            ),
-                          )
-                        ],
-                      ),
-                      InkWell(
-                        onTap: () {
-                          Get.to(() => ScreenAddProducts());
-                        },
-                        child: Container(
-                          padding: EdgeInsets.all(10),
-                          decoration: BoxDecoration(
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(20.0)),
-                            color: Color(0xff3C3E89),
-                          ),
-                          child: Row(
-                            children: [
-                              Container(
-                                decoration: BoxDecoration(
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(20.0)),
-                                  color: Colors.white,
-                                ),
-                                child: Icon(
-                                  Icons.add,
-                                  color: Color(0xff3C3E89),
-                                  size: 20,
-                                ),
-                              ),
-                              const SizedBox(width: 10),
-                              Text(
-                                'ADD NEW PRODUCT',
-                                style: TextStyle(
-                                    color: Colors.white, fontSize: 11),
-                              ),
-                            ],
-                          ),
-                        ),
-                      )
-                    ],
+                  borderRadius: BorderRadius.circular(25), // Rounded corners
+                  color: Color(0xff2596BE)
+                  // gradient: LinearGradient(
+                  //   colors: [
+                  //     Colors.blue,
+                  //     Colors.lightBlueAccent
+                  //   ], // Gradient background
+                  //   begin: Alignment.centerLeft,
+                  //   end: Alignment.centerRight,
+                  // ),
                   ),
+              padding: EdgeInsets.only(left: 20, right: 20),
+              margin: EdgeInsets.only(left: 20, right: 20),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: searchController,
+                      onChanged: updateSearchQuery,
+                      decoration: InputDecoration(
+                        hintText: "Search Product",
+                        hintStyle: TextStyle(color: Colors.white70),
+                        border: InputBorder.none, // No underline
+                      ),
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ),
+                  Icon(Icons.search, color: Colors.white), // Search Icon
                 ],
               ),
             ),
-            Expanded(
+          ),
+          Container(
+            padding: EdgeInsets.all(5),
+            color: Color(0xff01B8FA),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'All Product’s',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontStyle: FontStyle.italic,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xff3C3E89),
+                          ),
+                        ),
+                        SizedBox(
+                          width: 100,
+                          child: Divider(
+                            color: Color(0xff01B8FA),
+                            height: 2,
+                            thickness: 3,
+                          ),
+                        )
+                      ],
+                    ),
+                    InkWell(
+                      onTap: () {
+                        Get.to(() => ScreenAddProducts());
+                      },
+                      child: Container(
+                        padding: EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.all(Radius.circular(20.0)),
+                          color: Color(0xff3C3E89),
+                        ),
+                        child: Row(
+                          children: [
+                            Container(
+                              decoration: BoxDecoration(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(20.0)),
+                                color: Colors.white,
+                              ),
+                              child: Icon(
+                                Icons.add,
+                                color: Color(0xff3C3E89),
+                                size: 20,
+                              ),
+                            ),
+                            const SizedBox(width: 10),
+                            Text(
+                              'ADD NEW PRODUCT',
+                              style:
+                                  TextStyle(color: Colors.white, fontSize: 11),
+                            ),
+                          ],
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+              ],
+            ),
+          ),
+          Obx(() {
+            if (controllerAllProducts.loading.value) {
+              return Center(
+                  child: CircularProgressIndicator(color: Colors.red));
+            }
+
+            var filteredProducts = controllerAllProducts.allProducts
+                .where((product) => product.productName
+                    .trim()
+                    .toLowerCase()
+                    .contains(searchQuery.value.trim()))
+                .toList();
+
+            if (filteredProducts.isEmpty) {
+              // ✅ Ensure search results are shown
+              return Center(
+                child: Text(
+                  "No product found",
+                  style: TextStyle(color: Colors.red, fontSize: 16),
+                ),
+              );
+            }
+
+            return Expanded(
               child: ListView.builder(
-                itemCount: controllerAllProducts.allProducts.length,
+                itemCount: filteredProducts.length, // ✅ Correct list used
                 itemBuilder: (context, index) {
+                  var product = filteredProducts[index]; // ✅ Correct indexing
                   return Column(
                     children: [
                       Container(
@@ -427,45 +446,33 @@ class _ScreenProductState extends State<ScreenProduct>
                           children: [
                             Expanded(
                               flex: 1,
-                              child: Container(
-                                alignment: Alignment.center,
-                                decoration: BoxDecoration(
-                                  // color: Colors.red,
-                                  borderRadius: BorderRadius.only(
-                                    topLeft: Radius.circular(10),
-                                    bottomLeft: Radius.circular(10),
-                                  ),
-                                ),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(10),
-                                  child: Image.network(
-                                    controllerAllProducts
-                                        .allProducts[index].image
-                                        .toString(),
-                                    fit: BoxFit.cover,
-                                  ),
+                              child: Padding(
+                                padding: const EdgeInsets.all(10),
+                                child: Image.network(
+                                  product.image
+                                      .toString(), // ✅ Correct product reference
+                                  fit: BoxFit.cover,
                                 ),
                               ),
                             ),
                             Expanded(
                               flex: 2,
-                              child: Container(
+                              child: Padding(
                                 padding: EdgeInsets.all(5),
-                                // color: Colors.yellow,
                                 child: Column(
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceAround,
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      "${controllerAllProducts.allProducts[index].productName} - ${controllerAllProducts.allProducts[index].discription}",
+                                      "${product.productName} - ${product.discription}",
                                       style: TextStyle(
                                           color: Color(0xff3C3D86),
                                           fontSize: 12,
                                           fontWeight: FontWeight.w200),
                                     ),
                                     Text(
-                                      "IN Stock : ${controllerAllProducts.allProducts[index].stock}",
+                                      "IN Stock : ${product.stock}",
                                       style: TextStyle(
                                           color: Color(0xff01B8FA),
                                           fontStyle: FontStyle.italic,
@@ -478,107 +485,71 @@ class _ScreenProductState extends State<ScreenProduct>
                             ),
                             Expanded(
                               flex: 1,
-                              child: Container(
-                                padding: EdgeInsets.only(left: 10, right: 10),
-                                decoration: BoxDecoration(
-                                  // color: Colors.pink,
-                                  borderRadius: BorderRadius.only(
-                                      topRight: Radius.circular(10),
-                                      bottomRight: Radius.circular(10)),
-                                ),
-                                child: Column(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceEvenly,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    InkWell(
-                                      onTap: () {
-                                        // print(controllerAllProducts
-                                        //     .allProducts[index]);
-                                        // Get.to(() => ScreenEditProduct(
-                                        //     product: controllerAllProducts
-                                        //         .allProducts[index]));
-                                        if (controllerAllProducts
-                                            .allProducts.isNotEmpty) {
-                                          print(controllerAllProducts
-                                              .allProducts[index]);
-                                          Get.to(() => ScreenEditProduct(
-                                              product: controllerAllProducts
-                                                  .allProducts[index]));
-                                        } else {
-                                          print(
-                                              "Product list is empty or not loaded yet.");
-                                        }
-                                      },
-                                      child: Container(
-                                        padding: EdgeInsets.all(5),
-                                        decoration: BoxDecoration(
-                                          color: Colors.white,
-                                          border: Border.all(
-                                            color: Colors.black,
-                                            width: 1.5,
+                              child: Column(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  InkWell(
+                                    onTap: () {
+                                      Get.to(() =>
+                                          ScreenEditProduct(product: product));
+                                    },
+                                    child: Container(
+                                      padding: EdgeInsets.all(5),
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        border: Border.all(
+                                            color: Colors.black, width: 1.5),
+                                        borderRadius: BorderRadius.circular(5),
+                                      ),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(
+                                            "Edit",
+                                            style: TextStyle(
+                                                color: Color(0xff3C3D86),
+                                                fontSize: 10,
+                                                fontWeight: FontWeight.w800),
                                           ),
-                                          borderRadius:
-                                              BorderRadius.circular(5),
-                                        ),
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Text(
-                                              "Edit",
-                                              style: TextStyle(
-                                                  color: Color(0xff3C3D86),
-                                                  fontSize: 10,
-                                                  fontWeight: FontWeight.w800),
-                                            ),
-                                            Icon(
-                                              Icons.edit,
+                                          Icon(Icons.edit,
                                               color: Color(0xff01B8FA),
-                                              size: 15,
-                                            )
-                                          ],
-                                        ),
+                                              size: 15)
+                                        ],
                                       ),
                                     ),
-                                    InkWell(
-                                      onTap: () {
-                                        deleteItem(controllerAllProducts
-                                            .allProducts[index].id);
-                                      },
-                                      child: Container(
-                                        padding: EdgeInsets.all(5),
-                                        decoration: BoxDecoration(
-                                          color: Colors.white,
-                                          border: Border.all(
-                                            color: Colors.black,
-                                            width: 1.5,
+                                  ),
+                                  InkWell(
+                                    onTap: () {
+                                      deleteItem(product.id);
+                                    },
+                                    child: Container(
+                                      padding: EdgeInsets.all(5),
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        border: Border.all(
+                                            color: Colors.black, width: 1.5),
+                                        borderRadius: BorderRadius.circular(5),
+                                      ),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(
+                                            "Delete",
+                                            style: TextStyle(
+                                                color: Color(0xff3C3D86),
+                                                fontSize: 10,
+                                                fontWeight: FontWeight.w800),
                                           ),
-                                          borderRadius:
-                                              BorderRadius.circular(5),
-                                        ),
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Text(
-                                              "Delete",
-                                              style: TextStyle(
-                                                  color: Color(0xff3C3D86),
-                                                  fontSize: 10,
-                                                  fontWeight: FontWeight.w800),
-                                            ),
-                                            Icon(
-                                              Icons.delete,
-                                              color: Colors.red,
-                                              size: 15,
-                                            )
-                                          ],
-                                        ),
+                                          Icon(Icons.delete,
+                                              color: Colors.red, size: 15)
+                                        ],
                                       ),
                                     ),
-                                  ],
-                                ),
+                                  ),
+                                ],
                               ),
                             ),
                           ],
@@ -588,10 +559,10 @@ class _ScreenProductState extends State<ScreenProduct>
                   );
                 },
               ),
-            )
-          ],
-        );
-      }),
+            );
+          })
+        ],
+      ),
     );
   }
 }

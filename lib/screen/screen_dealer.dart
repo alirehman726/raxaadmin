@@ -27,6 +27,14 @@ class ScreenDealer extends StatefulWidget {
 class _ScreenDealerState extends State<ScreenDealer>
     with SingleTickerProviderStateMixin {
   final controllerAllDealer = Get.find<ControllerAllDealer>();
+  TextEditingController searchController = TextEditingController();
+  RxString searchQuery = "".obs;
+
+  void updateSearchQuery(String query) {
+    setState(() {
+      searchQuery.value = query.toLowerCase();
+    });
+  }
 
   @override
   void initState() {
@@ -377,6 +385,8 @@ class _ScreenDealerState extends State<ScreenDealer>
                 children: [
                   Expanded(
                     child: TextField(
+                      controller: searchController,
+                      onChanged: updateSearchQuery,
                       decoration: InputDecoration(
                         hintText: "Search Product",
                         hintStyle: TextStyle(color: Colors.white70),
@@ -471,7 +481,15 @@ class _ScreenDealerState extends State<ScreenDealer>
                   child: CircularProgressIndicator(color: Colors.red));
             }
 
-            if (controllerAllDealer.allDealer.isEmpty) {
+            var filteredProducts = controllerAllDealer.allDealer
+                .where((dealer) => dealer.name
+                    .trim()
+                    .toLowerCase()
+                    .contains(searchQuery.value.trim()))
+                .toList();
+
+            if (filteredProducts.isEmpty) {
+              // ✅ Ensure search results are shown
               return Center(
                 child: Text(
                   "No Dealer data available",
@@ -479,6 +497,15 @@ class _ScreenDealerState extends State<ScreenDealer>
                 ),
               );
             }
+
+            // if (controllerAllDealer.allDealer.isEmpty) {
+            //   return Center(
+            //     child: Text(
+            //       "No Dealer data available",
+            //       style: TextStyle(color: Colors.red, fontSize: 16),
+            //     ),
+            //   );
+            // }
             return Expanded(
               child: Container(
                 decoration: BoxDecoration(
@@ -490,8 +517,11 @@ class _ScreenDealerState extends State<ScreenDealer>
                 padding: const EdgeInsets.only(
                     left: 20, right: 20, top: 10, bottom: 10),
                 child: ListView.builder(
-                  itemCount: controllerAllDealer.allDealer.length,
+                  // itemCount: controllerAllDealer.allDealer.length,
+                  itemCount: filteredProducts.length,
+
                   itemBuilder: (context, index) {
+                     var dealer = filteredProducts[index];
                     return Column(
                       children: [
                         Row(
@@ -540,7 +570,7 @@ class _ScreenDealerState extends State<ScreenDealer>
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      controllerAllDealer.allDealer[index].name,
+                                      dealer.name,
                                       // dealerData[index]['name'],
                                       style: TextStyle(
                                         fontSize: 17,
@@ -549,8 +579,7 @@ class _ScreenDealerState extends State<ScreenDealer>
                                       ),
                                     ),
                                     Text(
-                                      controllerAllDealer
-                                          .allDealer[index].username,
+                                      dealer.username,
                                       // dealerData[index]['desc'],
                                       style: TextStyle(
                                         fontSize: 14,

@@ -11,6 +11,7 @@ import 'package:raxaadmin/screen/screen_products_details.dart';
 import 'package:raxaadmin/screen/screen_report.dart';
 import 'package:raxaadmin/utils/color.dart';
 import 'package:raxaadmin/utils/images.dart';
+import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 import 'screen_ads.dart';
 
@@ -21,7 +22,16 @@ class ScreenDrawer extends StatefulWidget {
 
 class _ScreenDrawerState extends State<ScreenDrawer>
     with SingleTickerProviderStateMixin {
+  int _currentIndex = 0;
+  final CarouselController _controller = CarouselController();
   final controllerAllProducts = Get.find<ControllerAllproducts>();
+  List<String> imageUrls = [
+    "https://images.unsplash.com/photo-1520342868574-5fa3804e551c?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=6ff92caffcdd63681a35134a6770ed3b&auto=format&fit=crop&w=1951&q=80",
+    "https://images.unsplash.com/photo-1522205408450-add114ad53fe?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=368f45b0888aeb0b7b08e3a1084d3ede&auto=format&fit=crop&w=1950&q=80",
+    "https://images.unsplash.com/photo-1519125323398-675f0ddb6308?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=94a1e718d89ca60a6337a6008341ca50&auto=format&fit=crop&w=1950&q=80",
+    "https://images.unsplash.com/photo-1523205771623-e0faa4d2813d?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=89719a0d55dd05e2deae4120227e6efc&auto=format&fit=crop&w=1953&q=80",
+    "https://images.unsplash.com/photo-1508704019882-f9cf40e475b4?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=8c6e5e3aba713b17aa1fe71ab4f0ae5b&auto=format&fit=crop&w=1352&q=80",
+  ];
 
   @override
   void initState() {
@@ -158,7 +168,7 @@ class _ScreenDrawerState extends State<ScreenDrawer>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Colors.grey[200],
+        backgroundColor: Colors.white,
         appBar: AppBar(
           centerTitle: true,
           title: Text("Raxa Spread pvt Ltd"),
@@ -173,6 +183,7 @@ class _ScreenDrawerState extends State<ScreenDrawer>
           ],
         ),
         drawer: Drawer(
+          backgroundColor: Colors.white,
           child: Column(
             children: [
               Container(
@@ -340,74 +351,18 @@ class _ScreenDrawerState extends State<ScreenDrawer>
                             physics: NeverScrollableScrollPhysics(),
                             children: [
                               CarouselSlider(
-                                items: [
-                                  //1st Image of Slider
-                                  Container(
+                                items: imageUrls.map((imageUrl) {
+                                  return Container(
                                     margin: EdgeInsets.all(6.0),
                                     decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(8.0),
                                       image: DecorationImage(
-                                        image: NetworkImage(
-                                            "https://images.unsplash.com/photo-1520342868574-5fa3804e551c?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=6ff92caffcdd63681a35134a6770ed3b&auto=format&fit=crop&w=1951&q=80"),
+                                        image: NetworkImage(imageUrl),
                                         fit: BoxFit.cover,
                                       ),
                                     ),
-                                  ),
-
-                                  //2nd Image of Slider
-                                  Container(
-                                    margin: EdgeInsets.all(6.0),
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(8.0),
-                                      image: DecorationImage(
-                                        image: NetworkImage(
-                                            "https://images.unsplash.com/photo-1522205408450-add114ad53fe?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=368f45b0888aeb0b7b08e3a1084d3ede&auto=format&fit=crop&w=1950&q=80"),
-                                        fit: BoxFit.cover,
-                                      ),
-                                    ),
-                                  ),
-
-                                  //3rd Image of Slider
-                                  Container(
-                                    margin: EdgeInsets.all(6.0),
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(8.0),
-                                      image: DecorationImage(
-                                        image: NetworkImage(
-                                            "https://images.unsplash.com/photo-1519125323398-675f0ddb6308?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=94a1e718d89ca60a6337a6008341ca50&auto=format&fit=crop&w=1950&q=80"),
-                                        fit: BoxFit.cover,
-                                      ),
-                                    ),
-                                  ),
-
-                                  //4th Image of Slider
-                                  Container(
-                                    margin: EdgeInsets.all(6.0),
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(8.0),
-                                      image: DecorationImage(
-                                        image: NetworkImage(
-                                            "https://images.unsplash.com/photo-1523205771623-e0faa4d2813d?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=89719a0d55dd05e2deae4120227e6efc&auto=format&fit=crop&w=1953&q=80"),
-                                        fit: BoxFit.cover,
-                                      ),
-                                    ),
-                                  ),
-
-                                  //5th Image of Slider
-                                  Container(
-                                    margin: EdgeInsets.all(6.0),
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(8.0),
-                                      image: DecorationImage(
-                                        image: NetworkImage(
-                                            "https://images.unsplash.com/photo-1508704019882-f9cf40e475b4?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=8c6e5e3aba713b17aa1fe71ab4f0ae5b&auto=format&fit=crop&w=1352&q=80"),
-                                        fit: BoxFit.cover,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-
-                                //Slider Container properties
+                                  );
+                                }).toList(),
                                 options: CarouselOptions(
                                   height: 180.0,
                                   enlargeCenterPage: true,
@@ -418,6 +373,24 @@ class _ScreenDrawerState extends State<ScreenDrawer>
                                   autoPlayAnimationDuration:
                                       Duration(milliseconds: 800),
                                   viewportFraction: 0.8,
+                                  onPageChanged: (index, reason) {
+                                    setState(() {
+                                      _currentIndex = index;
+                                    });
+                                  },
+                                ),
+                              ),
+                              SizedBox(height: 10),
+                              Center(
+                                child: AnimatedSmoothIndicator(
+                                  activeIndex: _currentIndex,
+                                  count: imageUrls.length,
+                                  effect: ExpandingDotsEffect(
+                                    dotHeight: 8,
+                                    dotWidth: 8,
+                                    activeDotColor: Colors.blue,
+                                    dotColor: Colors.grey,
+                                  ),
                                 ),
                               ),
                             ],

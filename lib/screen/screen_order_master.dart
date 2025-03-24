@@ -23,6 +23,14 @@ class ScreenOrderMaster extends StatefulWidget {
 class _ScreenOrderMasterState extends State<ScreenOrderMaster>
     with SingleTickerProviderStateMixin {
   final controllerAllOrder = Get.find<ControllerAllOrder>();
+  TextEditingController searchController = TextEditingController();
+  RxString searchQuery = "".obs;
+
+  void updateSearchQuery(String query) {
+    setState(() {
+      searchQuery.value = query.toLowerCase();
+    });
+  }
 
   @override
   void initState() {
@@ -342,6 +350,8 @@ class _ScreenOrderMasterState extends State<ScreenOrderMaster>
                 children: [
                   Expanded(
                     child: TextField(
+                      controller: searchController,
+                      onChanged: updateSearchQuery,
                       decoration: InputDecoration(
                         hintText: "Search Product",
                         hintStyle: TextStyle(color: Colors.white70),
@@ -472,14 +482,31 @@ class _ScreenOrderMasterState extends State<ScreenOrderMaster>
                   child: CircularProgressIndicator(color: Colors.red));
             }
 
-            if (controllerAllOrder.allOrder.isEmpty) {
+            var filteredProducts = controllerAllOrder.allOrder
+                .where((order) => order.actionBy
+                    .trim()
+                    .toLowerCase()
+                    .contains(searchQuery.value.trim()))
+                .toList();
+
+            if (filteredProducts.isEmpty) {
+              // ✅ Ensure search results are shown
               return Center(
                 child: Text(
-                  "No product data available",
+                  "No Order data available",
                   style: TextStyle(color: Colors.red, fontSize: 16),
                 ),
               );
             }
+
+            // if (controllerAllOrder.allOrder.isEmpty) {
+            //   return Center(
+            //     child: Text(
+            //       "No product data available",
+            //       style: TextStyle(color: Colors.red, fontSize: 16),
+            //     ),
+            //   );
+            // }
             return Expanded(
               child: Container(
                 decoration: BoxDecoration(
@@ -491,8 +518,10 @@ class _ScreenOrderMasterState extends State<ScreenOrderMaster>
                 padding: const EdgeInsets.only(
                     left: 20, right: 20, top: 10, bottom: 10),
                 child: ListView.builder(
-                  itemCount: controllerAllOrder.allOrder.length,
+                  // itemCount: controllerAllOrder.allOrder.length,
+                  itemCount: filteredProducts.length,
                   itemBuilder: (context, index) {
+                    var allOrder = filteredProducts[index];
                     return Column(
                       children: [
                         Row(
@@ -539,8 +568,7 @@ class _ScreenOrderMasterState extends State<ScreenOrderMaster>
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      controllerAllOrder
-                                          .allOrder[index].actionBy,
+                                      allOrder.actionBy,
                                       style: TextStyle(
                                         fontSize: 17,
                                         fontWeight: FontWeight.bold,
@@ -549,7 +577,6 @@ class _ScreenOrderMasterState extends State<ScreenOrderMaster>
                                     ),
                                     Text(
                                       "DATE : ${DateFormat('MM/dd/yyyy').format(controllerAllOrder.allOrder[index].orderDate)}",
-                                      
                                       style: TextStyle(
                                         fontSize: 14,
                                         fontWeight: FontWeight.w200,

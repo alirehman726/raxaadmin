@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:raxaadmin/Model/model_AllDealer.dart';
@@ -11,7 +12,10 @@ class ControllerAllDealer extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    controllerAllDealer();
+    // controllerAllDealer();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      controllerAllDealer();
+    });
   }
 
   controllerAllDealer() async {
@@ -34,7 +38,10 @@ class ControllerAllDealer extends GetxController {
     } catch (e) {
       print("❌ Error fetching tables: $e");
     } finally {
-      loading.value = false;
+      // loading.value = false;
+      Future.delayed(Duration(milliseconds: 500), () {
+        loading.value = false; // 🔥 Delay to ensure UI stability
+      });
     }
   }
 }

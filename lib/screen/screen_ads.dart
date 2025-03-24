@@ -22,6 +22,14 @@ class ScreenAds extends StatefulWidget {
 class _ScreenAdsState extends State<ScreenAds>
     with SingleTickerProviderStateMixin {
   final controllerAllAds = Get.find<ControllerAllAds>();
+  TextEditingController searchController = TextEditingController();
+  RxString searchQuery = "".obs;
+
+  void updateSearchQuery(String query) {
+    setState(() {
+      searchQuery.value = query.toLowerCase();
+    });
+  }
 
   @override
   void initState() {
@@ -262,6 +270,8 @@ class _ScreenAdsState extends State<ScreenAds>
                 children: [
                   Expanded(
                     child: TextField(
+                      controller: searchController,
+                      onChanged: updateSearchQuery,
                       decoration: InputDecoration(
                         hintText: "Search Product",
                         hintStyle: TextStyle(color: Colors.white70),
@@ -321,8 +331,15 @@ class _ScreenAdsState extends State<ScreenAds>
               return Center(
                   child: CircularProgressIndicator(color: Colors.red));
             }
+            var filteredProducts = controllerAllAds.allAds
+                .where((order) => order.userName
+                    .trim()
+                    .toLowerCase()
+                    .contains(searchQuery.value.trim()))
+                .toList();
 
-            if (controllerAllAds.allAds.isEmpty) {
+            if (filteredProducts.isEmpty) {
+              // ✅ Ensure search results are shown
               return Center(
                 child: Text(
                   "No Ads data available",
@@ -330,6 +347,14 @@ class _ScreenAdsState extends State<ScreenAds>
                 ),
               );
             }
+            // if (controllerAllAds.allAds.isEmpty) {
+            //   return Center(
+            //     child: Text(
+            //       "No Ads data available",
+            //       style: TextStyle(color: Colors.red, fontSize: 16),
+            //     ),
+            //   );
+            // }
             return Expanded(
               child: Container(
                 decoration: BoxDecoration(
@@ -341,8 +366,10 @@ class _ScreenAdsState extends State<ScreenAds>
                 padding: const EdgeInsets.only(
                     left: 20, right: 20, top: 10, bottom: 10),
                 child: ListView.builder(
-                  itemCount: controllerAllAds.allAds.length,
+                  // itemCount: controllerAllAds.allAds.length,
+                  itemCount: filteredProducts.length,
                   itemBuilder: (context, index) {
+                    var allAds = filteredProducts[index];
                     return Column(
                       children: [
                         Row(
@@ -389,7 +416,7 @@ class _ScreenAdsState extends State<ScreenAds>
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      controllerAllAds.allAds[index].userName,
+                                      allAds.userName,
                                       // orderMasterData[index]['name'],
                                       style: TextStyle(
                                         fontSize: 17,

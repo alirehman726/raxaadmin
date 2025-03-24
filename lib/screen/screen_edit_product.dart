@@ -91,7 +91,7 @@ class _ScreenEditProductState extends State<ScreenEditProduct> {
       setState(() {
         addedDate = "${pickedDate.year}-${pickedDate.month}-${pickedDate.day}";
         dateController.text =
-            addedDate; // TextFormField में दिखाने के लिए अपडेट करें
+            addedDate;
       });
     }
   }

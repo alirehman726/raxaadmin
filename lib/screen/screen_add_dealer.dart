@@ -231,11 +231,11 @@ class _ScreenAddDealerState extends State<ScreenAddDealer> {
                       decoration: InputDecoration(
                         filled: true,
                         fillColor: Color(0xffe6f8ff),
-                        hintText: "Design Blitz Pvt Ltd.",
-                        hintStyle: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black87,
-                        ),
+                        labelText: "Design Blitz Pvt Ltd.",
+                        // labelStyle: TextStyle(
+                        //   fontWeight: FontWeight.bold,
+                        //   color: Colors.black87,
+                        // ),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(3),
                           borderSide: BorderSide(
@@ -273,11 +273,11 @@ class _ScreenAddDealerState extends State<ScreenAddDealer> {
                       decoration: InputDecoration(
                         filled: true,
                         fillColor: Color(0xffe6f8ff),
-                        hintText: "+91 1234567890",
-                        hintStyle: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black87,
-                        ),
+                        labelText: "+91 1234567890",
+                        // hintStyle: TextStyle(
+                        //   fontWeight: FontWeight.bold,
+                        //   color: Colors.black87,
+                        // ),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(3),
                           borderSide: BorderSide(
@@ -314,12 +314,12 @@ class _ScreenAddDealerState extends State<ScreenAddDealer> {
                       decoration: InputDecoration(
                         filled: true,
                         fillColor: Color(0xffe6f8ff),
-                        hintText:
+                        labelText:
                             "Rasana Mota, Near Shiv Temple,Deesa, B.K, Gujrat-385535",
-                        hintStyle: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black87,
-                        ),
+                        // hintStyle: TextStyle(
+                        //   fontWeight: FontWeight.bold,
+                        //   color: Colors.black87,
+                        // ),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(3),
                           borderSide: BorderSide(
@@ -358,11 +358,11 @@ class _ScreenAddDealerState extends State<ScreenAddDealer> {
                       decoration: InputDecoration(
                         filled: true,
                         fillColor: Color(0xffe6f8ff),
-                        hintText: "contact@design-blitz.com",
-                        hintStyle: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black87,
-                        ),
+                        labelText: "contact@design-blitz.com",
+                        // hintStyle: TextStyle(
+                        //   fontWeight: FontWeight.bold,
+                        //   color: Colors.black87,
+                        // ),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(3),
                           borderSide: BorderSide(
@@ -400,11 +400,11 @@ class _ScreenAddDealerState extends State<ScreenAddDealer> {
                       decoration: InputDecoration(
                         filled: true,
                         fillColor: Color(0xffe6f8ff),
-                        hintText: "RAXADEAL001",
-                        hintStyle: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black87,
-                        ),
+                        labelText: "RAXADEAL001",
+                        // hintStyle: TextStyle(
+                        //   fontWeight: FontWeight.bold,
+                        //   color: Colors.black87,
+                        // ),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(3),
                           borderSide: BorderSide(
