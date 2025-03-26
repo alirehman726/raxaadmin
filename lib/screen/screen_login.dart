@@ -36,7 +36,10 @@ class _ScreenLoginState extends State<ScreenLogin> {
                     ),
                     SizedBox(width: 10),
                     Container(
-                      child: Image.asset(Images.LOGIN_MAIN_ICON, height: 150),
+                      child: Image.asset(
+                        Images.LOGIN_MAIN_ICON,
+                        height: 150,
+                      ),
                     ),
                   ],
                 ),

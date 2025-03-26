@@ -36,6 +36,7 @@ class AllOrder {
   DateTime orderDate;
   String actionBy;
   String paymentId;
+  String colorCode;
   String time;
 
   AllOrder({
@@ -44,6 +45,7 @@ class AllOrder {
     required this.orderDate,
     required this.actionBy,
     required this.paymentId,
+    required this.colorCode,
     required this.time,
   });
 
@@ -53,6 +55,7 @@ class AllOrder {
         orderDate: DateTime.parse(json["order_date"]),
         actionBy: json["action_by"],
         paymentId: json["payment_id"],
+        colorCode: json["color_code"],
         time: json["time"],
       );
 
@@ -64,6 +67,7 @@ class AllOrder {
         
         "action_by": actionBy,
         "payment_id": paymentId,
+        "color_code": colorCode,
         "time": time,
       };
 }

@@ -381,21 +381,26 @@ class _ScreenAdsState extends State<ScreenAds>
                                 width: 60,
                                 child: CircleAvatar(
                                   radius: 60,
-                                  backgroundColor: (() {
-                                    Color randomColor = getRandomColor();
-                                    return randomColor.withOpacity(0.5);
-                                  })(),
+                                  backgroundColor: getColorFromHex(
+                                          controllerAllAds
+                                              .allAds[index].colorCode)
+                                      .withOpacity(0.5),
                                   child: Padding(
                                     padding: const EdgeInsets.all(8),
                                     child: ClipOval(
                                       child: CircleAvatar(
                                         radius: 50,
-                                        backgroundColor: (() {
-                                          Color randomColor = getRandomColor();
-                                          return randomColor;
-                                        })(),
+                                        backgroundColor: getColorFromHex(
+                                            controllerAllAds
+                                                .allAds[index].colorCode),
+                                        // backgroundColor: (() {
+                                        //   Color randomColor = getRandomColor();
+                                        //   return randomColor;
+                                        // })(),
                                         child: Text(
-                                          'AD',
+                                          // 'AD',
+                                          getInitials(controllerAllAds
+                                              .allAds[index].userName),
                                           style: TextStyle(
                                               fontSize: 20,
                                               color: Colors.white,
@@ -502,6 +507,33 @@ class _ScreenAdsState extends State<ScreenAds>
         ],
       ),
     );
+  }
+
+  Color getColorFromHex(String hexColor) {
+    hexColor = hexColor
+        .replaceAll("#", "")
+        .toUpperCase(); // "#" ko remove kare aur uppercase kare
+
+    final validHex =
+        RegExp(r'^[0-9A-Fa-f]{6}$'); // Sirf valid hex colors allow kare
+    if (!validHex.hasMatch(hexColor)) {
+      print("Invalid color code: $hexColor");
+      return Colors.primaries[
+          hexColor.hashCode % Colors.primaries.length]; // Random unique color
+    }
+
+    return Color(int.parse("0xff$hexColor"));
+  }
+
+  String getInitials(String name) {
+    List<String> words = name.trim().split(" ");
+    if (words.length == 1) {
+      return words[0][0]
+          .toUpperCase(); // Sirf ek word ho to ek letter return kare
+    } else {
+      return (words[0][0] + words[1][0])
+          .toUpperCase(); // Pehla aur dusra letter return kare
+    }
   }
 }
 

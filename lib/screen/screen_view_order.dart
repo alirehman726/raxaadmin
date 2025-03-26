@@ -92,6 +92,14 @@ class _ScreenViewOrderState extends State<ScreenViewOrder> {
           if (controllerViewProducts.loading.value) {
             return Center(child: CircularProgressIndicator(color: Colors.red));
           }
+          if (controllerViewProducts.viewOrder.isEmpty) {
+            return Center(
+              child: Text(
+                "No Ads data available",
+                style: TextStyle(color: Colors.red, fontSize: 16),
+              ),
+            );
+          }
           return Column(
             children: [
               Padding(

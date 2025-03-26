@@ -1,6 +1,8 @@
 import 'dart:convert';
 
+import 'package:dio/dio.dart' as dio;
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:raxaadmin/Apis/auth_apis.dart';
 import 'package:raxaadmin/Controller/controller_allProducts.dart';
@@ -104,7 +106,63 @@ class _ScreenProductState extends State<ScreenProduct>
     }
   }
 
+  Future<void> doCallAPILogin(int id, String status) async {
+    doStartLoader1(true);
+
+    dio.FormData body = dio.FormData.fromMap({
+      "user_id": id.toString(),
+      "status": status.toString(),
+    });
+    var res = await AuthApis.productStatusAPI(body);
+
+    if (res != null) {
+      Map<String, dynamic> response = json.decode(res.toString());
+      print(response);
+      print(response['status']);
+      if (response['status'] == true) {
+        Fluttertoast.showToast(
+          msg: response['message'].toString(),
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 1,
+          textColor: Colors.white,
+          fontSize: 16.0,
+        );
+      } else {
+        doStartLoader1(false);
+        // SnackbarCustom.error("Error", response['message']);
+        Fluttertoast.showToast(
+          msg: response['message'].toString(),
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 1,
+          textColor: Colors.white,
+          fontSize: 16.0,
+        );
+      }
+    } else {
+      doStartLoader1(false);
+      Fluttertoast.showToast(
+        msg: "Something Error ",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.CENTER,
+        timeInSecForIosWeb: 1,
+        textColor: Colors.white,
+        fontSize: 16.0,
+      );
+      // SnackbarCustom.error("Error",
+      //     "Unable_to_login_at_the_moment_Please_try_again_after_sometime");
+    }
+  }
+
   bool isLoading = false;
+  bool isLoading1 = false;
+
+  doStartLoader1(bool val) {
+    setState(() {
+      isLoading1 = val;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -485,71 +543,125 @@ class _ScreenProductState extends State<ScreenProduct>
                             ),
                             Expanded(
                               flex: 1,
-                              child: Column(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
-                                children: [
-                                  InkWell(
-                                    onTap: () {
-                                      Get.to(() =>
-                                          ScreenEditProduct(product: product));
-                                    },
-                                    child: Container(
-                                      padding: EdgeInsets.all(5),
-                                      decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        border: Border.all(
-                                            color: Colors.black, width: 1.5),
-                                        borderRadius: BorderRadius.circular(5),
-                                      ),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text(
-                                            "Edit",
-                                            style: TextStyle(
-                                                color: Color(0xff3C3D86),
-                                                fontSize: 10,
-                                                fontWeight: FontWeight.w800),
-                                          ),
-                                          Icon(Icons.edit,
-                                              color: Color(0xff01B8FA),
-                                              size: 15)
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                  InkWell(
-                                    onTap: () {
-                                      deleteItem(product.id);
-                                    },
-                                    child: Container(
-                                      padding: EdgeInsets.all(5),
-                                      decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        border: Border.all(
-                                            color: Colors.black, width: 1.5),
-                                        borderRadius: BorderRadius.circular(5),
-                                      ),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text(
-                                            "Delete",
-                                            style: TextStyle(
-                                                color: Color(0xff3C3D86),
-                                                fontSize: 10,
-                                                fontWeight: FontWeight.w800),
-                                          ),
-                                          Icon(Icons.delete,
-                                              color: Colors.red, size: 15)
-                                        ],
+                              child: Padding(
+                                padding: const EdgeInsets.only(right: 10),
+                                child: Column(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    InkWell(
+                                      onTap: () {
+                                        Get.to(() => ScreenEditProduct(
+                                            product: product));
+                                      },
+                                      child: Container(
+                                        padding: EdgeInsets.all(5),
+                                        decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          border: Border.all(
+                                              color: Colors.black, width: 1.5),
+                                          borderRadius:
+                                              BorderRadius.circular(5),
+                                        ),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(
+                                              "Edit",
+                                              style: TextStyle(
+                                                  color: Color(0xff3C3D86),
+                                                  fontSize: 10,
+                                                  fontWeight: FontWeight.w800),
+                                            ),
+                                            Icon(Icons.edit,
+                                                color: Color(0xff01B8FA),
+                                                size: 15)
+                                          ],
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                ],
+                                    InkWell(
+                                      onTap: () {
+                                        deleteItem(product.id);
+                                      },
+                                      child: Container(
+                                        padding: EdgeInsets.all(5),
+                                        decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          border: Border.all(
+                                              color: Colors.black, width: 1.5),
+                                          borderRadius:
+                                              BorderRadius.circular(5),
+                                        ),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(
+                                              "Delete",
+                                              style: TextStyle(
+                                                  color: Color(0xff3C3D86),
+                                                  fontSize: 10,
+                                                  fontWeight: FontWeight.w800),
+                                            ),
+                                            Icon(Icons.delete,
+                                                color: Colors.red, size: 15)
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(height: 10),
+                                    // Text(
+                                    //   controllerAllProducts
+                                    //                   .allProducts[index].status ==
+                                    //           "1"
+                                    //       ? "Active"
+                                    //       : "Deactive",
+                                    //   style: TextStyle(
+                                    //     fontSize: 14,
+                                    //     fontWeight: FontWeight.w100,
+                                    //     color: controllerAllProducts
+                                    //                   .allProducts[index].status ==
+                                    //             "1"
+                                    //         ? Color(0xff3C3D86)
+                                    //         : Color(0xff3C3D86),
+                                    //   ),
+                                    // ),
+                                    // Transform.scale(
+                                    //   scale: 0.8,
+                                    //   child: Container(
+                                    //     child: Switch(
+                                    //       value: controllerAllProducts
+                                    //               .allProducts[index].status ==
+                                    //           "1",
+                                    //       onChanged: (value) {
+                                    //         setState(() {
+                                    //           controllerAllProducts
+                                    //               .allProducts[index]
+                                    //               .status = value ? "1" : "0";
+
+                                    //           print("AAAAAAAA");
+                                    //           doCallAPILogin(
+                                    //               controllerAllProducts
+                                    //                   .allProducts[index].id,
+                                    //               controllerAllProducts
+                                    //                   .allProducts[index]
+                                    //                   .status);
+                                    //         });
+                                    //       },
+                                    //       activeColor: Colors.green,
+                                    //       activeTrackColor: Colors.white,
+                                    //       inactiveThumbColor: Color(0xffADBABF),
+                                    //       inactiveTrackColor: Colors.white,
+                                    //       trackOutlineColor:
+                                    //           MaterialStateProperty.all(
+                                    //               Colors.transparent),
+                                    //     ),
+                                    //   ),
+                                    // ),
+                                  ],
+                                ),
                               ),
                             ),
                           ],

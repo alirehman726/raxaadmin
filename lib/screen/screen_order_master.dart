@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -533,25 +531,26 @@ class _ScreenOrderMasterState extends State<ScreenOrderMaster>
                                 width: 60,
                                 child: CircleAvatar(
                                   radius: 60,
-                                  backgroundColor: (() {
-                                    Color randomColor = getRandomColor();
-                                    return randomColor.withOpacity(0.5);
-                                  })(),
+                                  backgroundColor: getColorFromHex(
+                                          controllerAllOrder
+                                              .allOrder[index].colorCode)
+                                      .withOpacity(0.5),
                                   child: Padding(
                                     padding: const EdgeInsets.all(8),
                                     child: ClipOval(
                                       child: CircleAvatar(
                                         radius: 50,
-                                        backgroundColor: (() {
-                                          Color randomColor = getRandomColor();
-                                          return randomColor;
-                                        })(),
+                                        backgroundColor: getColorFromHex(
+                                            controllerAllOrder
+                                                .allOrder[index].colorCode),
                                         child: Text(
-                                          'AD',
+                                          getInitials(controllerAllOrder
+                                              .allOrder[index].actionBy),
                                           style: TextStyle(
-                                              fontSize: 20,
-                                              color: Colors.white,
-                                              fontWeight: FontWeight.bold),
+                                            fontSize: 20,
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.bold,
+                                          ),
                                         ),
                                       ),
                                     ),
@@ -559,6 +558,43 @@ class _ScreenOrderMasterState extends State<ScreenOrderMaster>
                                 ),
                               ),
                             ),
+
+                            // Expanded(
+                            //   flex: 1,
+                            //   child: Container(
+                            //     height: 60,
+                            //     width: 60,
+                            //     child: CircleAvatar(
+                            //       radius: 60,
+                            //       backgroundColor: Color(int.parse(
+                            //               '0xff${controllerAllOrder.allOrder[index].colorCode}'))
+                            //           .withOpacity(0.5),
+
+                            //       child: Padding(
+                            //         padding: const EdgeInsets.all(8),
+                            //         child: ClipOval(
+                            //           child: CircleAvatar(
+                            //             radius: 50,
+                            //             // backgroundColor: getColorFromHex(
+                            //             //     "ERDFFF"), // Full color
+                            //             backgroundColor: Color(int.parse(
+                            //                 '0xff${controllerAllOrder.allOrder[index].colorCode}')), // Full color
+                            //             child: Text(
+                            //               // 'AD',
+                            //               getInitials(allOrder.actionBy),
+                            //               style: TextStyle(
+                            //                 fontSize: 20,
+                            //                 color: Colors.white,
+                            //                 fontWeight: FontWeight.bold,
+                            //               ),
+                            //             ),
+                            //           ),
+                            //         ),
+                            //       ),
+                            //     ),
+                            //   ),
+                            // ),
+
                             Expanded(
                               flex: 2,
                               child: Container(
@@ -649,14 +685,31 @@ class _ScreenOrderMasterState extends State<ScreenOrderMaster>
       ),
     );
   }
-}
 
-Color getRandomColor() {
-  final Random random = Random();
-  return Color.fromARGB(
-    255,
-    random.nextInt(256),
-    random.nextInt(256),
-    random.nextInt(256),
-  );
+  Color getColorFromHex(String hexColor) {
+    hexColor = hexColor
+        .replaceAll("#", "")
+        .toUpperCase(); // "#" ko remove kare aur uppercase kare
+
+    final validHex =
+        RegExp(r'^[0-9A-Fa-f]{6}$'); // Sirf valid hex colors allow kare
+    if (!validHex.hasMatch(hexColor)) {
+      print("Invalid color code: $hexColor");
+      return Colors.primaries[
+          hexColor.hashCode % Colors.primaries.length]; // Random unique color
+    }
+
+    return Color(int.parse("0xff$hexColor"));
+  }
+
+  String getInitials(String name) {
+    List<String> words = name.trim().split(" ");
+    if (words.length == 1) {
+      return words[0][0]
+          .toUpperCase(); // Sirf ek word ho to ek letter return kare
+    } else {
+      return (words[0][0] + words[1][0])
+          .toUpperCase(); // Pehla aur dusra letter return kare
+    }
+  }
 }

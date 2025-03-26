@@ -96,6 +96,17 @@ class _ScreenDealerState extends State<ScreenDealer>
     },
   ];
 
+  String getInitials(String name) {
+    List<String> words = name.trim().split(" ");
+    if (words.length == 1) {
+      return words[0][0]
+          .toUpperCase(); // Sirf ek word hai to uska pehla letter return karega
+    } else {
+      return (words[0][0] + words[1][0])
+          .toUpperCase(); // Pehle aur doosre word ka first letter return karega
+    }
+  }
+
   List<Map<String, dynamic>> menuItems = [
     {
       "icon": Images.DRAWER_1,
@@ -131,6 +142,7 @@ class _ScreenDealerState extends State<ScreenDealer>
 
   int selectedIndex = 0;
   bool isSwitched = false;
+  final Color fixedColor = getRandomColor();
 
   Future<void> doCallAPILogin(int id, String status) async {
     doStartLoader(true);
@@ -521,11 +533,45 @@ class _ScreenDealerState extends State<ScreenDealer>
                   itemCount: filteredProducts.length,
 
                   itemBuilder: (context, index) {
-                     var dealer = filteredProducts[index];
+                    var dealer = filteredProducts[index];
+
                     return Column(
                       children: [
                         Row(
                           children: [
+                            // Expanded(
+                            //   flex: 1,
+                            //   child: Container(
+                            //     height: 60,
+                            //     width: 60,
+                            //     child: CircleAvatar(
+                            //       radius: 60,
+                            //       backgroundColor: (() {
+                            //         Color randomColor = getRandomColor();
+                            //         return randomColor.withOpacity(0.5);
+                            //       })(),
+                            //       child: Padding(
+                            //         padding: const EdgeInsets.all(8),
+                            //         child: ClipOval(
+                            //           child: CircleAvatar(
+                            //             radius: 50,
+                            //             backgroundColor: (() {
+                            //               Color randomColor = getRandomColor();
+                            //               return randomColor;
+                            //             })(),
+                            //             child: Text(
+                            //               'AD',
+                            //               style: TextStyle(
+                            //                   fontSize: 20,
+                            //                   color: Colors.white,
+                            //                   fontWeight: FontWeight.bold),
+                            //             ),
+                            //           ),
+                            //         ),
+                            //       ),
+                            //     ),
+                            //   ),
+                            // ),
                             Expanded(
                               flex: 1,
                               child: Container(
@@ -533,25 +579,30 @@ class _ScreenDealerState extends State<ScreenDealer>
                                 width: 60,
                                 child: CircleAvatar(
                                   radius: 60,
-                                  backgroundColor: (() {
-                                    Color randomColor = getRandomColor();
-                                    return randomColor.withOpacity(0.5);
-                                  })(),
+                                  backgroundColor: getColorFromHex(
+                                          controllerAllDealer
+                                              .allDealer[index].colorCode)
+                                      .withOpacity(0.5),
+                                  // backgroundColor: fixedColor.withOpacity(
+                                  //     0.5), // Fixed color with opacity
                                   child: Padding(
                                     padding: const EdgeInsets.all(8),
                                     child: ClipOval(
                                       child: CircleAvatar(
                                         radius: 50,
-                                        backgroundColor: (() {
-                                          Color randomColor = getRandomColor();
-                                          return randomColor;
-                                        })(),
+                                        backgroundColor: getColorFromHex(
+                                            controllerAllDealer
+                                                .allDealer[index].colorCode),
+                                        // backgroundColor:
+                                        //     fixedColor, // Fixed color
                                         child: Text(
-                                          'AD',
+                                          getInitials(dealer.name),
+                                          // 'AD',
                                           style: TextStyle(
-                                              fontSize: 20,
-                                              color: Colors.white,
-                                              fontWeight: FontWeight.bold),
+                                            fontSize: 20,
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.bold,
+                                          ),
                                         ),
                                       ),
                                     ),
@@ -569,15 +620,27 @@ class _ScreenDealerState extends State<ScreenDealer>
                                       MainAxisAlignment.spaceBetween,
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
+                                    // Text(
+                                    //   dealer.name,
+                                    //   // dealerData[index]['name'],
+                                    //   style: TextStyle(
+                                    //     fontSize: 17,
+                                    //     fontWeight: FontWeight.bold,
+                                    //     color: Color(0xff3C3E89),
+                                    //   ),
+                                    // ),
                                     Text(
                                       dealer.name,
-                                      // dealerData[index]['name'],
                                       style: TextStyle(
-                                        fontSize: 17,
+                                        fontSize: 15,
                                         fontWeight: FontWeight.bold,
                                         color: Color(0xff3C3E89),
                                       ),
+                                      maxLines: 1, // Maximum 2 lines
+                                      overflow: TextOverflow
+                                          .ellipsis, // 2nd line ke baad "..."
                                     ),
+
                                     Text(
                                       dealer.username,
                                       // dealerData[index]['desc'],
@@ -601,8 +664,11 @@ class _ScreenDealerState extends State<ScreenDealer>
                                     InkWell(
                                       onTap: () {
                                         Get.to(() => ScreenEditDealer(
-                                            id: controllerAllDealer
-                                                .allDealer[index].id));
+                                              id: controllerAllDealer
+                                                  .allDealer[index].id,
+                                              colorCode: controllerAllDealer
+                                                  .allDealer[index].colorCode,
+                                            ));
                                       },
                                       child: Text(
                                         "Edit",
@@ -685,6 +751,23 @@ class _ScreenDealerState extends State<ScreenDealer>
       ),
     );
   }
+
+  Color getColorFromHex(String hexColor) {
+    hexColor = hexColor
+        .replaceAll("#", "")
+        .toUpperCase(); // "#" ko remove kare aur uppercase kare
+
+    final validHex =
+        RegExp(r'^[0-9A-Fa-f]{6}$'); // Sirf valid hex colors allow kare
+    if (!validHex.hasMatch(hexColor)) {
+      print("Invalid color code: $hexColor");
+      return Colors.primaries[
+          hexColor.hashCode % Colors.primaries.length]; // Random unique color
+    }
+
+    return Color(int.parse("0xff$hexColor"));
+  }
+
 }
 
 Color getRandomColor() {

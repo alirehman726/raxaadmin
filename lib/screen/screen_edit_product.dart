@@ -6,6 +6,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
+import 'package:raxaadmin/Apis/auth_apis.dart';
 import 'package:raxaadmin/Controller/controller_allProducts.dart';
 import 'package:raxaadmin/Model/ModelAllProducts.dart';
 import 'package:raxaadmin/screen/screen_product.dart';
@@ -90,8 +91,7 @@ class _ScreenEditProductState extends State<ScreenEditProduct> {
     if (pickedDate != null) {
       setState(() {
         addedDate = "${pickedDate.year}-${pickedDate.month}-${pickedDate.day}";
-        dateController.text =
-            addedDate;
+        dateController.text = addedDate;
       });
     }
   }
@@ -139,6 +139,44 @@ class _ScreenEditProductState extends State<ScreenEditProduct> {
       }
     }
   }
+
+  void deleteItem(int id) async {
+    var res = await AuthApis.deleteOrderApi(id);
+
+    if (res != null) {
+      Map<String, dynamic> response = json.decode(res.toString());
+
+      if (response['status'] == true) {
+        Fluttertoast.showToast(msg: response['message'].toString());
+        Get.offAll(() => ScreenProduct());
+
+        final controllerAllProducts = Get.find<ControllerAllproducts>();
+        await controllerAllProducts.controllerAllProducts();
+        controllerAllProducts.update();
+
+        // ✅ UI अपडेट करो
+        setState(() {
+          isLoading = false;
+        });
+
+        print("✅ Data refreshed successfully!");
+        // if (controllerAllProducts.controllerAllProducts) {
+        //   Get.back(); // ✅ Model Close
+        // }
+      } else {
+        setState(() {
+          isLoading = false;
+        });
+
+        Fluttertoast.showToast(msg: response['message'].toString());
+        // SnackbarCustom.error("Error", response['message']);
+      }
+    } else {
+      throw Exception("No Response from API");
+    }
+  }
+
+  bool isLoading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -200,27 +238,69 @@ class _ScreenEditProductState extends State<ScreenEditProduct> {
             const SizedBox(height: 5),
             Padding(
               padding: EdgeInsets.all(20),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                    'Edit Product',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontStyle: FontStyle.italic,
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xff3C3E89),
-                    ),
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Edit Product',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontStyle: FontStyle.italic,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xff3C3E89),
+                        ),
+                      ),
+                      SizedBox(
+                        width: 100,
+                        child: Divider(
+                          color: Color(0xff01B8FA),
+                          height: 2,
+                          thickness: 3,
+                        ),
+                      )
+                    ],
                   ),
-                  SizedBox(
-                    width: 100,
-                    child: Divider(
-                      color: Color(0xff01B8FA),
-                      height: 2,
-                      thickness: 3,
-                    ),
-                  )
+                  InkWell(
+                    onTap: () {
+                      Get.dialog(
+                        AlertDialog(
+                          title: Text('Are You Sure You Want To Delete'),
+                          //content: Text("This should not be closed automatically"),
+                          actions: <Widget>[
+                            TextButton(
+                              child: Text('Yes'),
+                              onPressed: () async {
+                                // Get.dialog(
+                                //   // Container(
+                                //   //   child: Center(
+                                //   //     child: CircularProgressIndicator(
+                                //   //       color: darkButtonColor,
+                                //   //     ),
+                                //   //   ),
+                                //   // ),
+                                //   barrierDismissible: false,
+                                // );
+                                deleteItem(widget.product.id);
+                              },
+                            ),
+                            TextButton(
+                              child: Text('No'),
+                              onPressed: () {
+                                Get.back();
+                              },
+                            )
+                          ],
+                        ),
+                        barrierDismissible: false,
+                      );
+                    },
+                    child: Icon(Icons.delete_outline_rounded,
+                        color: Colors.red, size: 30),
+                  ),
                 ],
               ),
             ),

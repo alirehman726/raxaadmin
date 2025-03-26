@@ -34,12 +34,14 @@ class AllAds {
   String status;
   String date;
   String userName;
+  String colorCode;
 
   AllAds({
     required this.id,
     required this.status,
     required this.date,
     required this.userName,
+    required this.colorCode,
   });
 
   factory AllAds.fromJson(Map<String, dynamic> json) => AllAds(
@@ -47,6 +49,7 @@ class AllAds {
         status: json["status"],
         date: json["date"],
         userName: json["user_name"],
+        colorCode: json["color_code"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -54,5 +57,6 @@ class AllAds {
         "status": status,
         "date": date,
         "user_name": userName,
+        "color_code": colorCode,
       };
 }

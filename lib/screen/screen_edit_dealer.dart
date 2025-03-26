@@ -13,7 +13,9 @@ import 'package:raxaadmin/utils/images.dart';
 
 class ScreenEditDealer extends StatefulWidget {
   final int id;
-  const ScreenEditDealer({super.key, required this.id});
+  final String colorCode;
+  const ScreenEditDealer(
+      {super.key, required this.id, required this.colorCode});
 
   @override
   State<ScreenEditDealer> createState() => _ScreenEditDealerState();
@@ -120,6 +122,17 @@ class _ScreenEditDealerState extends State<ScreenEditDealer> {
     });
   }
 
+  String getInitials(String name) {
+    List<String> words = name.trim().split(" ");
+    if (words.length == 1) {
+      return words[0][0]
+          .toUpperCase(); // Sirf ek word hai to uska pehla letter return karega
+    } else {
+      return (words[0][0] + words[1][0])
+          .toUpperCase(); // Pehle aur doosre word ka first letter return karega
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -194,9 +207,12 @@ class _ScreenEditDealerState extends State<ScreenEditDealer> {
                         Center(
                           child: CircleAvatar(
                             radius: 40,
-                            backgroundColor: Colors.blue.withOpacity(0.5),
+                            backgroundColor: getColorFromHex(widget.colorCode)
+                                .withOpacity(0.5),
                             child: Text(
-                              'AD',
+                              getInitials(
+                                  controllerEditDealer.editDealer[0].name),
+                              // 'AD',
                               style: TextStyle(
                                 fontSize: 20,
                                 color: Colors.white,
@@ -206,35 +222,83 @@ class _ScreenEditDealerState extends State<ScreenEditDealer> {
                           ),
                         ),
                         SizedBox(height: 20),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            isEditButton
-                                ? Expanded(
-                                    child: TextFormField(
-                                      controller: nameController,
-                                      decoration:
-                                          InputDecoration(labelText: 'Name'),
-                                    ),
-                                  )
-                                : Text(
-                                    controllerEditDealer.editDealer[0].name,
-                                    style: TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold,
-                                      color: Color(0xff3C3E89),
-                                    ),
+                        Align(
+                          alignment:
+                              Alignment.center, // Poore row ko center karega
+                          child: IntrinsicWidth(
+                            // Row ka width sirf jitna zaroori hai utna hi hoga
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                isEditButton
+                                    ? Expanded(
+                                        child: TextFormField(
+                                          controller: nameController,
+                                          decoration: InputDecoration(
+                                              labelText: 'Name'),
+                                        ),
+                                      )
+                                    : Expanded(
+                                        child: Text(
+                                          controllerEditDealer
+                                              .editDealer[0].name,
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.bold,
+                                            color: Color(0xff3C3E89),
+                                          ),
+                                          softWrap: true,
+                                        ),
+                                      ),
+                                SizedBox(
+                                    width: 10), // Thoda spacing rakhne ke liye
+                                InkWell(
+                                  onTap: toggleEdit,
+                                  child: Icon(
+                                    Icons.edit,
+                                    color: Color(0xff0158FA),
                                   ),
-                            SizedBox(width: 15),
-                            InkWell(
-                              onTap: toggleEdit,
-                              child: Icon(
-                                Icons.edit,
-                                color: Color(0xff0158FA),
-                              ),
-                            )
-                          ],
+                                ),
+                              ],
+                            ),
+                          ),
                         ),
+                        // Row(
+                        //   mainAxisAlignment: MainAxisAlignment.center,
+                        //   children: [
+                        //     isEditButton
+                        //         ? Expanded(
+                        //             child: TextFormField(
+                        //               controller: nameController,
+                        //               decoration:
+                        //                   InputDecoration(labelText: 'Name'),
+                        //             ),
+                        //           )
+                        //         : Expanded(
+                        //             child: Text(
+                        //               controllerEditDealer.editDealer[0].name,
+                        //               textAlign: TextAlign.center,
+                        //               style: TextStyle(
+
+                        //                 fontSize: 20,
+                        //                 fontWeight: FontWeight.bold,
+                        //                 color: Color(0xff3C3E89),
+                        //               ),
+                        //               softWrap:
+                        //                   true, // Text ko automatic next line me shift karne dega
+                        //             ),
+                        //           ),
+                        //     SizedBox(width: 15),
+                        //     InkWell(
+                        //       onTap: toggleEdit,
+                        //       child: Icon(
+                        //         Icons.edit,
+                        //         color: Color(0xff0158FA),
+                        //       ),
+                        //     )
+                        //   ],
+                        // ),
                         SizedBox(height: 30),
                         buildEditableField("Phone no.", phoneController,
                             controllerEditDealer.editDealer[0].phnNumber),
@@ -361,5 +425,21 @@ class _ScreenEditDealerState extends State<ScreenEditDealer> {
         SizedBox(height: 30),
       ],
     );
+  }
+
+  Color getColorFromHex(String hexColor) {
+    hexColor = hexColor
+        .replaceAll("#", "")
+        .toUpperCase(); // "#" ko remove kare aur uppercase kare
+
+    final validHex =
+        RegExp(r'^[0-9A-Fa-f]{6}$'); // Sirf valid hex colors allow kare
+    if (!validHex.hasMatch(hexColor)) {
+      print("Invalid color code: $hexColor");
+      return Colors.primaries[
+          hexColor.hashCode % Colors.primaries.length]; // Random unique color
+    }
+
+    return Color(int.parse("0xff$hexColor"));
   }
 }
