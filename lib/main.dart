@@ -10,6 +10,7 @@ import 'package:raxaadmin/Controller/controller_OneProducts.dart';
 import 'package:raxaadmin/Controller/controller_allAds.dart';
 import 'package:raxaadmin/Controller/controller_allOrder.dart';
 import 'package:raxaadmin/Controller/controller_allProducts.dart';
+import 'package:raxaadmin/Controller/controller_dealerReport.dart';
 import 'package:raxaadmin/Controller/controller_viewAds.dart';
 import 'package:raxaadmin/screen/LacaleString.dart';
 import 'package:raxaadmin/screen/splash_screen.dart';
@@ -33,6 +34,7 @@ void main() async {
   Get.put(ControllerViewAds());
   Get.put(ControllerAllDealer());
   Get.put(ControllerEditDealer());
+  Get.put(ControllerDealerreport());
   runApp(const MyApp());
 }
 

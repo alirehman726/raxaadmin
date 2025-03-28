@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:raxaadmin/Controller/controller_dealerReport.dart';
 import 'package:raxaadmin/Widgets/logoutDialog.dart';
 import 'package:raxaadmin/screen/screen_ads.dart';
 import 'package:raxaadmin/screen/screen_dealer.dart';
@@ -16,6 +17,21 @@ class ScreenReport extends StatefulWidget {
 
 class _ScreenReportState extends State<ScreenReport>
     with SingleTickerProviderStateMixin {
+  final controllerDealerReport = Get.find<ControllerDealerreport>();
+
+  @override
+  void initState() {
+    super.initState();
+
+    // controllerDealerReport.controllerDealerreport();
+    String currentMonth = DateTime.now().month.toString();
+    String currentYear = DateTime.now().year.toString();
+
+    // API call with current month and year
+    controllerDealerReport.controllerDealerreport(
+        month: currentMonth, year: currentYear);
+  }
+
   String selectedValue = "January";
   List<String> options = [
     "January",
@@ -31,7 +47,25 @@ class _ScreenReportState extends State<ScreenReport>
     "November",
     "December"
   ];
-  
+
+  String convertMonthToNumber(String month) {
+    Map<String, String> monthMap = {
+      "January": "01",
+      "February": "02",
+      "March": "03",
+      "April": "04",
+      "May": "05",
+      "June": "06",
+      "July": "07",
+      "August": "08",
+      "September": "09",
+      "October": "10",
+      "November": "11",
+      "December": "12",
+    };
+    return monthMap[month] ?? "01"; // Default January
+  }
+
   String selectedValue1 = "2025";
   List<String> options1 = [
     "2025",
@@ -159,376 +193,414 @@ class _ScreenReportState extends State<ScreenReport>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xffccf1fe),
-      appBar: PreferredSize(
-        preferredSize: Size.fromHeight(kToolbarHeight),
-        child: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [
-                Color(0xff01B8FA),
-                Color(0xff2596be),
-              ],
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-            ),
-          ),
-          child: AppBar(
-            backgroundColor: Colors.transparent, // Make AppBar transparent
-            elevation: 0, // Remove shadow
-            actions: [
-              Padding(
-                padding: const EdgeInsets.only(right: 10),
-                child: Image.asset(
-                  Images.PROFILE_ICON,
-                  height: 35,
-                  width: 35,
-                ),
+        backgroundColor: Color(0xffccf1fe),
+        appBar: PreferredSize(
+          preferredSize: Size.fromHeight(kToolbarHeight),
+          child: Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  Color(0xff01B8FA),
+                  Color(0xff2596be),
+                ],
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
               ),
-            ],
-            iconTheme: IconThemeData(color: Colors.white),
+            ),
+            child: AppBar(
+              backgroundColor: Colors.transparent, // Make AppBar transparent
+              elevation: 0, // Remove shadow
+              actions: [
+                Padding(
+                  padding: const EdgeInsets.only(right: 10),
+                  child: Image.asset(
+                    Images.PROFILE_ICON,
+                    height: 35,
+                    width: 35,
+                  ),
+                ),
+              ],
+              iconTheme: IconThemeData(color: Colors.white),
 
-            centerTitle: true,
-            title: Text(
-              "Dealer Report",
-              style: TextStyle(color: Colors.white),
+              centerTitle: true,
+              title: Text(
+                "Dealer Report",
+                style: TextStyle(color: Colors.white),
+              ),
             ),
           ),
         ),
-      ),
-      drawer: Drawer(
-        child: Column(
-          children: [
-            Container(
-              padding: EdgeInsets.only(bottom: 20, left: 10),
-              height: 120,
-              width: double.infinity,
-              color: Colors.white,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Spacer(),
-                  Row(
+        drawer: Drawer(
+          child: Column(
+            children: [
+              Container(
+                padding: EdgeInsets.only(bottom: 20, left: 10),
+                height: 120,
+                width: double.infinity,
+                color: Colors.white,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Spacer(),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Image.asset(
+                          Images.PROFILE_ICON,
+                          height: 60,
+                          width: 60,
+                          fit: BoxFit.contain,
+                        ),
+                        const SizedBox(width: 10),
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(top: 10),
+                              child: Text(
+                                'ADMIN',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w800,
+                                ),
+                              ),
+                            ),
+                            Text(
+                              'example@gmail.com',
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w400,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    )
+                  ],
+                ),
+              ),
+              Divider(
+                color: Colors.black,
+                height: 2,
+              ),
+              const SizedBox(height: 20),
+              ...List.generate(menuItems.length, (index) {
+                bool isSelected = selectedIndex == index;
+                return InkWell(
+                  onTap: () {
+                    // setState(() {
+                    //   selectedIndex = index;
+                    //   print(selectedIndex);
+                    //   if (selectedIndex == 7) {
+                    //     logoutDialog_logout(context);
+                    //   }
+                    // });
+                  },
+                  child: Container(
+                    child: Row(
+                      children: [
+                        AnimatedContainer(
+                          duration: Duration(milliseconds: 300),
+                          width: 5,
+                          height: 35,
+                          decoration: BoxDecoration(
+                            // color: isSelected ? Colors.red : Colors.transparent,
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                        ),
+                        Expanded(
+                          child: ListTile(
+                            onTap: () {
+                              print(menuItems[index]["route"]());
+                              print('Rehmanali');
+                              Get.to(menuItems[index]["route"]());
+                            },
+                            leading: Image.asset(
+                              menuItems[index]["icon"],
+                              height: 23,
+                              width: 23,
+                              color: primaryColor,
+                            ),
+                            title: Text(
+                              menuItems[index]["title"],
+                              style: TextStyle(
+                                color: Color(0xff3C3D86),
+                                fontSize: 15,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                            trailing: Icon(
+                              Icons.arrow_forward_ios_rounded,
+                              color: gradient2,
+                              size: 20,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              }),
+              Spacer(),
+              InkWell(
+                onTap: () {
+                  logoutDialog_logout(context);
+                },
+                child: Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Image.asset(
-                        Images.PROFILE_ICON,
-                        height: 60,
-                        width: 60,
-                        fit: BoxFit.contain,
+                        Images.DRAWER_7,
+                        height: 23,
+                        width: 23,
+                        color: primaryColor,
+                        // color: isSelected ? Colors.red : Colors.black54,
                       ),
-                      const SizedBox(width: 10),
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.only(top: 10),
-                            child: Text(
-                              'ADMIN',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w800,
-                              ),
-                            ),
-                          ),
-                          Text(
-                            'example@gmail.com',
-                            style: TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w400,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  )
-                ],
-              ),
-            ),
-            Divider(
-              color: Colors.black,
-              height: 2,
-            ),
-            const SizedBox(height: 20),
-            ...List.generate(menuItems.length, (index) {
-              bool isSelected = selectedIndex == index;
-              return InkWell(
-                onTap: () {
-                  // setState(() {
-                  //   selectedIndex = index;
-                  //   print(selectedIndex);
-                  //   if (selectedIndex == 7) {
-                  //     logoutDialog_logout(context);
-                  //   }
-                  // });
-                },
-                child: Container(
-                  child: Row(
-                    children: [
-                      AnimatedContainer(
-                        duration: Duration(milliseconds: 300),
-                        width: 5,
-                        height: 35,
-                        decoration: BoxDecoration(
-                          // color: isSelected ? Colors.red : Colors.transparent,
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                      ),
-                      Expanded(
-                        child: ListTile(
-                          onTap: () {
-                            print(menuItems[index]["route"]());
-                            print('Rehmanali');
-                            Get.to(menuItems[index]["route"]());
-                          },
-                          leading: Image.asset(
-                            menuItems[index]["icon"],
-                            height: 23,
-                            width: 23,
-                            color: primaryColor,
-                          ),
-                          title: Text(
-                            menuItems[index]["title"],
-                            style: TextStyle(
-                              color: Color(0xff3C3D86),
-                              fontSize: 15,
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ),
-                          trailing: Icon(
-                            Icons.arrow_forward_ios_rounded,
-                            color: gradient2,
-                            size: 20,
-                          ),
+                      const SizedBox(width: 20),
+                      Text(
+                        "Logout",
+                        style: TextStyle(
+                          color: Color(0xff3C3D86),
+                          fontSize: 15,
+                          fontWeight: FontWeight.w700,
+                          // color: isSelected ? Colors.red : Colors.black54,
                         ),
                       ),
                     ],
                   ),
                 ),
-              );
-            }),
-            Spacer(),
-            InkWell(
-              onTap: () {
-                logoutDialog_logout(context);
-              },
-              child: Padding(
+              )
+            ],
+          ),
+        ),
+        body: Obx(() {
+          if (controllerDealerReport.loading.value) {
+            return Center(child: CircularProgressIndicator(color: Colors.red));
+          }
+          if (controllerDealerReport.report.isEmpty) {
+            return Center(
+              child: Text(
+                "No Dealer Report Data Available",
+                style: TextStyle(color: Colors.red, fontSize: 16),
+              ),
+            );
+          }
+          return Column(
+            children: [
+              Padding(
                 padding: const EdgeInsets.all(20),
-                child: Row(
+                child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Image.asset(
-                      Images.DRAWER_7,
-                      height: 23,
-                      width: 23,
-                      color: primaryColor,
-                      // color: isSelected ? Colors.red : Colors.black54,
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'You’re \n Doing Well',
+                              style: TextStyle(
+                                fontSize: 30,
+                                fontWeight: FontWeight.bold,
+                                color: Color(0xff3C3E89),
+                              ),
+                            ),
+                            // SizedBox(
+                            //   width: 100,
+                            //   child: Divider(
+                            //     color: Color(0xff01B8FA),
+                            //     height: 2,
+                            //     thickness: 3,
+                            //   ),
+                            // )
+                          ],
+                        ),
+                        Column(
+                          children: [
+                            Container(
+                              alignment: Alignment.center,
+                              width: 120,
+                              height: 40,
+                              padding: EdgeInsets.symmetric(horizontal: 5),
+                              decoration: BoxDecoration(
+                                color: Color(0xff01B8FA),
+                                border: Border.all(
+                                    color: Colors.blue,
+                                    width: 2), // Blue border
+                                borderRadius: BorderRadius.circular(
+                                    30), // Rounded corners
+                              ),
+                              child: DropdownButtonHideUnderline(
+                                child: DropdownButton<String>(
+                                  value: selectedValue1,
+                                  items: options1.map((String value) {
+                                    return DropdownMenuItem<String>(
+                                      value: value,
+                                      child: Text(
+                                        value,
+                                        style: TextStyle(
+                                            fontSize: 15, color: Colors.black),
+                                      ),
+                                    );
+                                  }).toList(),
+                                  onChanged: (String? newValue) {
+                                    setState(() {
+                                      selectedValue1 = newValue!;
+                                      print(selectedValue1);
+                                      print('selectedValue1');
+                                    });
+                                    controllerDealerReport
+                                        .controllerDealerreport(
+                                      month: convertMonthToNumber(
+                                          selectedValue), // Function se month number convert hoga
+                                      year:
+                                          selectedValue1, // Selected year ko pass karein
+                                    );
+                                  },
+                                  icon: Icon(Icons.arrow_drop_down,
+                                      color: Colors.black), // Dropdown arrow
+                                  style: TextStyle(color: Colors.black),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 15),
+                            Container(
+                              alignment: Alignment.center,
+                              width: 120,
+                              height: 40,
+                              padding: EdgeInsets.symmetric(horizontal: 5),
+                              decoration: BoxDecoration(
+                                color: Color(0xff01B8FA),
+                                border: Border.all(
+                                    color: Colors.blue,
+                                    width: 2), // Blue border
+                                borderRadius: BorderRadius.circular(
+                                    30), // Rounded corners
+                              ),
+                              child: DropdownButtonHideUnderline(
+                                child: DropdownButton<String>(
+                                  value: selectedValue,
+                                  items: options.map((String value) {
+                                    return DropdownMenuItem<String>(
+                                      value: value,
+                                      child: Text(
+                                        value,
+                                        style: TextStyle(
+                                            fontSize: 15, color: Colors.black),
+                                      ),
+                                    );
+                                  }).toList(),
+                                  onChanged: (String? newValue) {
+                                    setState(() {
+                                      selectedValue = newValue!;
+                                      print(selectedValue);
+                                      print('selectedValue');
+                                    });
+                                    controllerDealerReport
+                                        .controllerDealerreport(
+                                      month: convertMonthToNumber(
+                                          selectedValue), // Function se month number convert hoga
+                                      year:
+                                          selectedValue1, // Selected year ko pass karein
+                                    );
+                                  },
+                                  icon: Icon(Icons.arrow_drop_down,
+                                      color: Colors.black), // Dropdown arrow
+                                  style: TextStyle(color: Colors.black),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
-                    const SizedBox(width: 20),
-                    Text(
-                      "Logout",
-                      style: TextStyle(
-                        color: Color(0xff3C3D86),
-                        fontSize: 15,
-                        fontWeight: FontWeight.w700,
-                        // color: isSelected ? Colors.red : Colors.black54,
+                    const SizedBox(height: 20),
+                    Container(
+                      height: 10,
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [
+                            Color(0xff01B8FA),
+                            Color(0xff3C3D86),
+                          ],
+                          begin: Alignment.centerRight,
+                          end: Alignment.centerLeft,
+                        ),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                    const SizedBox(height: 50),
+                    Container(
+                      color: Color(0xff6f91c2),
+                      padding: EdgeInsets.all(10),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            "Dealer Name",
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                                fontSize: 16),
+                          ),
+                          Text(
+                            "Sales",
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                                fontSize: 16),
+                          ),
+                        ],
+                      ),
+                    ),
+                    // Data Rows
+                    SingleChildScrollView(
+                      child: Column(
+                        children: List.generate(
+                            controllerDealerReport.report.length, (index) {
+                          return Container(
+                            color: index % 2 == 0
+                                ? Colors.lightBlue[100]
+                                : Colors.lightBlue[300],
+                            padding: EdgeInsets.symmetric(
+                                vertical: 10, horizontal: 10),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  controllerDealerReport
+                                      .report[index].dealerName,
+                                  // data[index]["name"]!,
+                                  style: TextStyle(fontSize: 14),
+                                ),
+                                Text(
+                                  controllerDealerReport
+                                      .report[index].totalPrice
+                                      .toString(),
+                                  // data[index]["sales"]!,
+                                  style: TextStyle(fontSize: 14),
+                                ),
+                              ],
+                            ),
+                          );
+                        }),
                       ),
                     ),
                   ],
                 ),
               ),
-            )
-          ],
-        ),
-      ),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'You’re \n Doing Well',
-                          style: TextStyle(
-                            fontSize: 30,
-                            fontWeight: FontWeight.bold,
-                            color: Color(0xff3C3E89),
-                          ),
-                        ),
-                        // SizedBox(
-                        //   width: 100,
-                        //   child: Divider(
-                        //     color: Color(0xff01B8FA),
-                        //     height: 2,
-                        //     thickness: 3,
-                        //   ),
-                        // )
-                      ],
-                    ),
-                    Column(
-                      children: [
-                        Container(
-                          alignment: Alignment.center,
-                          width: 120,
-                          height: 40,
-                          padding: EdgeInsets.symmetric(horizontal: 5),
-                          decoration: BoxDecoration(
-                            color: Color(0xff01B8FA),
-                            border: Border.all(
-                                color: Colors.blue, width: 2), // Blue border
-                            borderRadius:
-                                BorderRadius.circular(30), // Rounded corners
-                          ),
-                          child: DropdownButtonHideUnderline(
-                            child: DropdownButton<String>(
-                              value: selectedValue1,
-                              items: options1.map((String value) {
-                                return DropdownMenuItem<String>(
-                                  value: value,
-                                  child: Text(
-                                    value,
-                                    style: TextStyle(
-                                        fontSize: 15, color: Colors.black),
-                                  ),
-                                );
-                              }).toList(),
-                              onChanged: (String? newValue) {
-                                setState(() {
-                                  selectedValue1 = newValue!;
-                                });
-                              },
-                              icon: Icon(Icons.arrow_drop_down,
-                                  color: Colors.black), // Dropdown arrow
-                              style: TextStyle(color: Colors.black),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 15),
-                        Container(
-                          alignment: Alignment.center,
-                          width: 120,
-                          height: 40,
-                          padding: EdgeInsets.symmetric(horizontal: 5),
-                          decoration: BoxDecoration(
-                            color: Color(0xff01B8FA),
-                            border: Border.all(
-                                color: Colors.blue, width: 2), // Blue border
-                            borderRadius:
-                                BorderRadius.circular(30), // Rounded corners
-                          ),
-                          child: DropdownButtonHideUnderline(
-                            child: DropdownButton<String>(
-                              value: selectedValue,
-                              items: options.map((String value) {
-                                return DropdownMenuItem<String>(
-                                  value: value,
-                                  child: Text(
-                                    value,
-                                    style: TextStyle(
-                                        fontSize: 15, color: Colors.black),
-                                  ),
-                                );
-                              }).toList(),
-                              onChanged: (String? newValue) {
-                                setState(() {
-                                  selectedValue = newValue!;
-                                });
-                              },
-                              icon: Icon(Icons.arrow_drop_down,
-                                  color: Colors.black), // Dropdown arrow
-                              style: TextStyle(color: Colors.black),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 20),
-                Container(
-                  height: 10,
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [
-                        Color(0xff01B8FA),
-                        Color(0xff3C3D86),
-                      ],
-                      begin: Alignment.centerRight,
-                      end: Alignment.centerLeft,
-                    ),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-                const SizedBox(height: 50),
-                Container(
-                  color: Color(0xff6f91c2),
-                  padding: EdgeInsets.all(10),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        "Dealer Name",
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                            fontSize: 16),
-                      ),
-                      Text(
-                        "Sales",
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                            fontSize: 16),
-                      ),
-                    ],
-                  ),
-                ),
-                // Data Rows
-                SingleChildScrollView(
-                  child: Column(
-                    children: List.generate(data.length, (index) {
-                      return Container(
-                        color: index % 2 == 0
-                            ? Colors.lightBlue[100]
-                            : Colors.lightBlue[300],
-                        padding:
-                            EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              data[index]["name"]!,
-                              style: TextStyle(fontSize: 14),
-                            ),
-                            Text(
-                              data[index]["sales"]!,
-                              style: TextStyle(fontSize: 14),
-                            ),
-                          ],
-                        ),
-                      );
-                    }),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
+            ],
+          );
+        }));
   }
 }

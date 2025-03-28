@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:raxaadmin/Controller/controller_OneProducts.dart';
-import 'package:raxaadmin/utils/images.dart';
 
 class ScreenProductsDetails extends StatefulWidget {
   final int productsId;
@@ -96,7 +95,9 @@ class _ScreenProductsDetailsState extends State<ScreenProductsDetails> {
                                 borderRadius:
                                     BorderRadius.all(Radius.circular(20.0)),
                                 image: DecorationImage(
-                                  image: AssetImage(Images.PRODUCTS),
+                                  image: NetworkImage(controllerOneProducts
+                                      .oneProducts[0].image
+                                      .toString()),
                                   fit: BoxFit.cover,
                                 ),
                               ),

@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:gif/gif.dart';
+import 'package:raxaadmin/screen/screen_drawer.dart';
 import 'package:raxaadmin/screen/screen_login.dart';
 import 'package:raxaadmin/utils/db_helper.dart';
 import 'package:raxaadmin/utils/images.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 final dbHelper = DBHelper();
 
@@ -68,22 +70,23 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   void onStart() async {
-    Future.delayed(const Duration(seconds: 2), () {
-      Get.offAll(() => ScreenLogin());
-    });
-  }
-  // void onStart() async {
-  //   SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    print(sharedPreferences.getString('token'));
+    print(
+        "sharedPreferences__________sharedPreferences__________sharedPreferences__________sharedPreferences__________");
 
-  //   if (sharedPreferences.getString('token') == '') {
-  //     Future.delayed(const Duration(seconds: 2), () {
-  //       Get.offAll(() => const LoginScreen());
-  //     });
-  //   } else {
-  //     Future.delayed(const Duration(seconds: 2), () {
-  //       Get.offAll(() => DrawerScreen());
-  //       // Get.offAll(() => Language());
-  //     });
-  //   }
-  // }
+    if (sharedPreferences.getString('token') == null) {
+      Future.delayed(const Duration(seconds: 2), () {
+        Get.offAll(() => ScreenLogin());
+      });
+    } else {
+      Future.delayed(const Duration(seconds: 2), () {
+        Get.offAll(() => ScreenDrawer());
+        // Get.offAll(() => Language());
+      });
+    }
+    // Future.delayed(const Duration(seconds: 2), () {
+    //   Get.offAll(() => ScreenLogin());
+    // });
+  }
 }

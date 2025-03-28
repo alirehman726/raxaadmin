@@ -29,6 +29,7 @@ logoutDialog_logout(context) {
             SharedPreferences sharedPreferences =
                 await SharedPreferences.getInstance();
             sharedPreferences.remove("token");
+            sharedPreferences.clear();
             Get.offAll(() => ScreenLogin());
           },
         ),

@@ -110,7 +110,7 @@ class _ScreenProductState extends State<ScreenProduct>
     doStartLoader1(true);
 
     dio.FormData body = dio.FormData.fromMap({
-      "user_id": id.toString(),
+      "product_id": id.toString(),
       "status": status.toString(),
     });
     var res = await AuthApis.productStatusAPI(body);
@@ -494,7 +494,6 @@ class _ScreenProductState extends State<ScreenProduct>
                       Container(
                         margin: const EdgeInsets.only(
                             left: 15, right: 15, top: 10, bottom: 10),
-                        height: 100,
                         width: double.infinity,
                         decoration: BoxDecoration(
                           color: Colors.white,
@@ -556,6 +555,7 @@ class _ScreenProductState extends State<ScreenProduct>
                                       },
                                       child: Container(
                                         padding: EdgeInsets.all(5),
+                                        margin: EdgeInsets.only(top: 10),
                                         decoration: BoxDecoration(
                                           color: Colors.white,
                                           border: Border.all(
@@ -581,85 +581,91 @@ class _ScreenProductState extends State<ScreenProduct>
                                         ),
                                       ),
                                     ),
-                                    InkWell(
-                                      onTap: () {
-                                        deleteItem(product.id);
-                                      },
-                                      child: Container(
-                                        padding: EdgeInsets.all(5),
-                                        decoration: BoxDecoration(
-                                          color: Colors.white,
-                                          border: Border.all(
-                                              color: Colors.black, width: 1.5),
-                                          borderRadius:
-                                              BorderRadius.circular(5),
-                                        ),
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Text(
-                                              "Delete",
-                                              style: TextStyle(
-                                                  color: Color(0xff3C3D86),
-                                                  fontSize: 10,
-                                                  fontWeight: FontWeight.w800),
-                                            ),
-                                            Icon(Icons.delete,
-                                                color: Colors.red, size: 15)
-                                          ],
-                                        ),
-                                      ),
-                                    ),
+                                    // InkWell(
+                                    //   onTap: () {
+                                    //     deleteItem(product.id);
+                                    //   },
+                                    //   child: Container(
+                                    //     padding: EdgeInsets.all(5),
+                                    //     decoration: BoxDecoration(
+                                    //       color: Colors.white,
+                                    //       border: Border.all(
+                                    //           color: Colors.black, width: 1.5),
+                                    //       borderRadius:
+                                    //           BorderRadius.circular(5),
+                                    //     ),
+                                    //     child: Row(
+                                    //       mainAxisAlignment:
+                                    //           MainAxisAlignment.spaceBetween,
+                                    //       children: [
+                                    //         Text(
+                                    //           "Delete",
+                                    //           style: TextStyle(
+                                    //               color: Color(0xff3C3D86),
+                                    //               fontSize: 10,
+                                    //               fontWeight: FontWeight.w800),
+                                    //         ),
+                                    //         Icon(Icons.delete,
+                                    //             color: Colors.red, size: 15)
+                                    //       ],
+                                    //     ),
+                                    //   ),
+                                    // ),
                                     const SizedBox(height: 10),
                                     // Text(
                                     //   controllerAllProducts
-                                    //                   .allProducts[index].status ==
-                                    //           "1"
+                                    //               .allProducts[index].status ==
+                                    //           1
                                     //       ? "Active"
                                     //       : "Deactive",
                                     //   style: TextStyle(
                                     //     fontSize: 14,
                                     //     fontWeight: FontWeight.w100,
                                     //     color: controllerAllProducts
-                                    //                   .allProducts[index].status ==
+                                    //                 .allProducts[index]
+                                    //                 .status ==
                                     //             "1"
                                     //         ? Color(0xff3C3D86)
                                     //         : Color(0xff3C3D86),
                                     //   ),
                                     // ),
-                                    // Transform.scale(
-                                    //   scale: 0.8,
-                                    //   child: Container(
-                                    //     child: Switch(
-                                    //       value: controllerAllProducts
-                                    //               .allProducts[index].status ==
-                                    //           "1",
-                                    //       onChanged: (value) {
-                                    //         setState(() {
-                                    //           controllerAllProducts
-                                    //               .allProducts[index]
-                                    //               .status = value ? "1" : "0";
+                                    // Inside your ListView.builder
+                                    Transform.scale(
+                                      scale: 0.8,
+                                      child: Obx(() {
+                                        // Get the current status from the controller
+                                        bool isActive = controllerAllProducts
+                                                .allProducts[index].status ==
+                                            1; // Assuming status is an int
+                                        return Switch(
+                                          value: isActive,
+                                          onChanged: (value) {
+                                            // Update the status in the controller
+                                            controllerAllProducts
+                                                    .allProducts[index].status =
+                                                value
+                                                    ? 1
+                                                    : 0; // Assigning int values
 
-                                    //           print("AAAAAAAA");
-                                    //           doCallAPILogin(
-                                    //               controllerAllProducts
-                                    //                   .allProducts[index].id,
-                                    //               controllerAllProducts
-                                    //                   .allProducts[index]
-                                    //                   .status);
-                                    //         });
-                                    //       },
-                                    //       activeColor: Colors.green,
-                                    //       activeTrackColor: Colors.white,
-                                    //       inactiveThumbColor: Color(0xffADBABF),
-                                    //       inactiveTrackColor: Colors.white,
-                                    //       trackOutlineColor:
-                                    //           MaterialStateProperty.all(
-                                    //               Colors.transparent),
-                                    //     ),
-                                    //   ),
-                                    // ),
+                                            // Call the API to update the status
+                                            doCallAPILogin(
+                                              controllerAllProducts
+                                                  .allProducts[index].id,
+                                              controllerAllProducts
+                                                  .allProducts[index].status
+                                                  .toString(), // Convert to string for API call
+                                            );
+                                          },
+                                          activeColor: Colors.green,
+                                          activeTrackColor: Colors.grey[300],
+                                          inactiveThumbColor: Color(0xffADBABF),
+                                          inactiveTrackColor: Colors.white,
+                                          trackOutlineColor:
+                                              MaterialStateProperty.all(
+                                                  Colors.transparent),
+                                        );
+                                      }),
+                                    ),
                                   ],
                                 ),
                               ),

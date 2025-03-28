@@ -1,7 +1,14 @@
+import 'dart:convert';
+
+import 'package:dio/dio.dart' as dio;
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:raxaadmin/Apis/auth_apis.dart';
+import 'package:raxaadmin/Controller/controller_allOrder.dart';
 import 'package:raxaadmin/Controller/controller_view_order.dart';
+import 'package:raxaadmin/screen/screen_order_master.dart';
 import 'package:raxaadmin/utils/images.dart';
 
 class ScreenViewOrder extends StatefulWidget {
@@ -25,18 +32,82 @@ class _ScreenViewOrderState extends State<ScreenViewOrder> {
     controllerViewProducts.controllerViewOrder(widget.id.toString());
   }
 
-  final List<Map<String, String>> data = [
-    {"name": "Aditya Darji", "quntity": "10", "sales": "₹25000"},
-    {"name": "Jay Darji", "quntity": "20", "sales": "₹70000"},
-    {"name": "Kiran Patel", "quntity": "20", "sales": "₹2500"},
-    {"name": "Bhautik Shah", "quntity": "25", "sales": "₹8000"},
-  ];
+  // final List<Map<String, String>> data = [
+  //   {"name": "Aditya Darji", "quntity": "10", "sales": "₹25000"},
+  //   {"name": "Jay Darji", "quntity": "20", "sales": "₹70000"},
+  //   {"name": "Kiran Patel", "quntity": "20", "sales": "₹2500"},
+  //   {"name": "Bhautik Shah", "quntity": "25", "sales": "₹8000"},
+  // ];
 
   String selectedValue = "pending";
   List<String> options = [
     "pending",
     "dispatch",
   ];
+
+  Future<void> doCallAPILogin(String status) async {
+    doStartLoader(true);
+
+    dio.FormData body = dio.FormData.fromMap({
+      "order_id": 2,
+      "status": status.toString(),
+    });
+    var res = await AuthApis.chnageOrderStatusAPI(body);
+
+    if (res != null) {
+      Map<String, dynamic> response = json.decode(res.toString());
+      print(response);
+      print(response['status']);
+      if (response['status'] == true) {
+        Fluttertoast.showToast(
+          msg: response['message'].toString(),
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 1,
+          textColor: Colors.white,
+          fontSize: 16.0,
+        );
+
+        Get.offAll(() => ScreenOrderMaster());
+
+        final controllerAllOrder = Get.find<ControllerAllOrder>();
+
+        await controllerAllOrder.controllerAllOrder();
+        controllerAllOrder.update();
+      } else {
+        doStartLoader(false);
+        // SnackbarCustom.error("Error", response['message']);
+        Fluttertoast.showToast(
+          msg: response['message'].toString(),
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 1,
+          textColor: Colors.white,
+          fontSize: 16.0,
+        );
+      }
+    } else {
+      doStartLoader(false);
+      Fluttertoast.showToast(
+        msg: "Something Error ",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.CENTER,
+        timeInSecForIosWeb: 1,
+        textColor: Colors.white,
+        fontSize: 16.0,
+      );
+      // SnackbarCustom.error("Error",
+      //     "Unable_to_login_at_the_moment_Please_try_again_after_sometime");
+    }
+  }
+
+  bool isLoading = false;
+
+  doStartLoader(bool val) {
+    setState(() {
+      isLoading = val;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -218,7 +289,28 @@ class _ScreenViewOrderState extends State<ScreenViewOrder> {
                       children: [
                         InkWell(
                           onTap: () {
-                            Get.back();
+                            // Get.back();
+                            Get.dialog(
+                              AlertDialog(
+                                title: Text('Are You Sure You Want To change'),
+                                //content: Text("This should not be closed automatically"),
+                                actions: <Widget>[
+                                  TextButton(
+                                    child: Text('Yes'),
+                                    onPressed: () async {
+                                      doCallAPILogin("approve");
+                                    },
+                                  ),
+                                  TextButton(
+                                    child: Text('No'),
+                                    onPressed: () {
+                                      Get.back();
+                                    },
+                                  )
+                                ],
+                              ),
+                              barrierDismissible: false,
+                            );
                           },
                           child: Container(
                             alignment: Alignment.center,
@@ -241,7 +333,28 @@ class _ScreenViewOrderState extends State<ScreenViewOrder> {
                         ),
                         InkWell(
                           onTap: () {
-                            Get.back();
+                            // Get.back();
+                            Get.dialog(
+                              AlertDialog(
+                                title: Text('Are You Sure You Want To change'),
+                                //content: Text("This should not be closed automatically"),
+                                actions: <Widget>[
+                                  TextButton(
+                                    child: Text('Yes'),
+                                    onPressed: () async {
+                                      doCallAPILogin("reject");
+                                    },
+                                  ),
+                                  TextButton(
+                                    child: Text('No'),
+                                    onPressed: () {
+                                      Get.back();
+                                    },
+                                  )
+                                ],
+                              ),
+                              barrierDismissible: false,
+                            );
                           },
                           child: Container(
                             alignment: Alignment.center,

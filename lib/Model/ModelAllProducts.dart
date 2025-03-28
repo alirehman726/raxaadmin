@@ -47,6 +47,7 @@ class AllProducts {
   String weight;
   String packingType;
   String? addedDate;
+  int? status;
 
   AllProducts({
     required this.id,
@@ -59,6 +60,7 @@ class AllProducts {
     required this.weight,
     required this.packingType,
     required this.addedDate,
+    required this.status,
   });
 
   factory AllProducts.fromJson(Map<String, dynamic> json) => AllProducts(
@@ -72,6 +74,7 @@ class AllProducts {
         weight: json["weight"],
         packingType: json["packing_type"],
         addedDate: json['added_date'],
+        status: json['status'],
       );
 
   Map<String, dynamic> toJson() => {
@@ -84,5 +87,6 @@ class AllProducts {
         "stock": stock,
         "weight": weight,
         "packing_type": packingType,
+        "status": status,
       };
 }
