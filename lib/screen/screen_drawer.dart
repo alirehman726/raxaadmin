@@ -1,4 +1,5 @@
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:raxaadmin/Controller/controller_allProducts.dart';
@@ -11,7 +12,9 @@ import 'package:raxaadmin/screen/screen_products_details.dart';
 import 'package:raxaadmin/screen/screen_report.dart';
 import 'package:raxaadmin/utils/color.dart';
 import 'package:raxaadmin/utils/images.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'screen_ads.dart';
 
@@ -25,6 +28,8 @@ class _ScreenDrawerState extends State<ScreenDrawer>
   int _currentIndex = 0;
   final CarouselController _controller = CarouselController();
   final controllerAllProducts = Get.find<ControllerAllproducts>();
+  String? username;
+  String? email;
   List<String> imageUrls = [
     "https://images.unsplash.com/photo-1520342868574-5fa3804e551c?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=6ff92caffcdd63681a35134a6770ed3b&auto=format&fit=crop&w=1951&q=80",
     "https://images.unsplash.com/photo-1522205408450-add114ad53fe?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=368f45b0888aeb0b7b08e3a1084d3ede&auto=format&fit=crop&w=1950&q=80",
@@ -38,6 +43,7 @@ class _ScreenDrawerState extends State<ScreenDrawer>
     super.initState();
 
     controllerAllProducts.controllerAllProducts();
+    loadUserData();
   }
 
   List<Map<String, dynamic>> menuItems = [
@@ -165,6 +171,24 @@ class _ScreenDrawerState extends State<ScreenDrawer>
     );
   }
 
+  void _launchURL() async {
+    const url =
+        'https://www.design-blitz.com/'; // 👈 Replace with your actual link
+    if (await canLaunchUrl(Uri.parse(url))) {
+      await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
+
+  Future<void> loadUserData() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      username = prefs.getString('username') ?? 'ADMIN';
+      email = prefs.getString('email') ?? 'example@gmail.com';
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -182,7 +206,7 @@ class _ScreenDrawerState extends State<ScreenDrawer>
             )
           ],
         ),
-        drawer: Drawer(
+       drawer: Drawer(
           backgroundColor: Colors.white,
           child: Column(
             children: [
@@ -214,7 +238,8 @@ class _ScreenDrawerState extends State<ScreenDrawer>
                             Padding(
                               padding: const EdgeInsets.only(top: 10),
                               child: Text(
-                                'ADMIN',
+                                username ?? '',
+                                // 'ADMIN',
                                 style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w800,
@@ -222,7 +247,8 @@ class _ScreenDrawerState extends State<ScreenDrawer>
                               ),
                             ),
                             Text(
-                              'example@gmail.com',
+                              email ?? '',
+                              // 'example@gmail.com',
                               style: TextStyle(
                                 fontSize: 12,
                                 fontWeight: FontWeight.w400,
@@ -330,10 +356,74 @@ class _ScreenDrawerState extends State<ScreenDrawer>
                     ],
                   ),
                 ),
-              )
+              ),
+              Divider(
+                color: Colors.black,
+                height: 2,
+              ),
+              Padding(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        RichText(
+                          text: TextSpan(
+                            style: const TextStyle(
+                              fontSize: 14,
+                              color: Colors.black,
+                            ),
+                            children: [
+                              const TextSpan(
+                                text: 'All Right Reserved By ',
+                                style: TextStyle(
+                                  color: Color(0xFF3C3C90), // Dark purple-ish
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                              TextSpan(
+                                text: 'Design-blitz',
+                                style: const TextStyle(
+                                  color: Colors
+                                      .lightBlueAccent, // Light blue clickable
+                                  fontWeight: FontWeight.w600,
+                                ),
+                                recognizer: TapGestureRecognizer()
+                                  ..onTap = _launchURL,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 5),
+                    RichText(
+                      text: TextSpan(
+                        style: const TextStyle(
+                          fontSize: 14,
+                          color: Colors.black,
+                        ),
+                        children: [
+                          const TextSpan(
+                            text: 'App Version : 1.0',
+                            style: TextStyle(
+                              color: Color(0xFF3C3C90), // Dark purple-ish
+                              fontWeight: FontWeight.w400,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ],
           ),
         ),
+       
+       
         body: Obx(
           () => controllerAllProducts.loading.value
               ? Center(child: CircularProgressIndicator(color: Colors.red))

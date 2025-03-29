@@ -15,6 +15,10 @@ class ControllerDealerreport extends GetxController {
   }
 
   controllerDealerreport({required String month, required String year}) async {
+    print(month);
+    print(
+        "month____yearmonth____year-------month____year-------month____year-------month____year-------month____year--------------");
+    print(year);
     try {
       loading.value = true;
 
@@ -34,6 +38,7 @@ class ControllerDealerreport extends GetxController {
         report.value = modelDealerReportFromJson(response.body).data;
         print(response.body);
       } else {
+        print(response.body);
         print("Error: ${response.reasonPhrase}");
       }
     } catch (e) {

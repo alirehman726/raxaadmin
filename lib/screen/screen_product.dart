@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:dio/dio.dart' as dio;
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
@@ -17,6 +18,8 @@ import 'package:raxaadmin/screen/screen_order_master.dart';
 import 'package:raxaadmin/screen/screen_report.dart';
 import 'package:raxaadmin/utils/color.dart';
 import 'package:raxaadmin/utils/images.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ScreenProduct extends StatefulWidget {
   @override
@@ -39,6 +42,7 @@ class _ScreenProductState extends State<ScreenProduct>
   void initState() {
     super.initState();
     controllerAllProducts.controllerAllProducts();
+     loadUserData();
   }
 
   List<Map<String, dynamic>> menuItems = [
@@ -164,6 +168,27 @@ class _ScreenProductState extends State<ScreenProduct>
     });
   }
 
+  void _launchURL() async {
+    const url =
+        'https://www.design-blitz.com/'; // 👈 Replace with your actual link
+    if (await canLaunchUrl(Uri.parse(url))) {
+      await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
+
+  Future<void> loadUserData() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      username = prefs.getString('username') ?? 'ADMIN';
+      email = prefs.getString('email') ?? 'example@gmail.com';
+    });
+  }
+
+    String? username;
+  String? email;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -187,157 +212,223 @@ class _ScreenProductState extends State<ScreenProduct>
           ),
         ],
       ),
-      drawer: Drawer(
-        child: Column(
-          children: [
-            Container(
-              padding: EdgeInsets.only(bottom: 20, left: 10),
-              height: 120,
-              width: double.infinity,
-              color: Colors.white,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Spacer(),
-                  Row(
+       drawer: Drawer(
+          backgroundColor: Colors.white,
+          child: Column(
+            children: [
+              Container(
+                padding: EdgeInsets.only(bottom: 20, left: 10),
+                height: 120,
+                width: double.infinity,
+                color: Colors.white,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Spacer(),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Image.asset(
+                          Images.PROFILE_ICON,
+                          height: 60,
+                          width: 60,
+                          fit: BoxFit.contain,
+                        ),
+                        const SizedBox(width: 10),
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(top: 10),
+                              child: Text(
+                                username ?? '',
+                                // 'ADMIN',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w800,
+                                ),
+                              ),
+                            ),
+                            Text(
+                              email ?? '',
+                              // 'example@gmail.com',
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w400,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    )
+                  ],
+                ),
+              ),
+              Divider(
+                color: Colors.black,
+                height: 2,
+              ),
+              const SizedBox(height: 20),
+              ...List.generate(menuItems.length, (index) {
+                bool isSelected = selectedIndex == index;
+                return InkWell(
+                  onTap: () {
+                    // setState(() {
+                    //   selectedIndex = index;
+                    //   print(selectedIndex);
+                    //   if (selectedIndex == 7) {
+                    //     logoutDialog_logout(context);
+                    //   }
+                    // });
+                  },
+                  child: Container(
+                    child: Row(
+                      children: [
+                        AnimatedContainer(
+                          duration: Duration(milliseconds: 300),
+                          width: 5,
+                          height: 35,
+                          decoration: BoxDecoration(
+                            // color: isSelected ? Colors.red : Colors.transparent,
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                        ),
+                        Expanded(
+                          child: ListTile(
+                            onTap: () {
+                              print(menuItems[index]["route"]());
+                              print('Rehmanali');
+                              Get.to(menuItems[index]["route"]());
+                            },
+                            leading: Image.asset(
+                              menuItems[index]["icon"],
+                              height: 23,
+                              width: 23,
+                              color: primaryColor,
+                              // color: isSelected ? Colors.red : Colors.black54,
+                            ),
+                            title: Text(
+                              menuItems[index]["title"],
+                              style: TextStyle(
+                                color: Color(0xff3C3D86),
+                                fontSize: 15,
+                                fontWeight: FontWeight.w700,
+                                // color: isSelected ? Colors.red : Colors.black54,
+                              ),
+                            ),
+                            trailing: Icon(
+                              Icons.arrow_forward_ios_rounded,
+                              color: gradient2,
+                              size: 20,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              }),
+              Spacer(),
+              InkWell(
+                onTap: () {
+                  logoutDialog_logout(context);
+                },
+                child: Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Image.asset(
-                        Images.PROFILE_ICON,
-                        height: 60,
-                        width: 60,
-                        fit: BoxFit.contain,
+                        Images.DRAWER_7,
+                        height: 23,
+                        width: 23,
+                        color: primaryColor,
+                        // color: isSelected ? Colors.red : Colors.black54,
                       ),
-                      const SizedBox(width: 10),
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.only(top: 10),
-                            child: Text(
-                              'ADMIN',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w800,
-                              ),
-                            ),
-                          ),
-                          Text(
-                            'example@gmail.com',
-                            style: TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w400,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  )
-                ],
-              ),
-            ),
-            Divider(
-              color: Colors.black,
-              height: 2,
-            ),
-            const SizedBox(height: 20),
-            ...List.generate(menuItems.length, (index) {
-              bool isSelected = selectedIndex == index;
-              return InkWell(
-                onTap: () {
-                  // setState(() {
-                  //   selectedIndex = index;
-                  //   print(selectedIndex);
-                  //   if (selectedIndex == 7) {
-                  //     logoutDialog_logout(context);
-                  //   }
-                  // });
-                },
-                child: Container(
-                  child: Row(
-                    children: [
-                      AnimatedContainer(
-                        duration: Duration(milliseconds: 300),
-                        width: 5,
-                        height: 35,
-                        decoration: BoxDecoration(
-                          // color: isSelected ? Colors.red : Colors.transparent,
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                      ),
-                      Expanded(
-                        child: ListTile(
-                          onTap: () {
-                            print(menuItems[index]["route"]());
-                            print('Rehmanali');
-                            Get.to(menuItems[index]["route"]());
-                          },
-                          leading: Image.asset(
-                            menuItems[index]["icon"],
-                            height: 23,
-                            width: 23,
-                            color: primaryColor,
-                            // color: isSelected ? Colors.red : Colors.black54,
-                          ),
-                          title: Text(
-                            menuItems[index]["title"],
-                            style: TextStyle(
-                              color: Color(0xff3C3D86),
-                              fontSize: 15,
-                              fontWeight: FontWeight.w700,
-                              // color: isSelected ? Colors.red : Colors.black54,
-                            ),
-                          ),
-                          trailing: Icon(
-                            Icons.arrow_forward_ios_rounded,
-                            color: gradient2,
-                            size: 20,
-                          ),
+                      const SizedBox(width: 20),
+                      Text(
+                        "Logout",
+                        style: TextStyle(
+                          color: Color(0xff3C3D86),
+                          fontSize: 15,
+                          fontWeight: FontWeight.w700,
+                          // color: isSelected ? Colors.red : Colors.black54,
                         ),
                       ),
                     ],
                   ),
                 ),
-              );
-            }),
-            Spacer(),
-            InkWell(
-              onTap: () {
-                logoutDialog_logout(context);
-              },
-              child: Padding(
+              ),
+              Divider(
+                color: Colors.black,
+                height: 2,
+              ),
+              Padding(
                 padding: const EdgeInsets.all(20),
-                child: Row(
+                child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Image.asset(
-                      Images.DRAWER_7,
-                      height: 23,
-                      width: 23,
-                      color: primaryColor,
-                      // color: isSelected ? Colors.red : Colors.black54,
+                    Row(
+                      children: [
+                        RichText(
+                          text: TextSpan(
+                            style: const TextStyle(
+                              fontSize: 14,
+                              color: Colors.black,
+                            ),
+                            children: [
+                              const TextSpan(
+                                text: 'All Right Reserved By ',
+                                style: TextStyle(
+                                  color: Color(0xFF3C3C90), // Dark purple-ish
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                              TextSpan(
+                                text: 'Design-blitz',
+                                style: const TextStyle(
+                                  color: Colors
+                                      .lightBlueAccent, // Light blue clickable
+                                  fontWeight: FontWeight.w600,
+                                ),
+                                recognizer: TapGestureRecognizer()
+                                  ..onTap = _launchURL,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
-                    const SizedBox(width: 20),
-                    Text(
-                      "Logout",
-                      style: TextStyle(
-                        color: Color(0xff3C3D86),
-                        fontSize: 15,
-                        fontWeight: FontWeight.w700,
-                        // color: isSelected ? Colors.red : Colors.black54,
+                    const SizedBox(height: 5),
+                    RichText(
+                      text: TextSpan(
+                        style: const TextStyle(
+                          fontSize: 14,
+                          color: Colors.black,
+                        ),
+                        children: [
+                          const TextSpan(
+                            text: 'App Version : 1.0',
+                            style: TextStyle(
+                              color: Color(0xFF3C3C90), // Dark purple-ish
+                              fontWeight: FontWeight.w400,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ],
                 ),
               ),
-            )
-          ],
+            ],
+          ),
         ),
-      ),
+       
       body: Column(
         children: [
           Container(

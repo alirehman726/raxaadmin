@@ -46,7 +46,8 @@ class _ScreenEditProductState extends State<ScreenEditProduct> {
     quantityController.text = widget.product.quantity.toString();
     weightController.text = widget.product.weight;
     packingTypeController.text = widget.product.packingType;
-    dateController.text = widget.product.addedDate ?? '';
+    flavourTypeController.text = widget.product.flavour;
+    // dateController.text = widget.product.addedDate ?? '';
     selectedStock = widget.product.stock ?? "yes";
 
     print("Stock from API: ${widget.product.stock.runtimeType}");
@@ -80,21 +81,21 @@ class _ScreenEditProductState extends State<ScreenEditProduct> {
   //     });
   //   }
   // }
-  void _showDatePicker() async {
-    final DateTime? pickedDate = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(2000),
-      lastDate: DateTime(2101),
-    );
+  // void _showDatePicker() async {
+  //   final DateTime? pickedDate = await showDatePicker(
+  //     context: context,
+  //     initialDate: DateTime.now(),
+  //     firstDate: DateTime(2000),
+  //     lastDate: DateTime(2101),
+  //   );
 
-    if (pickedDate != null) {
-      setState(() {
-        addedDate = "${pickedDate.year}-${pickedDate.month}-${pickedDate.day}";
-        dateController.text = addedDate;
-      });
-    }
-  }
+  //   if (pickedDate != null) {
+  //     setState(() {
+  //       addedDate = "${pickedDate.year}-${pickedDate.month}-${pickedDate.day}";
+  //       dateController.text = addedDate;
+  //     });
+  //   }
+  // }
 
   Future<void> _updateProduct() async {
     if (_formKey.currentState!.validate()) {
@@ -567,7 +568,7 @@ class _ScreenEditProductState extends State<ScreenEditProduct> {
                                           });
                                         },
                                         decoration: InputDecoration(
-                                            labelText: "In Stock"),
+                                            labelText: selectedStock),
                                       ),
                                     ),
                                   ],
@@ -797,25 +798,25 @@ class _ScreenEditProductState extends State<ScreenEditProduct> {
                             //   ],
                             // ),
 
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: TextFormField(
-                                    onTap: _showDatePicker,
-                                    controller: dateController,
-                                    readOnly:
-                                        true, // <-- Isko true rakhein taki user change na kar sake
-                                    decoration: InputDecoration(
-                                      labelText: "Added Date",
-                                      suffixIcon: Icon(
-                                        Icons.calendar_month_outlined,
-                                        color: Color(0xff3C3E89),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
+                            // Row(
+                            //   children: [
+                            //     Expanded(
+                            //       child: TextFormField(
+                            //         onTap: _showDatePicker,
+                            //         controller: dateController,
+                            //         readOnly:
+                            //             true, // <-- Isko true rakhein taki user change na kar sake
+                            //         decoration: InputDecoration(
+                            //           labelText: "Added Date",
+                            //           suffixIcon: Icon(
+                            //             Icons.calendar_month_outlined,
+                            //             color: Color(0xff3C3E89),
+                            //           ),
+                            //         ),
+                            //       ),
+                            //     ),
+                            //   ],
+                            // ),
 
                             const SizedBox(height: 17),
                             Row(

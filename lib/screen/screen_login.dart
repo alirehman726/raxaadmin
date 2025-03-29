@@ -195,6 +195,8 @@ class _ScreenLoginState extends State<ScreenLogin> {
         print('Hello TVS');
         if (response['status'] == true) {
           sharedPreferences.setString("token", response['token']);
+          sharedPreferences.setString("email", response['email']);
+          sharedPreferences.setString("username", response['username']);
           Get.to(() => ScreenDrawer());
           Fluttertoast.showToast(
             msg: "Login Successfully".toString(),

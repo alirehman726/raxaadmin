@@ -46,7 +46,8 @@ class AllProducts {
   String stock;
   String weight;
   String packingType;
-  String? addedDate;
+  String flavour;
+  // String? addedDate;
   int? status;
 
   AllProducts({
@@ -59,7 +60,8 @@ class AllProducts {
     required this.stock,
     required this.weight,
     required this.packingType,
-    required this.addedDate,
+    required this.flavour,
+    // required this.addedDate,
     required this.status,
   });
 
@@ -73,7 +75,8 @@ class AllProducts {
         stock: json["stock"],
         weight: json["weight"],
         packingType: json["packing_type"],
-        addedDate: json['added_date'],
+        flavour: json["flavour"],
+        // addedDate: json['added_date'],
         status: json['status'],
       );
 
@@ -87,6 +90,7 @@ class AllProducts {
         "stock": stock,
         "weight": weight,
         "packing_type": packingType,
+        "flavour": flavour,
         "status": status,
       };
 }

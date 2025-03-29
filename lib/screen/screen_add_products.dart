@@ -8,8 +8,9 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:raxaadmin/Apis/auth_apis.dart';
 import 'package:raxaadmin/Controller/controller_allProducts.dart';
-import 'package:raxaadmin/screen/screen_product.dart';
 import 'package:raxaadmin/utils/images.dart';
+
+import 'screen_product.dart';
 
 class ScreenAddProducts extends StatefulWidget {
   const ScreenAddProducts({super.key});
@@ -30,7 +31,7 @@ class _ScreenAddProductsState extends State<ScreenAddProducts> {
   String packingType = '';
   String flavour = '';
   String price = '';
-  String addedDate = 'Select Date';
+  // String addedDate = 'Select Date';
 
   // Future<void> _pickImage() async {
   //   final pickedFile =
@@ -51,19 +52,19 @@ class _ScreenAddProductsState extends State<ScreenAddProducts> {
     }
   }
 
-  void _showDatePicker() async {
-    final DateTime? pickedDate = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(2000),
-      lastDate: DateTime(2101),
-    );
-    if (pickedDate != null && pickedDate != DateTime.now()) {
-      setState(() {
-        addedDate = "${pickedDate.year}-${pickedDate.month}-${pickedDate.day}";
-      });
-    }
-  }
+  // void _showDatePicker() async {
+  //   final DateTime? pickedDate = await showDatePicker(
+  //     context: context,
+  //     initialDate: DateTime.now(),
+  //     firstDate: DateTime(2000),
+  //     lastDate: DateTime(2101),
+  //   );
+  //   if (pickedDate != null && pickedDate != DateTime.now()) {
+  //     setState(() {
+  //       addedDate = "${pickedDate.year}-${pickedDate.month}-${pickedDate.day}";
+  //     });
+  //   }
+  // }
 
   void _submit() {
     if (_formKey.currentState!.validate()) {
@@ -74,6 +75,15 @@ class _ScreenAddProductsState extends State<ScreenAddProducts> {
   }
 
   Future<void> doCallAPILogin() async {
+    print(productName);
+    print(description);
+    print(price);
+    print(netQuantity);
+    print(selectedValue);
+    print(weight);
+    print(packingType);
+    print(flavour);
+    print("flavour______");
     if (_image == null) {
       Fluttertoast.showToast(msg: "Please select in image");
       return;
@@ -95,7 +105,7 @@ class _ScreenAddProductsState extends State<ScreenAddProducts> {
         "weight": "${weight}/kg",
         "packing_type": packingType,
         "flavour": flavour,
-        "added_date": addedDate,
+        // "added_date": addedDate,
         "image": imageFile,
       });
 
@@ -817,26 +827,27 @@ class _ScreenAddProductsState extends State<ScreenAddProducts> {
                             //   ],
                             // ),
                             // Added Date
-                            GestureDetector(
-                              onTap: _showDatePicker,
-                              child: Row(
-                                children: [
-                                  Text(
-                                    'Added Date:     $addedDate',
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.bold,
-                                      color: Color(0xff3C3E89),
-                                    ),
-                                  ),
-                                  const SizedBox(width: 10),
-                                  Icon(
-                                    Icons.calendar_month_outlined,
-                                    color: Color(0xff3C3E89),
-                                  ),
-                                ],
-                              ),
-                            ),
+                            // GestureDetector(
+                            //   onTap: _showDatePicker,
+                            //   child: Row(
+                            //     children: [
+                            //       Text(
+                            //         'Added Date:     $addedDate',
+                            //         style: TextStyle(
+                            //           fontSize: 12,
+                            //           fontWeight: FontWeight.bold,
+                            //           color: Color(0xff3C3E89),
+                            //         ),
+                            //       ),
+                            //       const SizedBox(width: 10),
+                            //       Icon(
+                            //         Icons.calendar_month_outlined,
+                            //         color: Color(0xff3C3E89),
+                            //       ),
+                            //     ],
+                            //   ),
+                            // ),
+
                             const SizedBox(height: 17),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,

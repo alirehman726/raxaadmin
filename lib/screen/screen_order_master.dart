@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -10,6 +11,8 @@ import 'package:raxaadmin/screen/screen_report.dart';
 import 'package:raxaadmin/screen/screen_view_order.dart';
 import 'package:raxaadmin/utils/color.dart';
 import 'package:raxaadmin/utils/images.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'screen_ads.dart';
 
@@ -35,6 +38,7 @@ class _ScreenOrderMasterState extends State<ScreenOrderMaster>
     super.initState();
 
     controllerAllOrder.controllerAllOrder();
+     loadUserData();
   }
 
   String selectedValue = "January";
@@ -152,6 +156,27 @@ class _ScreenOrderMasterState extends State<ScreenOrderMaster>
   int selectedIndex = 0;
   bool isSwitched = false;
 
+  void _launchURL() async {
+    const url =
+        'https://www.design-blitz.com/'; // 👈 Replace with your actual link
+    if (await canLaunchUrl(Uri.parse(url))) {
+      await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
+
+  Future<void> loadUserData() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      username = prefs.getString('username') ?? 'ADMIN';
+      email = prefs.getString('email') ?? 'example@gmail.com';
+    });
+  }
+
+  String? username;
+  String? email;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -176,6 +201,7 @@ class _ScreenOrderMasterState extends State<ScreenOrderMaster>
         ],
       ),
       drawer: Drawer(
+        backgroundColor: Colors.white,
         child: Column(
           children: [
             Container(
@@ -206,7 +232,8 @@ class _ScreenOrderMasterState extends State<ScreenOrderMaster>
                           Padding(
                             padding: const EdgeInsets.only(top: 10),
                             child: Text(
-                              'ADMIN',
+                              username ?? '',
+                              // 'ADMIN',
                               style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w800,
@@ -214,7 +241,8 @@ class _ScreenOrderMasterState extends State<ScreenOrderMaster>
                             ),
                           ),
                           Text(
-                            'example@gmail.com',
+                            email ?? '',
+                            // 'example@gmail.com',
                             style: TextStyle(
                               fontSize: 12,
                               fontWeight: FontWeight.w400,
@@ -268,6 +296,7 @@ class _ScreenOrderMasterState extends State<ScreenOrderMaster>
                             height: 23,
                             width: 23,
                             color: primaryColor,
+                            // color: isSelected ? Colors.red : Colors.black54,
                           ),
                           title: Text(
                             menuItems[index]["title"],
@@ -275,6 +304,7 @@ class _ScreenOrderMasterState extends State<ScreenOrderMaster>
                               color: Color(0xff3C3D86),
                               fontSize: 15,
                               fontWeight: FontWeight.w700,
+                              // color: isSelected ? Colors.red : Colors.black54,
                             ),
                           ),
                           trailing: Icon(
@@ -320,7 +350,69 @@ class _ScreenOrderMasterState extends State<ScreenOrderMaster>
                   ],
                 ),
               ),
-            )
+            ),
+            Divider(
+              color: Colors.black,
+              height: 2,
+            ),
+            Padding(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      RichText(
+                        text: TextSpan(
+                          style: const TextStyle(
+                            fontSize: 14,
+                            color: Colors.black,
+                          ),
+                          children: [
+                            const TextSpan(
+                              text: 'All Right Reserved By ',
+                              style: TextStyle(
+                                color: Color(0xFF3C3C90), // Dark purple-ish
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                            TextSpan(
+                              text: 'Design-blitz',
+                              style: const TextStyle(
+                                color: Colors
+                                    .lightBlueAccent, // Light blue clickable
+                                fontWeight: FontWeight.w600,
+                              ),
+                              recognizer: TapGestureRecognizer()
+                                ..onTap = _launchURL,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 5),
+                  RichText(
+                    text: TextSpan(
+                      style: const TextStyle(
+                        fontSize: 14,
+                        color: Colors.black,
+                      ),
+                      children: [
+                        const TextSpan(
+                          text: 'App Version : 1.0',
+                          style: TextStyle(
+                            color: Color(0xFF3C3C90), // Dark purple-ish
+                            fontWeight: FontWeight.w400,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ],
         ),
       ),
