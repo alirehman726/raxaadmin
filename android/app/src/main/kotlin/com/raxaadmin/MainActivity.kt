@@ -1,4 +1,4 @@
-package com.example.raxaadmin
+package com.raxaadmin
 
 import io.flutter.embedding.android.FlutterActivity
 
