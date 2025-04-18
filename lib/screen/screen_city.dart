@@ -6,32 +6,36 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:raxaadmin/Apis/auth_apis.dart';
-import 'package:raxaadmin/Controller/controller_product.dart';
+import 'package:raxaadmin/Controller/controller_city.dart';
 import 'package:raxaadmin/Widgets/logoutDialog.dart';
-import 'package:raxaadmin/Widgets/myToasts.dart';
-import 'package:raxaadmin/screen/screen_add_products.dart';
+import 'package:raxaadmin/screen/screen_add_city.dart';
 import 'package:raxaadmin/screen/screen_ads.dart';
-import 'package:raxaadmin/screen/screen_city.dart';
 import 'package:raxaadmin/screen/screen_dealer.dart';
 import 'package:raxaadmin/screen/screen_drawer.dart';
-import 'package:raxaadmin/screen/screen_edit_product.dart';
 import 'package:raxaadmin/screen/screen_order_master.dart';
-import 'package:raxaadmin/screen/screen_report.dart';
+import 'package:raxaadmin/screen/screen_product.dart';
 import 'package:raxaadmin/utils/color.dart';
 import 'package:raxaadmin/utils/images.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class ScreenProduct extends StatefulWidget {
+class ScreenCity extends StatefulWidget {
   @override
-  _ScreenProductState createState() => _ScreenProductState();
+  _ScreenCityState createState() => _ScreenCityState();
 }
 
-class _ScreenProductState extends State<ScreenProduct>
+class _ScreenCityState extends State<ScreenCity>
     with SingleTickerProviderStateMixin {
-  final controllerProducts = Get.find<Controllerproducts>();
+  final controllercity = Get.find<ControllerCity>();
   TextEditingController searchController = TextEditingController();
   RxString searchQuery = "".obs;
+
+  @override
+  void initState() {
+    super.initState();
+    controllercity.controllercity();
+    loadUserData();
+  }
 
   void updateSearchQuery(String query) {
     setState(() {
@@ -39,11 +43,14 @@ class _ScreenProductState extends State<ScreenProduct>
     });
   }
 
-  @override
-  void initState() {
-    super.initState();
-    controllerProducts.controllerProducts();
-    loadUserData();
+  void _launchURL() async {
+    const url =
+        'https://www.design-blitz.com/'; // 👈 Replace with your actual link
+    if (await canLaunchUrl(Uri.parse(url))) {
+      await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
+    } else {
+      throw 'Could not launch $url';
+    }
   }
 
   List<Map<String, dynamic>> menuItems = [
@@ -85,36 +92,18 @@ class _ScreenProductState extends State<ScreenProduct>
   ];
 
   int selectedIndex = 0;
+  bool isSwitched = false;
 
-  void deleteItem(int id) async {
-    var res = await AuthApis.deleteOrderApi(id);
-
-    if (res != null) {
-      Map<String, dynamic> response = json.decode(res.toString());
-
-      if (response['status'] == true) {
-        // ✅ API Call करके डेटा अपडेट करो
-        await controllerProducts.controllerProducts();
-
-        // ✅ UI अपडेट करो
-        setState(() {
-          isLoading = false;
-        });
-
-        print("✅ Data refreshed successfully!");
-        // if (controllerProducts.controllerProducts) {
-        //   Get.back(); // ✅ Model Close
-        // }
-      } else {
-        setState(() {
-          isLoading = false;
-        });
-        SnackbarCustom.error("Error", response['message']);
-      }
-    } else {
-      throw Exception("No Response from API");
-    }
+  Future<void> loadUserData() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      username = prefs.getString('username') ?? 'ADMIN';
+      email = prefs.getString('email') ?? 'example@gmail.com';
+    });
   }
+
+  String? username;
+  String? email;
 
   Future<void> doCallAPILogin(int id, String status) async {
     doStartLoader1(true);
@@ -174,27 +163,6 @@ class _ScreenProductState extends State<ScreenProduct>
     });
   }
 
-  void _launchURL() async {
-    const url =
-        'https://www.design-blitz.com/'; // 👈 Replace with your actual link
-    if (await canLaunchUrl(Uri.parse(url))) {
-      await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
-    } else {
-      throw 'Could not launch $url';
-    }
-  }
-
-  Future<void> loadUserData() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    setState(() {
-      username = prefs.getString('username') ?? 'ADMIN';
-      email = prefs.getString('email') ?? 'example@gmail.com';
-    });
-  }
-
-  String? username;
-  String? email;
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -203,7 +171,7 @@ class _ScreenProductState extends State<ScreenProduct>
         centerTitle: true,
         backgroundColor: Color(0xff01B8FA),
         title: Text(
-          "PRODUCT PAGE",
+          "City Master",
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.w400),
         ),
         iconTheme: IconThemeData(color: Colors.white),
@@ -434,7 +402,6 @@ class _ScreenProductState extends State<ScreenProduct>
           ],
         ),
       ),
-      
       body: Column(
         children: [
           Container(
@@ -501,7 +468,7 @@ class _ScreenProductState extends State<ScreenProduct>
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'All Product’s',
+                          'All City',
                           style: TextStyle(
                             fontSize: 20,
                             fontStyle: FontStyle.italic,
@@ -510,7 +477,7 @@ class _ScreenProductState extends State<ScreenProduct>
                           ),
                         ),
                         SizedBox(
-                          width: 100,
+                          width: 50,
                           child: Divider(
                             color: Color(0xff01B8FA),
                             height: 2,
@@ -521,7 +488,7 @@ class _ScreenProductState extends State<ScreenProduct>
                     ),
                     InkWell(
                       onTap: () {
-                        Get.to(() => ScreenAddProducts());
+                        Get.to(() => ScreenAddCity());
                       },
                       child: Container(
                         padding: EdgeInsets.all(10),
@@ -545,7 +512,7 @@ class _ScreenProductState extends State<ScreenProduct>
                             ),
                             const SizedBox(width: 10),
                             Text(
-                              'ADD NEW PRODUCT',
+                              'ADD NEW City',
                               style:
                                   TextStyle(color: Colors.white, fontSize: 11),
                             ),
@@ -559,13 +526,13 @@ class _ScreenProductState extends State<ScreenProduct>
             ),
           ),
           Obx(() {
-            if (controllerProducts.loading.value) {
+            if (controllercity.loading.value) {
               return Center(
                   child: CircularProgressIndicator(color: Colors.red));
             }
 
-            var filteredProducts = controllerProducts.allProducts
-                .where((product) => product.productName
+            var filteredProducts = controllercity.cityData
+                .where((product) => product.name
                     .trim()
                     .toLowerCase()
                     .contains(searchQuery.value.trim()))
@@ -598,175 +565,167 @@ class _ScreenProductState extends State<ScreenProduct>
                         ),
                         child: Row(
                           children: [
-                            Expanded(
-                              flex: 1,
-                              child: Padding(
-                                padding: const EdgeInsets.all(10),
-                                child: Image.network(
-                                  product.image
-                                      .toString(), // ✅ Correct product reference
-                                  fit: BoxFit.cover,
-                                ),
-                              ),
-                            ),
+                            // Expanded(
+                            //   flex: 1,
+                            //   child: Padding(
+                            //     padding: const EdgeInsets.all(10),
+                            //     child: Image.network(
+                            //       product.image
+                            //           .toString(), // ✅ Correct product reference
+                            //       fit: BoxFit.cover,
+                            //     ),
+                            //   ),
+                            // ),
                             Expanded(
                               flex: 2,
                               child: Padding(
-                                padding: EdgeInsets.all(5),
+                                padding: EdgeInsets.all(10),
                                 child: Column(
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceAround,
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      "${product.productName} - ${product.discription}",
+                                      "${product.name}",
                                       style: TextStyle(
                                           color: Color(0xff3C3D86),
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.w200),
-                                    ),
-                                    Text(
-                                      "IN Stock : ${product.stock}",
-                                      style: TextStyle(
-                                          color: Color(0xff01B8FA),
-                                          fontStyle: FontStyle.italic,
-                                          fontSize: 12,
+                                          fontSize: 20,
                                           fontWeight: FontWeight.w200),
                                     ),
                                   ],
                                 ),
                               ),
                             ),
-                            Expanded(
-                              flex: 1,
-                              child: Padding(
-                                padding: const EdgeInsets.only(right: 10),
-                                child: Column(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceEvenly,
-                                  children: [
-                                    InkWell(
-                                      onTap: () {
-                                        Get.to(() => ScreenEditProduct(
-                                            product: product));
-                                      },
-                                      child: Container(
-                                        padding: EdgeInsets.all(5),
-                                        margin: EdgeInsets.only(top: 10),
-                                        decoration: BoxDecoration(
-                                          color: Colors.white,
-                                          border: Border.all(
-                                              color: Colors.black, width: 1.5),
-                                          borderRadius:
-                                              BorderRadius.circular(5),
-                                        ),
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Text(
-                                              "Edit",
-                                              style: TextStyle(
-                                                  color: Color(0xff3C3D86),
-                                                  fontSize: 10,
-                                                  fontWeight: FontWeight.w800),
-                                            ),
-                                            Icon(Icons.edit,
-                                                color: Color(0xff01B8FA),
-                                                size: 15)
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                    // InkWell(
-                                    //   onTap: () {
-                                    //     deleteItem(product.id);
-                                    //   },
-                                    //   child: Container(
-                                    //     padding: EdgeInsets.all(5),
-                                    //     decoration: BoxDecoration(
-                                    //       color: Colors.white,
-                                    //       border: Border.all(
-                                    //           color: Colors.black, width: 1.5),
-                                    //       borderRadius:
-                                    //           BorderRadius.circular(5),
-                                    //     ),
-                                    //     child: Row(
-                                    //       mainAxisAlignment:
-                                    //           MainAxisAlignment.spaceBetween,
-                                    //       children: [
-                                    //         Text(
-                                    //           "Delete",
-                                    //           style: TextStyle(
-                                    //               color: Color(0xff3C3D86),
-                                    //               fontSize: 10,
-                                    //               fontWeight: FontWeight.w800),
-                                    //         ),
-                                    //         Icon(Icons.delete,
-                                    //             color: Colors.red, size: 15)
-                                    //       ],
-                                    //     ),
-                                    //   ),
-                                    // ),
-                                    const SizedBox(height: 10),
-                                    // Text(
-                                    //   controllerProducts
-                                    //               .allProducts[index].status ==
-                                    //           1
-                                    //       ? "Active"
-                                    //       : "Deactive",
-                                    //   style: TextStyle(
-                                    //     fontSize: 14,
-                                    //     fontWeight: FontWeight.w100,
-                                    //     color: controllerProducts
-                                    //                 .allProducts[index]
-                                    //                 .status ==
-                                    //             "1"
-                                    //         ? Color(0xff3C3D86)
-                                    //         : Color(0xff3C3D86),
-                                    //   ),
-                                    // ),
-                                    // Inside your ListView.builder
-                                    Transform.scale(
-                                      scale: 0.8,
-                                      child: Obx(() {
-                                        // Get the current status from the controller
-                                        bool isActive = controllerProducts
-                                                .allProducts[index].status ==
-                                            1; // Assuming status is an int
-                                        return Switch(
-                                          value: isActive,
-                                          onChanged: (value) {
-                                            // Update the status in the controller
-                                            controllerProducts
-                                                    .allProducts[index].status =
-                                                value
-                                                    ? 1
-                                                    : 0; // Assigning int values
+                            // Expanded(
+                            //   flex: 1,
+                            //   child: Padding(
+                            //     padding: const EdgeInsets.only(right: 10),
+                            //     child: Column(
+                            //       mainAxisAlignment:
+                            //           MainAxisAlignment.spaceEvenly,
+                            //       children: [
+                            //         InkWell(
+                            //           onTap: () {
+                            //             Get.to(() => ScreenEditProduct(
+                            //                 product: product));
+                            //           },
+                            //           child: Container(
+                            //             padding: EdgeInsets.all(5),
+                            //             margin: EdgeInsets.only(top: 10),
+                            //             decoration: BoxDecoration(
+                            //               color: Colors.white,
+                            //               border: Border.all(
+                            //                   color: Colors.black, width: 1.5),
+                            //               borderRadius:
+                            //                   BorderRadius.circular(5),
+                            //             ),
+                            //             child: Row(
+                            //               mainAxisAlignment:
+                            //                   MainAxisAlignment.spaceBetween,
+                            //               children: [
+                            //                 Text(
+                            //                   "Edit",
+                            //                   style: TextStyle(
+                            //                       color: Color(0xff3C3D86),
+                            //                       fontSize: 10,
+                            //                       fontWeight: FontWeight.w800),
+                            //                 ),
+                            //                 Icon(Icons.edit,
+                            //                     color: Color(0xff01B8FA),
+                            //                     size: 15)
+                            //               ],
+                            //             ),
+                            //           ),
+                            //         ),
+                            //         // InkWell(
+                            //         //   onTap: () {
+                            //         //     deleteItem(product.id);
+                            //         //   },
+                            //         //   child: Container(
+                            //         //     padding: EdgeInsets.all(5),
+                            //         //     decoration: BoxDecoration(
+                            //         //       color: Colors.white,
+                            //         //       border: Border.all(
+                            //         //           color: Colors.black, width: 1.5),
+                            //         //       borderRadius:
+                            //         //           BorderRadius.circular(5),
+                            //         //     ),
+                            //         //     child: Row(
+                            //         //       mainAxisAlignment:
+                            //         //           MainAxisAlignment.spaceBetween,
+                            //         //       children: [
+                            //         //         Text(
+                            //         //           "Delete",
+                            //         //           style: TextStyle(
+                            //         //               color: Color(0xff3C3D86),
+                            //         //               fontSize: 10,
+                            //         //               fontWeight: FontWeight.w800),
+                            //         //         ),
+                            //         //         Icon(Icons.delete,
+                            //         //             color: Colors.red, size: 15)
+                            //         //       ],
+                            //         //     ),
+                            //         //   ),
+                            //         // ),
+                            //         const SizedBox(height: 10),
+                            //         // Text(
+                            //         //   controllerProducts
+                            //         //               .allProducts[index].status ==
+                            //         //           1
+                            //         //       ? "Active"
+                            //         //       : "Deactive",
+                            //         //   style: TextStyle(
+                            //         //     fontSize: 14,
+                            //         //     fontWeight: FontWeight.w100,
+                            //         //     color: controllerProducts
+                            //         //                 .allProducts[index]
+                            //         //                 .status ==
+                            //         //             "1"
+                            //         //         ? Color(0xff3C3D86)
+                            //         //         : Color(0xff3C3D86),
+                            //         //   ),
+                            //         // ),
+                            //         // Inside your ListView.builder
+                            //         Transform.scale(
+                            //           scale: 0.8,
+                            //           child: Obx(() {
+                            //             // Get the current status from the controller
+                            //             bool isActive = controllerProducts
+                            //                     .allProducts[index].status ==
+                            //                 1; // Assuming status is an int
+                            //             return Switch(
+                            //               value: isActive,
+                            //               onChanged: (value) {
+                            //                 // Update the status in the controller
+                            //                 controllerProducts
+                            //                         .allProducts[index].status =
+                            //                     value
+                            //                         ? 1
+                            //                         : 0; // Assigning int values
 
-                                            // Call the API to update the status
-                                            doCallAPILogin(
-                                              controllerProducts
-                                                  .allProducts[index].id,
-                                              controllerProducts
-                                                  .allProducts[index].status
-                                                  .toString(), // Convert to string for API call
-                                            );
-                                          },
-                                          activeColor: Colors.green,
-                                          activeTrackColor: Colors.grey[300],
-                                          inactiveThumbColor: Color(0xffADBABF),
-                                          inactiveTrackColor: Colors.white,
-                                          trackOutlineColor:
-                                              MaterialStateProperty.all(
-                                                  Colors.transparent),
-                                        );
-                                      }),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
+                            //                 // Call the API to update the status
+                            //                 doCallAPILogin(
+                            //                   controllerProducts
+                            //                       .allProducts[index].id,
+                            //                   controllerProducts
+                            //                       .allProducts[index].status
+                            //                       .toString(), // Convert to string for API call
+                            //                 );
+                            //               },
+                            //               activeColor: Colors.green,
+                            //               activeTrackColor: Colors.grey[300],
+                            //               inactiveThumbColor: Color(0xffADBABF),
+                            //               inactiveTrackColor: Colors.white,
+                            //               trackOutlineColor:
+                            //                   MaterialStateProperty.all(
+                            //                       Colors.transparent),
+                            //             );
+                            //           }),
+                            //         ),
+                            //       ],
+                            //     ),
+                            //   ),
+                            // ),
                           ],
                         ),
                       ),
@@ -778,8 +737,6 @@ class _ScreenProductState extends State<ScreenProduct>
           })
         ],
       ),
-    
     );
-
   }
 }

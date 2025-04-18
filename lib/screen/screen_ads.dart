@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:raxaadmin/Controller/controller_allAds.dart';
 import 'package:raxaadmin/Widgets/logoutDialog.dart';
+import 'package:raxaadmin/screen/screen_city.dart';
 import 'package:raxaadmin/screen/screen_dealer.dart';
 import 'package:raxaadmin/screen/screen_drawer.dart';
 import 'package:raxaadmin/screen/screen_order_master.dart';
@@ -68,10 +69,15 @@ class _ScreenAdsState extends State<ScreenAds>
       "title": "Approve Ads",
       "route": () => ScreenAds(),
     },
+    // {
+    //   "icon": Images.DRAWER_6,
+    //   "title": "City Master",
+    //   "route": () => ScreenReport(),
+    // },
     {
       "icon": Images.DRAWER_6,
-      "title": "Dealer Report",
-      "route": () => ScreenReport(),
+      "title": "City Master",
+      "route": () => ScreenCity(),
     },
   ];
 

@@ -8,11 +8,11 @@ import 'package:get/get.dart';
 import 'package:raxaadmin/Controller/controller_allProducts.dart';
 import 'package:raxaadmin/Model/ModelAllProducts.dart';
 import 'package:raxaadmin/Widgets/logoutDialog.dart';
+import 'package:raxaadmin/screen/screen_city.dart';
 import 'package:raxaadmin/screen/screen_dealer.dart';
 import 'package:raxaadmin/screen/screen_order_master.dart';
 import 'package:raxaadmin/screen/screen_product.dart';
 import 'package:raxaadmin/screen/screen_products_details.dart';
-import 'package:raxaadmin/screen/screen_report.dart';
 import 'package:raxaadmin/utils/color.dart';
 import 'package:raxaadmin/utils/images.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -75,19 +75,21 @@ class _ScreenDrawerState extends State<ScreenDrawer>
       "title": "Approve Ads",
       "route": () => ScreenAds(),
     },
+    // {
+    //   "icon": Images.DRAWER_6,
+    //   "title": "Dealer Report",
+    //   "route": () => ScreenReport(),
+    // },
     {
       "icon": Images.DRAWER_6,
-      "title": "Dealer Report",
-      "route": () => ScreenReport(),
+      "title": "City Master",
+      "route": () => ScreenCity(),
     },
   ];
 
   int selectedIndex = 0;
 
   Widget _buildProductGrid(RxList<AllProducts> allProducts) {
-    print(allProducts);
-    print('allProducts');
-
     return Padding(
       padding: const EdgeInsets.only(left: 20, right: 20),
       child: GridView.builder(

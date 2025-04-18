@@ -22,6 +22,7 @@ class ScreenViewOrder extends StatefulWidget {
 
 class _ScreenViewOrderState extends State<ScreenViewOrder> {
   final controllerViewProducts = Get.find<ControllerViewOrder>();
+  DateTime? selectedDate;
 
   @override
   void initState() {
@@ -30,6 +31,13 @@ class _ScreenViewOrderState extends State<ScreenViewOrder> {
     print(widget.id);
 
     controllerViewProducts.controllerViewOrder(widget.id.toString());
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Future.delayed(Duration(seconds: 1), () {
+        if (controllerViewProducts.viewOrder.isNotEmpty) {
+          selectedValue.value = controllerViewProducts.viewOrder[0].status;
+        }
+      });
+    });
   }
 
   // final List<Map<String, String>> data = [
@@ -39,17 +47,77 @@ class _ScreenViewOrderState extends State<ScreenViewOrder> {
   //   {"name": "Bhautik Shah", "quntity": "25", "sales": "₹8000"},
   // ];
 
-  String selectedValue = "pending";
+  // String selectedValue = "pending";
+  RxString selectedValue = "pending".obs;
   List<String> options = [
     "pending",
+    "approve",
+    "reject",
     "dispatch",
   ];
 
-  Future<void> doCallAPILogin(String status) async {
+  Future<void> updateOrderstatus(String value, String format, int id) async {
     doStartLoader(true);
 
     dio.FormData body = dio.FormData.fromMap({
-      "order_id": 2,
+      "order_id": id.toString(),
+      "status": value.toString(),
+      "order_date": format,
+    });
+    var res = await AuthApis.chnageStatusStatusAPI(body);
+
+    if (res != null) {
+      Map<String, dynamic> response = json.decode(res.toString());
+      print(response);
+      print(response['status']);
+      if (response['status'] == true) {
+        Fluttertoast.showToast(
+          msg: response['message'].toString(),
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 1,
+          textColor: Colors.white,
+          fontSize: 16.0,
+        );
+
+        Get.offAll(() => ScreenOrderMaster());
+
+        final controllerAllOrder = Get.find<ControllerAllOrder>();
+
+        await controllerAllOrder.controllerAllOrder();
+        controllerAllOrder.update();
+      } else {
+        doStartLoader(false);
+        // SnackbarCustom.error("Error", response['message']);
+        Fluttertoast.showToast(
+          msg: response['message'].toString(),
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 1,
+          textColor: Colors.white,
+          fontSize: 16.0,
+        );
+      }
+    } else {
+      doStartLoader(false);
+      Fluttertoast.showToast(
+        msg: "Something Error ",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.CENTER,
+        timeInSecForIosWeb: 1,
+        textColor: Colors.white,
+        fontSize: 16.0,
+      );
+      // SnackbarCustom.error("Error",
+      //     "Unable_to_login_at_the_moment_Please_try_again_after_sometime");
+    }
+  }
+
+  Future<void> doCallAPILogin(String status, int id) async {
+    doStartLoader(true);
+
+    dio.FormData body = dio.FormData.fromMap({
+      "order_id": id.toString(),
       "status": status.toString(),
     });
     var res = await AuthApis.chnageOrderStatusAPI(body);
@@ -284,102 +352,110 @@ class _ScreenViewOrderState extends State<ScreenViewOrder> {
                       ),
                     ),
                     const SizedBox(height: 20),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        InkWell(
-                          onTap: () {
-                            // Get.back();
-                            Get.dialog(
-                              AlertDialog(
-                                title: Text('Are You Sure You Want To change'),
-                                //content: Text("This should not be closed automatically"),
-                                actions: <Widget>[
-                                  TextButton(
-                                    child: Text('Yes'),
-                                    onPressed: () async {
-                                      doCallAPILogin("approve");
-                                    },
+                    controllerViewProducts.viewOrder[0].status == "pending"
+                        ? Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              InkWell(
+                                onTap: () {
+                                  // Get.back();
+                                  Get.dialog(
+                                    AlertDialog(
+                                      title: Text(
+                                          'Are You Sure You Want To change'),
+                                      //content: Text("This should not be closed automatically"),
+                                      actions: <Widget>[
+                                        TextButton(
+                                          child: Text('Yes'),
+                                          onPressed: () async {
+                                            doCallAPILogin(
+                                                "approve",
+                                                controllerViewProducts
+                                                    .viewOrder[0].id);
+                                          },
+                                        ),
+                                        TextButton(
+                                          child: Text('No'),
+                                          onPressed: () {
+                                            Get.back();
+                                          },
+                                        )
+                                      ],
+                                    ),
+                                    barrierDismissible: false,
+                                  );
+                                },
+                                child: Container(
+                                  alignment: Alignment.center,
+                                  width: 130,
+                                  padding: EdgeInsets.only(
+                                      left: 10, right: 10, top: 10, bottom: 10),
+                                  decoration: BoxDecoration(
+                                    color: Color(0xff3FCB1C),
+                                    borderRadius: BorderRadius.circular(7),
                                   ),
-                                  TextButton(
-                                    child: Text('No'),
-                                    onPressed: () {
-                                      Get.back();
-                                    },
-                                  )
-                                ],
-                              ),
-                              barrierDismissible: false,
-                            );
-                          },
-                          child: Container(
-                            alignment: Alignment.center,
-                            width: 130,
-                            padding: EdgeInsets.only(
-                                left: 10, right: 10, top: 10, bottom: 10),
-                            decoration: BoxDecoration(
-                              color: Color(0xff3FCB1C),
-                              borderRadius: BorderRadius.circular(7),
-                            ),
-                            child: Text(
-                              'APPROVE',
-                              style: TextStyle(
-                                fontSize: 10,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
-                              ),
-                            ),
-                          ),
-                        ),
-                        InkWell(
-                          onTap: () {
-                            // Get.back();
-                            Get.dialog(
-                              AlertDialog(
-                                title: Text('Are You Sure You Want To change'),
-                                //content: Text("This should not be closed automatically"),
-                                actions: <Widget>[
-                                  TextButton(
-                                    child: Text('Yes'),
-                                    onPressed: () async {
-                                      doCallAPILogin("reject");
-                                    },
+                                  child: Text(
+                                    'APPROVE',
+                                    style: TextStyle(
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white,
+                                    ),
                                   ),
-                                  TextButton(
-                                    child: Text('No'),
-                                    onPressed: () {
-                                      Get.back();
-                                    },
-                                  )
-                                ],
+                                ),
                               ),
-                              barrierDismissible: false,
-                            );
-                          },
-                          child: Container(
-                            alignment: Alignment.center,
-                            width: 130,
-                            padding: EdgeInsets.only(
-                                left: 10, right: 10, top: 10, bottom: 10),
-                            decoration: BoxDecoration(
-                              color: Color(0xffFF8800),
-                              borderRadius: BorderRadius.circular(7),
-                            ),
-                            child: Text(
-                              'REJECT',
-                              style: TextStyle(
-                                fontSize: 10,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
+                              InkWell(
+                                onTap: () {
+                                  // Get.back();
+                                  Get.dialog(
+                                    AlertDialog(
+                                      title: Text(
+                                          'Are You Sure You Want To change'),
+                                      //content: Text("This should not be closed automatically"),
+                                      actions: <Widget>[
+                                        TextButton(
+                                          child: Text('Yes'),
+                                          onPressed: () async {
+                                            doCallAPILogin(
+                                                "reject",
+                                                controllerViewProducts
+                                                    .viewOrder[0].id);
+                                          },
+                                        ),
+                                        TextButton(
+                                          child: Text('No'),
+                                          onPressed: () {
+                                            Get.back();
+                                          },
+                                        )
+                                      ],
+                                    ),
+                                    barrierDismissible: false,
+                                  );
+                                },
+                                child: Container(
+                                  alignment: Alignment.center,
+                                  width: 130,
+                                  padding: EdgeInsets.only(
+                                      left: 10, right: 10, top: 10, bottom: 10),
+                                  decoration: BoxDecoration(
+                                    color: Color(0xffFF8800),
+                                    borderRadius: BorderRadius.circular(7),
+                                  ),
+                                  child: Text(
+                                    'REJECT',
+                                    style: TextStyle(
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ),
                               ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-
+                            ],
+                          )
+                        : Container(),
                     const SizedBox(height: 20),
-
                     Padding(
                       padding: const EdgeInsets.only(left: 20, right: 20),
                       child: Column(
@@ -398,195 +474,261 @@ class _ScreenViewOrderState extends State<ScreenViewOrder> {
                                 ),
                               ),
                               Container(
-                                alignment: Alignment.center,
-                                width: 120,
-                                height: 40,
-                                padding: EdgeInsets.symmetric(horizontal: 5),
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  border:
-                                      Border.all(color: Colors.white, width: 2),
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                child: DropdownButtonHideUnderline(
-                                  child: DropdownButton<String>(
-                                    value: selectedValue,
-                                    items: options.map((String value) {
-                                      return DropdownMenuItem<String>(
-                                        value: value,
-                                        child: Text(
-                                          value,
-                                          style: TextStyle(
-                                              fontSize: 15,
-                                              color: Colors.black),
-                                        ),
-                                      );
-                                    }).toList(),
-                                    onChanged: (String? newValue) {
-                                      setState(() {
-                                        selectedValue = newValue!;
-                                      });
-                                    },
-                                    icon: Icon(Icons.arrow_drop_down,
-                                        color: Colors.black), // Dropdown arrow
-                                    style: TextStyle(color: Colors.black),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                          //
-                          //
-                          //
-
-                          const SizedBox(height: 10),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                'Date',
-                                style: TextStyle(
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w400,
-                                  color: Colors.black,
-                                ),
-                              ),
-                              Container(
-                                alignment: Alignment.center,
-                                width: 120,
-                                height: 40,
-                                padding: EdgeInsets.symmetric(horizontal: 5),
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  border:
-                                      Border.all(color: Colors.white, width: 2),
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                child: Text(
-                                  DateFormat('MM/dd/yyyy').format(
-                                      controllerViewProducts
-                                          .viewOrder[0].orderDate),
-
-                                  // '03/01/2025',
-                                  style: TextStyle(
-                                    fontSize: 13,
-                                    fontWeight: FontWeight.w600,
-                                    color: Color(0xff3C3D86),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                          //
-                          //
-                          //
-
-                          const SizedBox(height: 10),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                'Payment ID',
-                                style: TextStyle(
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w400,
-                                  color: Colors.black,
-                                ),
-                              ),
-                              Container(
-                                alignment: Alignment.center,
-                                width: 120,
-                                height: 40,
-                                padding: EdgeInsets.symmetric(horizontal: 5),
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  border:
-                                      Border.all(color: Colors.white, width: 2),
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                child: Text(
-                                  controllerViewProducts.viewOrder[0].paymentId
-                                      .toString(),
-                                  // 'UTRN NO',
-                                  style: TextStyle(
-                                    fontSize: 13,
-                                    fontWeight: FontWeight.w600,
-                                    color: Color(0xff3C3D86),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                          //
-                          //
-                          //
-
-                          const SizedBox(height: 10),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                'Action By',
-                                style: TextStyle(
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w400,
-                                  color: Colors.black,
-                                ),
-                              ),
-                              Container(
-                                alignment: Alignment.center,
-                                width: 120,
-                                height: 40,
-                                padding: EdgeInsets.symmetric(horizontal: 5),
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  border:
-                                      Border.all(color: Colors.white, width: 2),
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                child: Text(
-                                  controllerViewProducts.viewOrder[0].paymentId
-                                      .toString(),
-                                  // 'RAXADEAL001',
-                                  style: TextStyle(
-                                    fontSize: 13,
-                                    fontWeight: FontWeight.w600,
-                                    color: Color(0xff3C3D86),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 20),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(''),
-                              InkWell(
-                                onTap: () {
-                                  Get.back();
-                                },
-                                child: Container(
                                   alignment: Alignment.center,
-                                  width: 130,
-                                  padding: EdgeInsets.only(
-                                      left: 10, right: 10, top: 10, bottom: 10),
+                                  width: 120,
+                                  height: 40,
+                                  padding: EdgeInsets.symmetric(horizontal: 5),
                                   decoration: BoxDecoration(
-                                    color: Color(0xff67a5fc),
-                                    borderRadius: BorderRadius.circular(7),
+                                    color: Colors.white,
+                                    border: Border.all(
+                                        color: Colors.white, width: 2),
+                                    borderRadius: BorderRadius.circular(10),
                                   ),
-                                  child: Text(
-                                    'Submit',
-                                    style: TextStyle(
-                                      fontSize: 10,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                ),
-                              ),
+                                  // child: DropdownButtonHideUnderline(
+                                  //   child: DropdownButton<String>(
+                                  //     value: selectedValue,
+                                  //     items: options.map((String value) {
+                                  //       return DropdownMenuItem<String>(
+                                  //         value: value,
+                                  //         child: Text(
+                                  //           value,
+                                  //           style: TextStyle(
+                                  //               fontSize: 15,
+                                  //               color: Colors.black),
+                                  //         ),
+                                  //       );
+                                  //     }).toList(),
+                                  //     onChanged: (String? newValue) {
+                                  //       setState(() {
+                                  //         selectedValue = newValue!;
+                                  //       });
+                                  //     },
+                                  //     icon: Icon(Icons.arrow_drop_down,
+                                  //         color: Colors.black), // Dropdown arrow
+                                  //     style: TextStyle(color: Colors.black),
+                                  //   ),
+                                  // ),
+
+                                  child: Obx(() => DropdownButton<String>(
+                                        value: selectedValue.value,
+                                        items: options.map((String value) {
+                                          return DropdownMenuItem<String>(
+                                            value: value,
+                                            child: Text(
+                                              value,
+                                              style: TextStyle(
+                                                  fontSize: 15,
+                                                  color: Colors.black),
+                                            ),
+                                          );
+                                        }).toList(),
+                                        onChanged: (String? newValue) {
+                                          selectedValue.value = newValue!;
+                                        },
+                                        icon: Icon(Icons.arrow_drop_down,
+                                            color: Colors.black),
+                                        style: TextStyle(color: Colors.black),
+                                      ))),
                             ],
                           ),
+                          //
+                          //
+                          //
+
+                          const SizedBox(height: 10),
+                          controllerViewProducts.viewOrder[0].status ==
+                                  "approve"
+                              ? Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      'Date',
+                                      style: TextStyle(
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.w400,
+                                        color: Colors.black,
+                                      ),
+                                    ),
+                                    InkWell(
+                                      onTap: () async {
+                                        DateTime? pickedDate =
+                                            await showDatePicker(
+                                          context: context,
+                                          initialDate: selectedDate ??
+                                              DateTime
+                                                  .now(), // default selected date
+                                          firstDate: DateTime(2000),
+                                          lastDate: DateTime(2101),
+                                        );
+
+                                        if (pickedDate != null) {
+                                          setState(() {
+                                            selectedDate = pickedDate;
+                                          });
+                                        }
+                                      },
+                                      child: Container(
+                                        alignment: Alignment.center,
+                                        width: 120,
+                                        height: 40,
+                                        padding:
+                                            EdgeInsets.symmetric(horizontal: 5),
+                                        decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          border: Border.all(
+                                              color: Colors.white, width: 2),
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                        ),
+                                        child: Text(
+                                          selectedDate != null
+                                              ? DateFormat('MM/dd/yyyy')
+                                                  .format(selectedDate!)
+                                              : DateFormat('MM/dd/yyyy').format(
+                                                  controllerViewProducts
+                                                      .viewOrder[0].orderDate),
+                                          style: TextStyle(
+                                            fontSize: 13,
+                                            fontWeight: FontWeight.w600,
+                                            color: Color(0xff3C3D86),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                )
+                              : Container(),
+                          //
+                          //
+                          //
+
+                          // const SizedBox(height: 10),
+                          // Row(
+                          //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          //   children: [
+                          //     Text(
+                          //       'Payment ID',
+                          //       style: TextStyle(
+                          //         fontSize: 15,
+                          //         fontWeight: FontWeight.w400,
+                          //         color: Colors.black,
+                          //       ),
+                          //     ),
+                          //     Container(
+                          //       alignment: Alignment.center,
+                          //       width: 120,
+                          //       height: 40,
+                          //       padding: EdgeInsets.symmetric(horizontal: 5),
+                          //       decoration: BoxDecoration(
+                          //         color: Colors.white,
+                          //         border:
+                          //             Border.all(color: Colors.white, width: 2),
+                          //         borderRadius: BorderRadius.circular(10),
+                          //       ),
+                          //       child: Text(
+                          //         controllerViewProducts.viewOrder[0].paymentId
+                          //             .toString(),
+                          //         // 'UTRN NO',
+                          //         style: TextStyle(
+                          //           fontSize: 13,
+                          //           fontWeight: FontWeight.w600,
+                          //           color: Color(0xff3C3D86),
+                          //         ),
+                          //       ),
+                          //     ),
+                          //   ],
+                          // ),
+                          //
+                          //
+                          //
+
+                          const SizedBox(height: 10),
+                          controllerViewProducts.viewOrder[0].status ==
+                                  "approve"
+                              ? Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      'Action By',
+                                      style: TextStyle(
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.w400,
+                                        color: Colors.black,
+                                      ),
+                                    ),
+                                    Container(
+                                      alignment: Alignment.center,
+                                      width: 120,
+                                      height: 40,
+                                      padding:
+                                          EdgeInsets.symmetric(horizontal: 5),
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        border: Border.all(
+                                            color: Colors.white, width: 2),
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                      child: Text(
+                                        controllerViewProducts
+                                            .viewOrder[0].actionBy
+                                            .toString(),
+                                        // 'RAXADEAL001',
+                                        style: TextStyle(
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.w600,
+                                          color: Color(0xff3C3D86),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                )
+                              : Container(),
+                          const SizedBox(height: 20),
+                          controllerViewProducts.viewOrder[0].status ==
+                                  "approve"
+                              ? Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(''),
+                                    InkWell(
+                                      onTap: () {
+                                        updateOrderstatus(
+                                            selectedValue.value,
+                                            DateFormat('yyyy-MM-dd')
+                                                .format(selectedDate!),
+                                            controllerViewProducts
+                                                .viewOrder[0].id);
+                                        // Get.back();
+                                      },
+                                      child: Container(
+                                        alignment: Alignment.center,
+                                        width: 130,
+                                        padding: EdgeInsets.only(
+                                            left: 10,
+                                            right: 10,
+                                            top: 10,
+                                            bottom: 10),
+                                        decoration: BoxDecoration(
+                                          color: Color(0xff67a5fc),
+                                          borderRadius:
+                                              BorderRadius.circular(7),
+                                        ),
+                                        child: Text(
+                                          'Submit',
+                                          style: TextStyle(
+                                            fontSize: 10,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                )
+                              : Container(),
                         ],
                       ),
                     )

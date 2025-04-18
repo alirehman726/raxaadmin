@@ -100,6 +100,19 @@ class AuthApis {
     }
   }
 
+  static Future<dio.Response?> chnageStatusStatusAPI(dio.FormData body) async {
+    dio.Response res = await formService.postRequest(
+        "https://raxaspread.com/API/api/update-order", body, null, null);
+    print(res.data);
+    print('res.data_____________Add Dealer____________________');
+    print("URL: HIT");
+    if (res.statusCode! >= 200 && res.statusCode! <= 210) {
+      return res;
+    } else if (res.statusCode! >= 400 && res.statusCode! <= 403) {
+      return null;
+    }
+  }
+
   static Future<dio.Response?> editDealerAPI(dio.FormData body, int id) async {
     dio.Response res = await formService.postRequest(
         "https://raxaspread.com/API/api/edit_user/${id}", body, null, null);
@@ -166,6 +179,16 @@ class AuthApis {
   static Future<dio.Response?> addProductAPI(dio.FormData body) async {
     dio.Response res = await formService.postRequest(
         "https://raxaspread.com/API/api/add_product", body, null, null);
+    if (res.statusCode! >= 200 && res.statusCode! <= 210) {
+      return res;
+    } else if (res.statusCode! >= 400 && res.statusCode! <= 403) {
+      return null;
+    }
+  }
+
+  static Future<dio.Response?> addCityAPI(dio.FormData body) async {
+    dio.Response res = await formService.postRequest(
+        "https://raxaspread.com/API/api/add-city", body, null, null);
     if (res.statusCode! >= 200 && res.statusCode! <= 210) {
       return res;
     } else if (res.statusCode! >= 400 && res.statusCode! <= 403) {

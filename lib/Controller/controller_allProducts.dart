@@ -7,21 +7,32 @@ class ControllerAllproducts extends GetxController {
   RxList<AllProducts> allProducts = <AllProducts>[].obs;
   RxBool loading = false.obs;
 
+  // @override
+  // void onInit() {
+  //   super.onInit();
+  //   // 🔥 API कॉल को UI Build के बाद रन कराने के लिए
+  //   WidgetsBinding.instance.addPostFrameCallback((_) {
+  //     controllerAllProducts();
+  //   });
+  // }
+
   @override
   void onInit() {
     super.onInit();
-    // 🔥 API कॉल को UI Build के बाद रन कराने के लिए
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await Future.delayed(Duration(milliseconds: 100));
       controllerAllProducts();
     });
   }
 
   Future<void> controllerAllProducts() async {
     try {
+      // ✅ Delay the first reactive update just a bit
+      await Future.delayed(Duration(milliseconds: 10));
       loading.value = true;
 
       var request = http.MultipartRequest(
-          'GET', Uri.parse('https://raxaspread.com/API/api/allproduct'));
+          'GET', Uri.parse('https://raxaspread.com/API/api/activeproduct'));
 
       http.Response response =
           await http.Response.fromStream(await request.send());
@@ -32,20 +43,20 @@ class ControllerAllproducts extends GetxController {
         var products = modelAllProductsFromJson(response.body).data;
 
         if (products.isNotEmpty) {
-          allProducts.assignAll(products); // 🔥 Correct way to update
+          allProducts.assignAll(products);
         } else {
-          allProducts.clear(); // 🔥 If no products, clear list safely
+          allProducts.clear();
         }
         print(response.body);
       } else {
         print("❌ API Error: ${response.reasonPhrase}");
       }
     } catch (e) {
-      print("❌ Error fetching products: $e");
+      print("❌ Error fetching products1: $e");
     } finally {
-        Future.delayed(Duration(milliseconds: 500), () {
-          loading.value = false; // 🔥 Delay to ensure UI stability
-        });
+      // ✅ Delay to avoid Obx rebuilding too soon
+      await Future.delayed(Duration(milliseconds: 300));
+      loading.value = false;
     }
   }
 }

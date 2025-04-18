@@ -11,6 +11,7 @@ import 'package:raxaadmin/Controller/controller_AllDealer.dart';
 import 'package:raxaadmin/Widgets/logoutDialog.dart';
 import 'package:raxaadmin/screen/screen_add_dealer.dart';
 import 'package:raxaadmin/screen/screen_ads.dart';
+import 'package:raxaadmin/screen/screen_city.dart';
 import 'package:raxaadmin/screen/screen_drawer.dart';
 import 'package:raxaadmin/screen/screen_edit_dealer.dart';
 import 'package:raxaadmin/screen/screen_order_master.dart';
@@ -19,8 +20,6 @@ import 'package:raxaadmin/utils/color.dart';
 import 'package:raxaadmin/utils/images.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
-
-import 'screen_report.dart';
 
 class ScreenDealer extends StatefulWidget {
   @override
@@ -44,7 +43,7 @@ class _ScreenDealerState extends State<ScreenDealer>
     super.initState();
 
     controllerAllDealer.controllerAllDealer();
-     loadUserData();
+    loadUserData();
   }
 
   List<Map<String, dynamic>> dealerData = [
@@ -137,10 +136,15 @@ class _ScreenDealerState extends State<ScreenDealer>
       "title": "Approve Ads",
       "route": () => ScreenAds(),
     },
+    // {
+    //   "icon": Images.DRAWER_6,
+    //   "title": "Dealer Report",
+    //   "route": () => ScreenReport(),
+    // },
     {
       "icon": Images.DRAWER_6,
-      "title": "Dealer Report",
-      "route": () => ScreenReport(),
+      "title": "City Master",
+      "route": () => ScreenCity(),
     },
   ];
 
@@ -205,7 +209,7 @@ class _ScreenDealerState extends State<ScreenDealer>
     });
   }
 
-    String? username;
+  String? username;
   String? email;
 
   void _launchURL() async {
@@ -249,223 +253,222 @@ class _ScreenDealerState extends State<ScreenDealer>
           ),
         ],
       ),
-       drawer: Drawer(
-          backgroundColor: Colors.white,
-          child: Column(
-            children: [
-              Container(
-                padding: EdgeInsets.only(bottom: 20, left: 10),
-                height: 120,
-                width: double.infinity,
-                color: Colors.white,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Spacer(),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Image.asset(
-                          Images.PROFILE_ICON,
-                          height: 60,
-                          width: 60,
-                          fit: BoxFit.contain,
-                        ),
-                        const SizedBox(width: 10),
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.only(top: 10),
-                              child: Text(
-                                username ?? '',
-                                // 'ADMIN',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w800,
-                                ),
-                              ),
-                            ),
-                            Text(
-                              email ?? '',
-                              // 'example@gmail.com',
-                              style: TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w400,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    )
-                  ],
-                ),
-              ),
-              Divider(
-                color: Colors.black,
-                height: 2,
-              ),
-              const SizedBox(height: 20),
-              ...List.generate(menuItems.length, (index) {
-                bool isSelected = selectedIndex == index;
-                return InkWell(
-                  onTap: () {
-                    // setState(() {
-                    //   selectedIndex = index;
-                    //   print(selectedIndex);
-                    //   if (selectedIndex == 7) {
-                    //     logoutDialog_logout(context);
-                    //   }
-                    // });
-                  },
-                  child: Container(
-                    child: Row(
-                      children: [
-                        AnimatedContainer(
-                          duration: Duration(milliseconds: 300),
-                          width: 5,
-                          height: 35,
-                          decoration: BoxDecoration(
-                            // color: isSelected ? Colors.red : Colors.transparent,
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                        ),
-                        Expanded(
-                          child: ListTile(
-                            onTap: () {
-                              print(menuItems[index]["route"]());
-                              print('Rehmanali');
-                              Get.to(menuItems[index]["route"]());
-                            },
-                            leading: Image.asset(
-                              menuItems[index]["icon"],
-                              height: 23,
-                              width: 23,
-                              color: primaryColor,
-                              // color: isSelected ? Colors.red : Colors.black54,
-                            ),
-                            title: Text(
-                              menuItems[index]["title"],
-                              style: TextStyle(
-                                color: Color(0xff3C3D86),
-                                fontSize: 15,
-                                fontWeight: FontWeight.w700,
-                                // color: isSelected ? Colors.red : Colors.black54,
-                              ),
-                            ),
-                            trailing: Icon(
-                              Icons.arrow_forward_ios_rounded,
-                              color: gradient2,
-                              size: 20,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                );
-              }),
-              Spacer(),
-              InkWell(
-                onTap: () {
-                  logoutDialog_logout(context);
-                },
-                child: Padding(
-                  padding: const EdgeInsets.all(20),
-                  child: Row(
+      drawer: Drawer(
+        backgroundColor: Colors.white,
+        child: Column(
+          children: [
+            Container(
+              padding: EdgeInsets.only(bottom: 20, left: 10),
+              height: 120,
+              width: double.infinity,
+              color: Colors.white,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Spacer(),
+                  Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Image.asset(
-                        Images.DRAWER_7,
-                        height: 23,
-                        width: 23,
-                        color: primaryColor,
-                        // color: isSelected ? Colors.red : Colors.black54,
+                        Images.PROFILE_ICON,
+                        height: 60,
+                        width: 60,
+                        fit: BoxFit.contain,
                       ),
-                      const SizedBox(width: 20),
-                      Text(
-                        "Logout",
-                        style: TextStyle(
-                          color: Color(0xff3C3D86),
-                          fontSize: 15,
-                          fontWeight: FontWeight.w700,
-                          // color: isSelected ? Colors.red : Colors.black54,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              Divider(
-                color: Colors.black,
-                height: 2,
-              ),
-              Padding(
-                padding: const EdgeInsets.all(20),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        RichText(
-                          text: TextSpan(
-                            style: const TextStyle(
-                              fontSize: 14,
-                              color: Colors.black,
-                            ),
-                            children: [
-                              const TextSpan(
-                                text: 'All Right Reserved By ',
-                                style: TextStyle(
-                                  color: Color(0xFF3C3C90), // Dark purple-ish
-                                  fontWeight: FontWeight.w700,
-                                ),
-                              ),
-                              TextSpan(
-                                text: 'Design-blitz',
-                                style: const TextStyle(
-                                  color: Colors
-                                      .lightBlueAccent, // Light blue clickable
-                                  fontWeight: FontWeight.w600,
-                                ),
-                                recognizer: TapGestureRecognizer()
-                                  ..onTap = _launchURL,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 5),
-                    RichText(
-                      text: TextSpan(
-                        style: const TextStyle(
-                          fontSize: 14,
-                          color: Colors.black,
-                        ),
+                      const SizedBox(width: 10),
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const TextSpan(
-                            text: 'App Version : 1.0',
+                          Padding(
+                            padding: const EdgeInsets.only(top: 10),
+                            child: Text(
+                              username ?? '',
+                              // 'ADMIN',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w800,
+                              ),
+                            ),
+                          ),
+                          Text(
+                            email ?? '',
+                            // 'example@gmail.com',
                             style: TextStyle(
-                              color: Color(0xFF3C3C90), // Dark purple-ish
+                              fontSize: 12,
                               fontWeight: FontWeight.w400,
                             ),
                           ),
                         ],
                       ),
+                    ],
+                  )
+                ],
+              ),
+            ),
+            Divider(
+              color: Colors.black,
+              height: 2,
+            ),
+            const SizedBox(height: 20),
+            ...List.generate(menuItems.length, (index) {
+              bool isSelected = selectedIndex == index;
+              return InkWell(
+                onTap: () {
+                  // setState(() {
+                  //   selectedIndex = index;
+                  //   print(selectedIndex);
+                  //   if (selectedIndex == 7) {
+                  //     logoutDialog_logout(context);
+                  //   }
+                  // });
+                },
+                child: Container(
+                  child: Row(
+                    children: [
+                      AnimatedContainer(
+                        duration: Duration(milliseconds: 300),
+                        width: 5,
+                        height: 35,
+                        decoration: BoxDecoration(
+                          // color: isSelected ? Colors.red : Colors.transparent,
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                      ),
+                      Expanded(
+                        child: ListTile(
+                          onTap: () {
+                            print(menuItems[index]["route"]());
+                            print('Rehmanali');
+                            Get.to(menuItems[index]["route"]());
+                          },
+                          leading: Image.asset(
+                            menuItems[index]["icon"],
+                            height: 23,
+                            width: 23,
+                            color: primaryColor,
+                            // color: isSelected ? Colors.red : Colors.black54,
+                          ),
+                          title: Text(
+                            menuItems[index]["title"],
+                            style: TextStyle(
+                              color: Color(0xff3C3D86),
+                              fontSize: 15,
+                              fontWeight: FontWeight.w700,
+                              // color: isSelected ? Colors.red : Colors.black54,
+                            ),
+                          ),
+                          trailing: Icon(
+                            Icons.arrow_forward_ios_rounded,
+                            color: gradient2,
+                            size: 20,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            }),
+            Spacer(),
+            InkWell(
+              onTap: () {
+                logoutDialog_logout(context);
+              },
+              child: Padding(
+                padding: const EdgeInsets.all(20),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Image.asset(
+                      Images.DRAWER_7,
+                      height: 23,
+                      width: 23,
+                      color: primaryColor,
+                      // color: isSelected ? Colors.red : Colors.black54,
+                    ),
+                    const SizedBox(width: 20),
+                    Text(
+                      "Logout",
+                      style: TextStyle(
+                        color: Color(0xff3C3D86),
+                        fontSize: 15,
+                        fontWeight: FontWeight.w700,
+                        // color: isSelected ? Colors.red : Colors.black54,
+                      ),
                     ),
                   ],
                 ),
               ),
-            ],
-          ),
+            ),
+            Divider(
+              color: Colors.black,
+              height: 2,
+            ),
+            Padding(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      RichText(
+                        text: TextSpan(
+                          style: const TextStyle(
+                            fontSize: 14,
+                            color: Colors.black,
+                          ),
+                          children: [
+                            const TextSpan(
+                              text: 'All Right Reserved By ',
+                              style: TextStyle(
+                                color: Color(0xFF3C3C90), // Dark purple-ish
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                            TextSpan(
+                              text: 'Design-blitz',
+                              style: const TextStyle(
+                                color: Colors
+                                    .lightBlueAccent, // Light blue clickable
+                                fontWeight: FontWeight.w600,
+                              ),
+                              recognizer: TapGestureRecognizer()
+                                ..onTap = _launchURL,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 5),
+                  RichText(
+                    text: TextSpan(
+                      style: const TextStyle(
+                        fontSize: 14,
+                        color: Colors.black,
+                      ),
+                      children: [
+                        const TextSpan(
+                          text: 'App Version : 1.0',
+                          style: TextStyle(
+                            color: Color(0xFF3C3C90), // Dark purple-ish
+                            fontWeight: FontWeight.w400,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
         ),
-       
+      ),
       body: Column(
         children: [
           Container(
@@ -860,7 +863,6 @@ class _ScreenDealerState extends State<ScreenDealer>
 
     return Color(int.parse("0xff$hexColor"));
   }
-
 }
 
 Color getRandomColor() {

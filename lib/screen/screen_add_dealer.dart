@@ -273,6 +273,7 @@ class _ScreenAddDealerState extends State<ScreenAddDealer> {
                             EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                       ),
                     ),
+                    
                     const SizedBox(height: 20),
                     Text(
                       "Phone no.",
@@ -542,6 +543,7 @@ class _ScreenAddDealerState extends State<ScreenAddDealer> {
                         ),
                       ],
                     )
+                  
                   ],
                 ),
               ),

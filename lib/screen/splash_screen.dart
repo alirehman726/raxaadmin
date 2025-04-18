@@ -196,14 +196,30 @@ class _SplashScreenState extends State<SplashScreen>
           Center(
             child: ScaleTransition(
               scale: _animation,
-              child: Image.asset(
-                Images.CENTER_ICON,
-                width: 150,
-                height: 150,
-                fit: BoxFit.contain,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Image.asset(
+                    Images.CENTER_ICON,
+                    width: 150,
+                    height: 150,
+                    fit: BoxFit.contain,
+                  ),
+                  const SizedBox(height: 10),
+                  Text(
+                    'Welcome',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xff0093e9),
+                    ),
+                  ),
+                ],
               ),
             ),
           ),
+
           // Padding(
           //   padding: const EdgeInsets.only(left: 30, right: 30),
           //   child: Align(

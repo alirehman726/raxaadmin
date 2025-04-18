@@ -4,10 +4,10 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:raxaadmin/Controller/controller_allOrder.dart';
 import 'package:raxaadmin/Widgets/logoutDialog.dart';
+import 'package:raxaadmin/screen/screen_city.dart';
 import 'package:raxaadmin/screen/screen_dealer.dart';
 import 'package:raxaadmin/screen/screen_drawer.dart';
 import 'package:raxaadmin/screen/screen_product.dart';
-import 'package:raxaadmin/screen/screen_report.dart';
 import 'package:raxaadmin/screen/screen_view_order.dart';
 import 'package:raxaadmin/utils/color.dart';
 import 'package:raxaadmin/utils/images.dart';
@@ -38,7 +38,7 @@ class _ScreenOrderMasterState extends State<ScreenOrderMaster>
     super.initState();
 
     controllerAllOrder.controllerAllOrder();
-     loadUserData();
+    loadUserData();
   }
 
   String selectedValue = "January";
@@ -146,10 +146,15 @@ class _ScreenOrderMasterState extends State<ScreenOrderMaster>
       "title": "Approve Ads",
       "route": () => ScreenAds(),
     },
+    // {
+    //   "icon": Images.DRAWER_6,
+    //   "title": "Dealer Report",
+    //   "route": () => ScreenReport(),
+    // },
     {
       "icon": Images.DRAWER_6,
       "title": "Dealer Report",
-      "route": () => ScreenReport(),
+      "route": () => ScreenCity(),
     },
   ];
 
