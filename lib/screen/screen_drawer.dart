@@ -5,6 +5,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:raxaadmin/Controller/controller.ads.dart';
 import 'package:raxaadmin/Controller/controller_allProducts.dart';
 import 'package:raxaadmin/Model/ModelAllProducts.dart';
 import 'package:raxaadmin/Widgets/logoutDialog.dart';
@@ -31,6 +32,7 @@ class _ScreenDrawerState extends State<ScreenDrawer>
   int _currentIndex = 0;
   final CarouselController _controller = CarouselController();
   final controllerAllProducts = Get.find<ControllerAllproducts>();
+  final controllerAds = Get.find<ControllerAds>();
   String? username;
   String? email;
   List<String> imageUrls = [
@@ -46,6 +48,10 @@ class _ScreenDrawerState extends State<ScreenDrawer>
     super.initState();
 
     controllerAllProducts.controllerAllProducts();
+    controllerAds.controllerAds();
+    print(controllerAds.allAds.length);
+    print("____________controllerAds.allAds.length");
+
     loadUserData();
   }
 
@@ -459,14 +465,15 @@ class _ScreenDrawerState extends State<ScreenDrawer>
                               physics: NeverScrollableScrollPhysics(),
                               children: [
                                 CarouselSlider(
-                                  items: imageUrls.map((imageUrl) {
+                                  items: controllerAds.allAds.map((image) {
+                                    print(controllerAds.allAds[0].ads);
                                     return Container(
                                       margin: EdgeInsets.all(6.0),
                                       decoration: BoxDecoration(
                                         borderRadius:
                                             BorderRadius.circular(8.0),
                                         image: DecorationImage(
-                                          image: NetworkImage(imageUrl),
+                                          image: NetworkImage(image.ads),
                                           fit: BoxFit.cover,
                                         ),
                                       ),
@@ -493,7 +500,7 @@ class _ScreenDrawerState extends State<ScreenDrawer>
                                 Center(
                                   child: AnimatedSmoothIndicator(
                                     activeIndex: _currentIndex,
-                                    count: imageUrls.length,
+                                    count: controllerAds.allAds.length,
                                     effect: ExpandingDotsEffect(
                                       dotHeight: 8,
                                       dotWidth: 8,

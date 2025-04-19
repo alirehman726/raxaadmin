@@ -8,6 +8,7 @@ import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:raxaadmin/Apis/auth_apis.dart';
 import 'package:raxaadmin/Controller/controller_allProducts.dart';
+import 'package:raxaadmin/Controller/controller_product.dart';
 import 'package:raxaadmin/Model/ModelAllProducts.dart';
 import 'package:raxaadmin/screen/screen_product.dart';
 import 'package:raxaadmin/utils/images.dart';
@@ -129,9 +130,9 @@ class _ScreenEditProductState extends State<ScreenEditProduct> {
           Fluttertoast.showToast(msg: jsonResponse['message'].toString());
           Get.offAll(() => ScreenProduct());
 
-          final controllerAllProducts = Get.find<ControllerAllproducts>();
-          await controllerAllProducts.controllerAllProducts();
-          controllerAllProducts.update();
+          final controllerProducts = Get.find<Controllerproducts>();
+          await controllerProducts.controllerProducts();
+          controllerProducts.update();
         } else {
           Fluttertoast.showToast(msg: jsonResponse['message'].toString());
         }
@@ -482,7 +483,7 @@ class _ScreenEditProductState extends State<ScreenEditProduct> {
                                 ),
                               ),
                             ),
-                            SizedBox(height: 20),
+                            SizedBox(height: 10),
                             Align(
                               alignment: Alignment.centerLeft,
                               child: Text(
@@ -493,23 +494,177 @@ class _ScreenEditProductState extends State<ScreenEditProduct> {
                                 ),
                               ),
                             ),
-                            // TextField(
-                            //   obscureText: true,
-                            //   decoration: InputDecoration(
-                            //     hintText:
-                            //         "JPSR Prabhu Shriram Agarbatti Perfume incense sticks....",
-                            //     enabledBorder: UnderlineInputBorder(
-                            //       borderSide:
-                            //           BorderSide(color: Colors.blueAccent),
-                            //     ),
-                            //   ),
-                            // ),
+
                             TextFormField(
                               controller: descriptionController,
                               validator: (value) =>
                                   value!.isEmpty ? "Enter description" : null,
                               decoration: InputDecoration(
                                 hintText: "",
+                                enabledBorder: UnderlineInputBorder(
+                                  borderSide:
+                                      BorderSide(color: Colors.blueAccent),
+                                ),
+                              ),
+                            ),
+
+                            SizedBox(height: 10),
+                            Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                "In Stock",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.blue[900],
+                                ),
+                              ),
+                            ),
+                            DropdownButtonFormField<String>(
+                              decoration: InputDecoration(
+                                labelText: selectedStock,
+                                filled: true,
+                                fillColor: Colors.white,
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(3),
+                                  borderSide: BorderSide(
+                                    color: Colors.grey,
+                                    width: 1,
+                                  ),
+                                ),
+                                contentPadding: EdgeInsets.symmetric(
+                                    horizontal: 12, vertical: 10),
+                              ),
+                              value:
+                                  selectedStock, // Ensure this holds "yes" or "no"
+                              items: ["yes", "no"].map((String value) {
+                                return DropdownMenuItem<String>(
+                                  value: value,
+                                  child: Text(value), // Show API value properly
+                                );
+                              }).toList(),
+                              onChanged: (String? newValue) {
+                                setState(() {
+                                  selectedStock = newValue!;
+                                });
+                              },
+                            ),
+                            SizedBox(height: 10),
+                            Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                "Net Quantity ",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.blue[900],
+                                ),
+                              ),
+                            ),
+                            TextFormField(
+                              controller: quantityController,
+                              keyboardType: TextInputType.number,
+                              validator: (value) =>
+                                  value!.isEmpty ? "Enter quantity" : null,
+                              decoration: InputDecoration(
+                                hintStyle:
+                                    TextStyle(fontWeight: FontWeight.bold),
+                                enabledBorder: UnderlineInputBorder(
+                                  borderSide:
+                                      BorderSide(color: Colors.blueAccent),
+                                ),
+                              ),
+                            ),
+                            SizedBox(height: 10),
+                            Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                "Weight ",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.blue[900],
+                                ),
+                              ),
+                            ),
+                            TextFormField(
+                              controller: weightController,
+                              validator: (value) =>
+                                  value!.isEmpty ? "Enter weight" : null,
+                              decoration: InputDecoration(
+                                hintStyle:
+                                    TextStyle(fontWeight: FontWeight.bold),
+                                enabledBorder: UnderlineInputBorder(
+                                  borderSide:
+                                      BorderSide(color: Colors.blueAccent),
+                                ),
+                              ),
+                            ),
+                            SizedBox(height: 10),
+                            Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                "Packing Type ",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.blue[900],
+                                ),
+                              ),
+                            ),
+                            TextFormField(
+                              controller: packingTypeController,
+                              validator: (value) =>
+                                  value!.isEmpty ? "Enter packing type" : null,
+                              decoration: InputDecoration(
+                                hintText: "Round",
+                                hintStyle:
+                                    TextStyle(fontWeight: FontWeight.bold),
+                                enabledBorder: UnderlineInputBorder(
+                                  borderSide:
+                                      BorderSide(color: Colors.blueAccent),
+                                ),
+                              ),
+                            ),
+                            SizedBox(height: 10),
+                            Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                "Flavour ",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.blue[900],
+                                ),
+                              ),
+                            ),
+                            TextFormField(
+                              controller: flavourTypeController,
+                              validator: (value) =>
+                                  value!.isEmpty ? "Enter Flavour" : null,
+                              decoration: InputDecoration(
+                                hintStyle:
+                                    TextStyle(fontWeight: FontWeight.bold),
+                                enabledBorder: UnderlineInputBorder(
+                                  borderSide:
+                                      BorderSide(color: Colors.blueAccent),
+                                ),
+                              ),
+                            ),
+                            SizedBox(height: 10),
+                            Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                "Price ",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.blue[900],
+                                ),
+                              ),
+                            ),
+                            TextFormField(
+                              controller: priceController,
+                              validator: (value) =>
+                                  value!.isEmpty ? "Enter Price" : null,
+                              decoration: InputDecoration(
+                                hintText: "",
+                                hintStyle:
+                                    TextStyle(fontWeight: FontWeight.bold),
                                 enabledBorder: UnderlineInputBorder(
                                   borderSide:
                                       BorderSide(color: Colors.blueAccent),
@@ -525,238 +680,238 @@ class _ScreenEditProductState extends State<ScreenEditProduct> {
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Row(
-                                  children: [
-                                    Text(
-                                      'In Stock : ',
-                                      style: TextStyle(
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.bold,
-                                        color: Color(0xff3C3E89),
-                                      ),
-                                    ),
-                                    Container(
-                                      alignment: Alignment.center,
-                                      width: 60,
-                                      height: 25,
-                                      padding:
-                                          EdgeInsets.symmetric(horizontal: 5),
-                                      decoration: BoxDecoration(
-                                        border: Border.all(
-                                            color: Colors.blue,
-                                            width: 2), // Blue border
-                                        borderRadius: BorderRadius.circular(
-                                            5), // Rounded corners
-                                      ),
-                                      child: DropdownButtonFormField<String>(
-                                        value:
-                                            selectedStock, // Ensure this holds "yes" or "no"
-                                        items:
-                                            ["yes", "no"].map((String value) {
-                                          return DropdownMenuItem<String>(
-                                            value: value,
-                                            child: Text(
-                                                value), // Show API value properly
-                                          );
-                                        }).toList(),
-                                        onChanged: (String? newValue) {
-                                          setState(() {
-                                            selectedStock = newValue!;
-                                          });
-                                        },
-                                        decoration: InputDecoration(
-                                            labelText: selectedStock),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                Row(
-                                  children: [
-                                    Text(
-                                      'Net Quantity : ',
-                                      style: TextStyle(
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.bold,
-                                        color: Color(0xff3C3E89),
-                                      ),
-                                    ),
-                                    Container(
-                                      alignment: Alignment.center,
-                                      width: 60,
-                                      height: 25,
-                                      child: TextFormField(
-                                        controller: quantityController,
-                                        keyboardType: TextInputType.number,
-                                        validator: (value) => value!.isEmpty
-                                            ? "Enter quantity"
-                                            : null,
-                                        decoration: InputDecoration(
-                                          hintStyle: TextStyle(
-                                              fontWeight: FontWeight.bold),
-                                          enabledBorder: UnderlineInputBorder(
-                                            borderSide: BorderSide(
-                                                color: Colors.blueAccent),
-                                          ),
-                                        ),
-                                      ),
-                                      // child: TextField(
-                                      //   decoration: InputDecoration(
-                                      //     hintText: "50",
-                                      //     hintStyle: TextStyle(
-                                      //         fontWeight: FontWeight.bold),
-                                      //     enabledBorder: UnderlineInputBorder(
-                                      //       borderSide: BorderSide(
-                                      //           color: Colors.blueAccent),
-                                      //     ),
-                                      //   ),
-                                      // ),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 17),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Row(
-                                  children: [
-                                    Text(
-                                      'Weight : ',
-                                      style: TextStyle(
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.bold,
-                                        color: Color(0xff3C3E89),
-                                      ),
-                                    ),
-                                    Container(
-                                      alignment: Alignment.center,
-                                      width: 60,
-                                      height: 25,
-                                      child: TextFormField(
-                                        controller: weightController,
-                                        validator: (value) => value!.isEmpty
-                                            ? "Enter weight"
-                                            : null,
-                                        decoration: InputDecoration(
-                                          hintStyle: TextStyle(
-                                              fontWeight: FontWeight.bold),
-                                          enabledBorder: UnderlineInputBorder(
-                                            borderSide: BorderSide(
-                                                color: Colors.blueAccent),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                Row(
-                                  children: [
-                                    Text(
-                                      'Packing Type : ',
-                                      style: TextStyle(
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.bold,
-                                        color: Color(0xff3C3E89),
-                                      ),
-                                    ),
-                                    Container(
-                                      alignment: Alignment.center,
-                                      width: 60,
-                                      height: 25,
-                                      child: TextFormField(
-                                        controller: packingTypeController,
-                                        validator: (value) => value!.isEmpty
-                                            ? "Enter packing type"
-                                            : null,
-                                        decoration: InputDecoration(
-                                          hintText: "Round",
-                                          hintStyle: TextStyle(
-                                              fontWeight: FontWeight.bold),
-                                          enabledBorder: UnderlineInputBorder(
-                                            borderSide: BorderSide(
-                                                color: Colors.blueAccent),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 17),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Row(
-                                  children: [
-                                    Text(
-                                      'Flavour : ',
-                                      style: TextStyle(
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.bold,
-                                        color: Color(0xff3C3E89),
-                                      ),
-                                    ),
-                                    Container(
-                                      alignment: Alignment.center,
-                                      width: 60,
-                                      height: 25,
-                                      child: TextFormField(
-                                        controller: flavourTypeController,
-                                        validator: (value) => value!.isEmpty
-                                            ? "Enter Flavour"
-                                            : null,
-                                        decoration: InputDecoration(
-                                          hintStyle: TextStyle(
-                                              fontWeight: FontWeight.bold),
-                                          enabledBorder: UnderlineInputBorder(
-                                            borderSide: BorderSide(
-                                                color: Colors.blueAccent),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                Row(
-                                  children: [
-                                    Text(
-                                      'Price : ',
-                                      style: TextStyle(
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.bold,
-                                        color: Color(0xff3C3E89),
-                                      ),
-                                    ),
-                                    Container(
-                                      alignment: Alignment.center,
-                                      width: 60,
-                                      height: 25,
-                                      child: TextFormField(
-                                        controller: priceController,
-                                        validator: (value) => value!.isEmpty
-                                            ? "Enter Price"
-                                            : null,
-                                        decoration: InputDecoration(
-                                          hintText: "",
-                                          hintStyle: TextStyle(
-                                              fontWeight: FontWeight.bold),
-                                          enabledBorder: UnderlineInputBorder(
-                                            borderSide: BorderSide(
-                                                color: Colors.blueAccent),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 17),
+                            // Row(
+                            //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            //   children: [
+                            //     Row(
+                            //       children: [
+                            //         Text(
+                            //           'In Stock : ',
+                            //           style: TextStyle(
+                            //             fontSize: 12,
+                            //             fontWeight: FontWeight.bold,
+                            //             color: Color(0xff3C3E89),
+                            //           ),
+                            //         ),
+                            //         Container(
+                            //           alignment: Alignment.center,
+                            //           width: 60,
+                            //           height: 25,
+                            //           padding:
+                            //               EdgeInsets.symmetric(horizontal: 5),
+                            //           decoration: BoxDecoration(
+                            //             border: Border.all(
+                            //                 color: Colors.blue,
+                            //                 width: 2), // Blue border
+                            //             borderRadius: BorderRadius.circular(
+                            //                 5), // Rounded corners
+                            //           ),
+                            //           child: DropdownButtonFormField<String>(
+                            //             value:
+                            //                 selectedStock, // Ensure this holds "yes" or "no"
+                            //             items:
+                            //                 ["yes", "no"].map((String value) {
+                            //               return DropdownMenuItem<String>(
+                            //                 value: value,
+                            //                 child: Text(
+                            //                     value), // Show API value properly
+                            //               );
+                            //             }).toList(),
+                            //             onChanged: (String? newValue) {
+                            //               setState(() {
+                            //                 selectedStock = newValue!;
+                            //               });
+                            //             },
+                            //             decoration: InputDecoration(
+                            //                 labelText: selectedStock),
+                            //           ),
+                            //         ),
+                            //       ],
+                            //     ),
+                            //     Row(
+                            //       children: [
+                            //         Text(
+                            //           'Net Quantity : ',
+                            //           style: TextStyle(
+                            //             fontSize: 12,
+                            //             fontWeight: FontWeight.bold,
+                            //             color: Color(0xff3C3E89),
+                            //           ),
+                            //         ),
+                            //         Container(
+                            //           alignment: Alignment.center,
+                            //           width: 60,
+                            //           height: 25,
+                            //           child: TextFormField(
+                            //             controller: quantityController,
+                            //             keyboardType: TextInputType.number,
+                            //             validator: (value) => value!.isEmpty
+                            //                 ? "Enter quantity"
+                            //                 : null,
+                            //             decoration: InputDecoration(
+                            //               hintStyle: TextStyle(
+                            //                   fontWeight: FontWeight.bold),
+                            //               enabledBorder: UnderlineInputBorder(
+                            //                 borderSide: BorderSide(
+                            //                     color: Colors.blueAccent),
+                            //               ),
+                            //             ),
+                            //           ),
+                            //           // child: TextField(
+                            //           //   decoration: InputDecoration(
+                            //           //     hintText: "50",
+                            //           //     hintStyle: TextStyle(
+                            //           //         fontWeight: FontWeight.bold),
+                            //           //     enabledBorder: UnderlineInputBorder(
+                            //           //       borderSide: BorderSide(
+                            //           //           color: Colors.blueAccent),
+                            //           //     ),
+                            //           //   ),
+                            //           // ),
+                            //         ),
+                            //       ],
+                            //     ),
+                            //   ],
+                            // ),
+                            // const SizedBox(height: 17),
+                            // Row(
+                            //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            //   children: [
+                            //     Row(
+                            //       children: [
+                            //         Text(
+                            //           'Weight : ',
+                            //           style: TextStyle(
+                            //             fontSize: 12,
+                            //             fontWeight: FontWeight.bold,
+                            //             color: Color(0xff3C3E89),
+                            //           ),
+                            //         ),
+                            //         Container(
+                            //           alignment: Alignment.center,
+                            //           width: 60,
+                            //           height: 25,
+                            //           child: TextFormField(
+                            //             controller: weightController,
+                            //             validator: (value) => value!.isEmpty
+                            //                 ? "Enter weight"
+                            //                 : null,
+                            //             decoration: InputDecoration(
+                            //               hintStyle: TextStyle(
+                            //                   fontWeight: FontWeight.bold),
+                            //               enabledBorder: UnderlineInputBorder(
+                            //                 borderSide: BorderSide(
+                            //                     color: Colors.blueAccent),
+                            //               ),
+                            //             ),
+                            //           ),
+                            //         ),
+                            //       ],
+                            //     ),
+                            //     Row(
+                            //       children: [
+                            //         Text(
+                            //           'Packing Type : ',
+                            //           style: TextStyle(
+                            //             fontSize: 12,
+                            //             fontWeight: FontWeight.bold,
+                            //             color: Color(0xff3C3E89),
+                            //           ),
+                            //         ),
+                            //         Container(
+                            //           alignment: Alignment.center,
+                            //           width: 60,
+                            //           height: 25,
+                            //           child: TextFormField(
+                            //             controller: packingTypeController,
+                            //             validator: (value) => value!.isEmpty
+                            //                 ? "Enter packing type"
+                            //                 : null,
+                            //             decoration: InputDecoration(
+                            //               hintText: "Round",
+                            //               hintStyle: TextStyle(
+                            //                   fontWeight: FontWeight.bold),
+                            //               enabledBorder: UnderlineInputBorder(
+                            //                 borderSide: BorderSide(
+                            //                     color: Colors.blueAccent),
+                            //               ),
+                            //             ),
+                            //           ),
+                            //         ),
+                            //       ],
+                            //     ),
+                            //   ],
+                            // ),
+                            // const SizedBox(height: 17),
+                            // Row(
+                            //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            //   children: [
+                            //     Row(
+                            //       children: [
+                            //         Text(
+                            //           'Flavour : ',
+                            //           style: TextStyle(
+                            //             fontSize: 12,
+                            //             fontWeight: FontWeight.bold,
+                            //             color: Color(0xff3C3E89),
+                            //           ),
+                            //         ),
+                            //         Container(
+                            //           alignment: Alignment.center,
+                            //           width: 60,
+                            //           height: 25,
+                            //           child: TextFormField(
+                            //             controller: flavourTypeController,
+                            //             validator: (value) => value!.isEmpty
+                            //                 ? "Enter Flavour"
+                            //                 : null,
+                            //             decoration: InputDecoration(
+                            //               hintStyle: TextStyle(
+                            //                   fontWeight: FontWeight.bold),
+                            //               enabledBorder: UnderlineInputBorder(
+                            //                 borderSide: BorderSide(
+                            //                     color: Colors.blueAccent),
+                            //               ),
+                            //             ),
+                            //           ),
+                            //         ),
+                            //       ],
+                            //     ),
+                            //     Row(
+                            //       children: [
+                            //         Text(
+                            //           'Price : ',
+                            //           style: TextStyle(
+                            //             fontSize: 12,
+                            //             fontWeight: FontWeight.bold,
+                            //             color: Color(0xff3C3E89),
+                            //           ),
+                            //         ),
+                            //         Container(
+                            //           alignment: Alignment.center,
+                            //           width: 60,
+                            //           height: 25,
+                            //           child: TextFormField(
+                            //             controller: priceController,
+                            //             validator: (value) => value!.isEmpty
+                            //                 ? "Enter Price"
+                            //                 : null,
+                            //             decoration: InputDecoration(
+                            //               hintText: "",
+                            //               hintStyle: TextStyle(
+                            //                   fontWeight: FontWeight.bold),
+                            //               enabledBorder: UnderlineInputBorder(
+                            //                 borderSide: BorderSide(
+                            //                     color: Colors.blueAccent),
+                            //               ),
+                            //             ),
+                            //           ),
+                            //         ),
+                            //       ],
+                            //     ),
+                            //   ],
+                            // ),
+                            // const SizedBox(height: 17),
 
                             // Row(
                             //   children: [

@@ -7,7 +7,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:raxaadmin/Apis/auth_apis.dart';
-import 'package:raxaadmin/Controller/controller_allProducts.dart';
+import 'package:raxaadmin/Controller/controller_product.dart';
 import 'package:raxaadmin/utils/images.dart';
 
 import 'screen_product.dart';
@@ -117,9 +117,9 @@ class _ScreenAddProductsState extends State<ScreenAddProducts> {
           Fluttertoast.showToast(msg: response['message'].toString());
           Get.offAll(() => ScreenProduct());
 
-          final controllerAllProducts = Get.find<ControllerAllproducts>();
-          await controllerAllProducts.controllerAllProducts();
-          controllerAllProducts.update();
+          final controllerProducts = Get.find<Controllerproducts>();
+          await controllerProducts.controllerProducts();
+          controllerProducts.update();
         } else {
           Fluttertoast.showToast(msg: response['message'].toString());
         }
@@ -457,6 +457,7 @@ class _ScreenAddProductsState extends State<ScreenAddProducts> {
                       Padding(
                         padding: const EdgeInsets.all(20),
                         child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             // Align(
@@ -497,7 +498,6 @@ class _ScreenAddProductsState extends State<ScreenAddProducts> {
                                 productName = value;
                               },
                             ),
-                            SizedBox(height: 20),
                             // Align(
                             //   alignment: Alignment.centerLeft,
                             //   child: Text(
@@ -536,6 +536,147 @@ class _ScreenAddProductsState extends State<ScreenAddProducts> {
                                 description = value;
                               },
                             ),
+                            //
+                            //
+                            //
+                            const SizedBox(height: 10),
+                            Text(
+                              "In Stock",
+                              textAlign: TextAlign.start,
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                                color: Colors.black,
+                              ),
+                            ),
+                            const SizedBox(height: 5),
+                            DropdownButtonFormField<String>(
+                              value: selectedValue,
+                              items: options.map((String value) {
+                                return DropdownMenuItem<String>(
+                                  value: value,
+                                  child: Text(
+                                    value,
+                                    style: TextStyle(
+                                        fontSize: 12, color: Colors.black),
+                                  ),
+                                );
+                              }).toList(),
+                              onChanged: (String? newValue) {
+                                setState(() {
+                                  selectedValue = newValue!;
+                                });
+                              },
+                              decoration: InputDecoration(
+                                filled: true,
+                                fillColor: Colors.white,
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(3),
+                                  borderSide: BorderSide(
+                                    color: Colors.grey,
+                                    width: 1,
+                                  ),
+                                ),
+                                contentPadding: EdgeInsets.symmetric(
+                                    horizontal: 12, vertical: 10),
+                              ),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return "Please select a city";
+                                }
+                                return null;
+                              },
+                            ),
+                            TextFormField(
+                              decoration: InputDecoration(
+                                labelText: "Net quantity",
+                                enabledBorder: UnderlineInputBorder(
+                                  borderSide:
+                                      BorderSide(color: Colors.blueAccent),
+                                ),
+                              ),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'net quantity';
+                                }
+                                return null;
+                              },
+                              onChanged: (value) {
+                                netQuantity = value;
+                              },
+                            ),
+                            TextFormField(
+                              decoration: InputDecoration(
+                                hintText: "Weight (0g/ Kg)",
+                                enabledBorder: UnderlineInputBorder(
+                                  borderSide:
+                                      BorderSide(color: Colors.blueAccent),
+                                ),
+                              ),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'weight';
+                                }
+                                return null;
+                              },
+                              onChanged: (value) {
+                                weight = value;
+                              },
+                            ),
+                            TextFormField(
+                              decoration: InputDecoration(
+                                labelText: "Packing type",
+                                enabledBorder: UnderlineInputBorder(
+                                  borderSide:
+                                      BorderSide(color: Colors.blueAccent),
+                                ),
+                              ),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'packing type';
+                                }
+                                return null;
+                              },
+                              onChanged: (value) {
+                                packingType = value;
+                              },
+                            ),
+                            TextFormField(
+                              decoration: InputDecoration(
+                                hintText: "Flavour",
+                                enabledBorder: UnderlineInputBorder(
+                                  borderSide:
+                                      BorderSide(color: Colors.blueAccent),
+                                ),
+                              ),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Please enter flavour';
+                                }
+                                return null;
+                              },
+                              onChanged: (value) {
+                                flavour = value;
+                              },
+                            ),
+                            TextFormField(
+                              decoration: InputDecoration(
+                                labelText: "Price",
+                                enabledBorder: UnderlineInputBorder(
+                                  borderSide:
+                                      BorderSide(color: Colors.blueAccent),
+                                ),
+                              ),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Please enter Price';
+                                }
+                                return null;
+                              },
+                              onChanged: (value) {
+                                price = value;
+                              },
+                            ),
                           ],
                         ),
                       ),
@@ -545,308 +686,308 @@ class _ScreenAddProductsState extends State<ScreenAddProducts> {
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Row(
-                                  children: [
-                                    Text(
-                                      'In Stock : ',
-                                      style: TextStyle(
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.bold,
-                                        color: Color(0xff3C3E89),
-                                      ),
-                                    ),
-                                    Container(
-                                      alignment: Alignment.center,
-                                      width: 60,
-                                      height: 25,
-                                      padding:
-                                          EdgeInsets.symmetric(horizontal: 5),
-                                      decoration: BoxDecoration(
-                                        border: Border.all(
-                                            color: Colors.blue,
-                                            width: 2), // Blue border
-                                        borderRadius: BorderRadius.circular(
-                                            5), // Rounded corners
-                                      ),
-                                      child: DropdownButtonHideUnderline(
-                                        child: DropdownButton<String>(
-                                          value: selectedValue,
-                                          items: options.map((String value) {
-                                            return DropdownMenuItem<String>(
-                                              value: value,
-                                              child: Text(
-                                                value,
-                                                style: TextStyle(
-                                                    fontSize: 12,
-                                                    color: Colors.black),
-                                              ),
-                                            );
-                                          }).toList(),
-                                          onChanged: (String? newValue) {
-                                            setState(() {
-                                              selectedValue = newValue!;
-                                            });
-                                          },
-                                          icon: Icon(Icons.arrow_drop_down,
-                                              color: Colors
-                                                  .black), // Dropdown arrow
-                                          style: TextStyle(color: Colors.black),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                Row(
-                                  children: [
-                                    Text(
-                                      'Net Quantity : ',
-                                      style: TextStyle(
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.bold,
-                                        color: Color(0xff3C3E89),
-                                      ),
-                                    ),
-                                    Container(
-                                      alignment: Alignment.center,
-                                      width: 60,
-                                      height: 25,
-                                      child: TextFormField(
-                                        decoration: InputDecoration(
-                                          labelText: "",
-                                          enabledBorder: UnderlineInputBorder(
-                                            borderSide: BorderSide(
-                                                color: Colors.blueAccent),
-                                          ),
-                                        ),
-                                        validator: (value) {
-                                          if (value == null || value.isEmpty) {
-                                            return 'net quantity';
-                                          }
-                                          return null;
-                                        },
-                                        onChanged: (value) {
-                                          netQuantity = value;
-                                        },
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 17),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Row(
-                                  children: [
-                                    Text(
-                                      'Weight : ',
-                                      style: TextStyle(
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.bold,
-                                        color: Color(0xff3C3E89),
-                                      ),
-                                    ),
-                                    Container(
-                                      alignment: Alignment.center,
-                                      width: 60,
-                                      height: 25,
-                                      child: TextFormField(
-                                        decoration: InputDecoration(
-                                          hintText: "0g/ Kg",
-                                          enabledBorder: UnderlineInputBorder(
-                                            borderSide: BorderSide(
-                                                color: Colors.blueAccent),
-                                          ),
-                                        ),
-                                        validator: (value) {
-                                          if (value == null || value.isEmpty) {
-                                            return 'weight';
-                                          }
-                                          return null;
-                                        },
-                                        onChanged: (value) {
-                                          weight = value;
-                                        },
-                                      ),
-                                      // child: TextField(
-                                      //   decoration: InputDecoration(
-                                      //     hintText: "0g/ Kg",
-                                      //     hintStyle: TextStyle(
-                                      //         fontWeight: FontWeight.bold),
-                                      //     enabledBorder: UnderlineInputBorder(
-                                      //       borderSide: BorderSide(
-                                      //           color: Colors.blueAccent),
-                                      //     ),
-                                      //   ),
-                                      // ),
-                                    ),
-                                  ],
-                                ),
-                                Row(
-                                  children: [
-                                    Text(
-                                      'Packing Type : ',
-                                      style: TextStyle(
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.bold,
-                                        color: Color(0xff3C3E89),
-                                      ),
-                                    ),
-                                    Container(
-                                      alignment: Alignment.center,
-                                      width: 60,
-                                      height: 25,
-                                      child: TextFormField(
-                                        decoration: InputDecoration(
-                                          labelText: "",
-                                          enabledBorder: UnderlineInputBorder(
-                                            borderSide: BorderSide(
-                                                color: Colors.blueAccent),
-                                          ),
-                                        ),
-                                        validator: (value) {
-                                          if (value == null || value.isEmpty) {
-                                            return 'packing type';
-                                          }
-                                          return null;
-                                        },
-                                        onChanged: (value) {
-                                          packingType = value;
-                                        },
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 17),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Row(
-                                  children: [
-                                    Text(
-                                      'Flavour : ',
-                                      style: TextStyle(
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.bold,
-                                        color: Color(0xff3C3E89),
-                                      ),
-                                    ),
-                                    Container(
-                                      alignment: Alignment.center,
-                                      width: 60,
-                                      height: 25,
-                                      child: TextFormField(
-                                        decoration: InputDecoration(
-                                          hintText: "",
-                                          enabledBorder: UnderlineInputBorder(
-                                            borderSide: BorderSide(
-                                                color: Colors.blueAccent),
-                                          ),
-                                        ),
-                                        validator: (value) {
-                                          if (value == null || value.isEmpty) {
-                                            return 'Please enter flavour';
-                                          }
-                                          return null;
-                                        },
-                                        onChanged: (value) {
-                                          flavour = value;
-                                        },
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                Row(
-                                  children: [
-                                    Text(
-                                      'Price : ',
-                                      style: TextStyle(
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.bold,
-                                        color: Color(0xff3C3E89),
-                                      ),
-                                    ),
-                                    Container(
-                                      alignment: Alignment.center,
-                                      width: 60,
-                                      height: 25,
-                                      child: TextFormField(
-                                        decoration: InputDecoration(
-                                          labelText: "",
-                                          enabledBorder: UnderlineInputBorder(
-                                            borderSide: BorderSide(
-                                                color: Colors.blueAccent),
-                                          ),
-                                        ),
-                                        validator: (value) {
-                                          if (value == null || value.isEmpty) {
-                                            return 'Please enter Price';
-                                          }
-                                          return null;
-                                        },
-                                        onChanged: (value) {
-                                          price = value;
-                                        },
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 17),
                             // Row(
+                            //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             //   children: [
-                            //     Text(
-                            //       'Added Date :',
-                            //       style: TextStyle(
-                            //         fontSize: 12,
-                            //         fontWeight: FontWeight.bold,
-                            //         color: Color(0xff3C3E89),
-                            //       ),
+                            //     Row(
+                            //       children: [
+                            //         Text(
+                            //           'In Stock : ',
+                            //           style: TextStyle(
+                            //             fontSize: 12,
+                            //             fontWeight: FontWeight.bold,
+                            //             color: Color(0xff3C3E89),
+                            //           ),
+                            //         ),
+                            //         Container(
+                            //           alignment: Alignment.center,
+                            //           width: 60,
+                            //           height: 25,
+                            //           padding:
+                            //               EdgeInsets.symmetric(horizontal: 5),
+                            //           decoration: BoxDecoration(
+                            //             border: Border.all(
+                            //                 color: Colors.blue,
+                            //                 width: 2), // Blue border
+                            //             borderRadius: BorderRadius.circular(
+                            //                 5), // Rounded corners
+                            //           ),
+                            //           child: DropdownButtonHideUnderline(
+                            //             child: DropdownButton<String>(
+                            //               value: selectedValue,
+                            //               items: options.map((String value) {
+                            //                 return DropdownMenuItem<String>(
+                            //                   value: value,
+                            //                   child: Text(
+                            //                     value,
+                            //                     style: TextStyle(
+                            //                         fontSize: 12,
+                            //                         color: Colors.black),
+                            //                   ),
+                            //                 );
+                            //               }).toList(),
+                            //               onChanged: (String? newValue) {
+                            //                 setState(() {
+                            //                   selectedValue = newValue!;
+                            //                 });
+                            //               },
+                            //               icon: Icon(Icons.arrow_drop_down,
+                            //                   color: Colors
+                            //                       .black), // Dropdown arrow
+                            //               style: TextStyle(color: Colors.black),
+                            //             ),
+                            //           ),
+                            //         ),
+                            //       ],
                             //     ),
-                            //     const SizedBox(width: 10),
-                            //     Text(
-                            //       ' 31/02/2025 ',
-                            //       style: TextStyle(
-                            //         fontSize: 12,
-                            //         fontWeight: FontWeight.bold,
-                            //         color: Color(0xff3C3E89),
-                            //       ),
+                            //     Row(
+                            //       children: [
+                            //         Text(
+                            //           'Net Quantity : ',
+                            //           style: TextStyle(
+                            //             fontSize: 12,
+                            //             fontWeight: FontWeight.bold,
+                            //             color: Color(0xff3C3E89),
+                            //           ),
+                            //         ),
+                            //         Container(
+                            //           alignment: Alignment.center,
+                            //           width: 60,
+                            //           height: 25,
+                            //           child: TextFormField(
+                            //             decoration: InputDecoration(
+                            //               labelText: "",
+                            //               enabledBorder: UnderlineInputBorder(
+                            //                 borderSide: BorderSide(
+                            //                     color: Colors.blueAccent),
+                            //               ),
+                            //             ),
+                            //             validator: (value) {
+                            //               if (value == null || value.isEmpty) {
+                            //                 return 'net quantity';
+                            //               }
+                            //               return null;
+                            //             },
+                            //             onChanged: (value) {
+                            //               netQuantity = value;
+                            //             },
+                            //           ),
+                            //         ),
+                            //       ],
                             //     ),
-                            //     const SizedBox(width: 10),
-                            //     Icon(
-                            //       Icons.calendar_month_outlined,
-                            //       color: Color(0xff3C3E89),
-                            //     )
                             //   ],
                             // ),
-                            // Added Date
-                            // GestureDetector(
-                            //   onTap: _showDatePicker,
-                            //   child: Row(
-                            //     children: [
-                            //       Text(
-                            //         'Added Date:     $addedDate',
-                            //         style: TextStyle(
-                            //           fontSize: 12,
-                            //           fontWeight: FontWeight.bold,
-                            //           color: Color(0xff3C3E89),
+                            // const SizedBox(height: 17),
+                            // Row(
+                            //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            //   children: [
+                            //     Row(
+                            //       children: [
+                            //         Text(
+                            //           'Weight : ',
+                            //           style: TextStyle(
+                            //             fontSize: 12,
+                            //             fontWeight: FontWeight.bold,
+                            //             color: Color(0xff3C3E89),
+                            //           ),
                             //         ),
-                            //       ),
-                            //       const SizedBox(width: 10),
-                            //       Icon(
-                            //         Icons.calendar_month_outlined,
-                            //         color: Color(0xff3C3E89),
-                            //       ),
-                            //     ],
-                            //   ),
+                            //         Container(
+                            //           alignment: Alignment.center,
+                            //           width: 60,
+                            //           height: 25,
+                            //           child: TextFormField(
+                            //             decoration: InputDecoration(
+                            //               hintText: "0g/ Kg",
+                            //               enabledBorder: UnderlineInputBorder(
+                            //                 borderSide: BorderSide(
+                            //                     color: Colors.blueAccent),
+                            //               ),
+                            //             ),
+                            //             validator: (value) {
+                            //               if (value == null || value.isEmpty) {
+                            //                 return 'weight';
+                            //               }
+                            //               return null;
+                            //             },
+                            //             onChanged: (value) {
+                            //               weight = value;
+                            //             },
+                            //           ),
+                            //           // child: TextField(
+                            //           //   decoration: InputDecoration(
+                            //           //     hintText: "0g/ Kg",
+                            //           //     hintStyle: TextStyle(
+                            //           //         fontWeight: FontWeight.bold),
+                            //           //     enabledBorder: UnderlineInputBorder(
+                            //           //       borderSide: BorderSide(
+                            //           //           color: Colors.blueAccent),
+                            //           //     ),
+                            //           //   ),
+                            //           // ),
+                            //         ),
+                            //       ],
+                            //     ),
+                            //     Row(
+                            //       children: [
+                            //         Text(
+                            //           'Packing Type : ',
+                            //           style: TextStyle(
+                            //             fontSize: 12,
+                            //             fontWeight: FontWeight.bold,
+                            //             color: Color(0xff3C3E89),
+                            //           ),
+                            //         ),
+                            //         Container(
+                            //           alignment: Alignment.center,
+                            //           width: 60,
+                            //           height: 25,
+                            //           child: TextFormField(
+                            //             decoration: InputDecoration(
+                            //               labelText: "",
+                            //               enabledBorder: UnderlineInputBorder(
+                            //                 borderSide: BorderSide(
+                            //                     color: Colors.blueAccent),
+                            //               ),
+                            //             ),
+                            //             validator: (value) {
+                            //               if (value == null || value.isEmpty) {
+                            //                 return 'packing type';
+                            //               }
+                            //               return null;
+                            //             },
+                            //             onChanged: (value) {
+                            //               packingType = value;
+                            //             },
+                            //           ),
+                            //         ),
+                            //       ],
+                            //     ),
+                            //   ],
                             // ),
+                            // const SizedBox(height: 17),
+                            // Row(
+                            //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            //   children: [
+                            //     Row(
+                            //       children: [
+                            //         Text(
+                            //           'Flavour : ',
+                            //           style: TextStyle(
+                            //             fontSize: 12,
+                            //             fontWeight: FontWeight.bold,
+                            //             color: Color(0xff3C3E89),
+                            //           ),
+                            //         ),
+                            //         Container(
+                            //           alignment: Alignment.center,
+                            //           width: 60,
+                            //           height: 25,
+                            //           child: TextFormField(
+                            //             decoration: InputDecoration(
+                            //               hintText: "",
+                            //               enabledBorder: UnderlineInputBorder(
+                            //                 borderSide: BorderSide(
+                            //                     color: Colors.blueAccent),
+                            //               ),
+                            //             ),
+                            //             validator: (value) {
+                            //               if (value == null || value.isEmpty) {
+                            //                 return 'Please enter flavour';
+                            //               }
+                            //               return null;
+                            //             },
+                            //             onChanged: (value) {
+                            //               flavour = value;
+                            //             },
+                            //           ),
+                            //         ),
+                            //       ],
+                            //     ),
+                            //     Row(
+                            //       children: [
+                            //         Text(
+                            //           'Price : ',
+                            //           style: TextStyle(
+                            //             fontSize: 12,
+                            //             fontWeight: FontWeight.bold,
+                            //             color: Color(0xff3C3E89),
+                            //           ),
+                            //         ),
+                            //         Container(
+                            //           alignment: Alignment.center,
+                            //           width: 60,
+                            //           height: 25,
+                            //           child: TextFormField(
+                            //             decoration: InputDecoration(
+                            //               labelText: "",
+                            //               enabledBorder: UnderlineInputBorder(
+                            //                 borderSide: BorderSide(
+                            //                     color: Colors.blueAccent),
+                            //               ),
+                            //             ),
+                            //             validator: (value) {
+                            //               if (value == null || value.isEmpty) {
+                            //                 return 'Please enter Price';
+                            //               }
+                            //               return null;
+                            //             },
+                            //             onChanged: (value) {
+                            //               price = value;
+                            //             },
+                            //           ),
+                            //         ),
+                            //       ],
+                            //     ),
+                            //   ],
+                            // ),
+                            // const SizedBox(height: 17),
+                            // // Row(
+                            // //   children: [
+                            // //     Text(
+                            // //       'Added Date :',
+                            // //       style: TextStyle(
+                            // //         fontSize: 12,
+                            // //         fontWeight: FontWeight.bold,
+                            // //         color: Color(0xff3C3E89),
+                            // //       ),
+                            // //     ),
+                            // //     const SizedBox(width: 10),
+                            // //     Text(
+                            // //       ' 31/02/2025 ',
+                            // //       style: TextStyle(
+                            // //         fontSize: 12,
+                            // //         fontWeight: FontWeight.bold,
+                            // //         color: Color(0xff3C3E89),
+                            // //       ),
+                            // //     ),
+                            // //     const SizedBox(width: 10),
+                            // //     Icon(
+                            // //       Icons.calendar_month_outlined,
+                            // //       color: Color(0xff3C3E89),
+                            // //     )
+                            // //   ],
+                            // // ),
+                            // // Added Date
+                            // // GestureDetector(
+                            // //   onTap: _showDatePicker,
+                            // //   child: Row(
+                            // //     children: [
+                            // //       Text(
+                            // //         'Added Date:     $addedDate',
+                            // //         style: TextStyle(
+                            // //           fontSize: 12,
+                            // //           fontWeight: FontWeight.bold,
+                            // //           color: Color(0xff3C3E89),
+                            // //         ),
+                            // //       ),
+                            // //       const SizedBox(width: 10),
+                            // //       Icon(
+                            // //         Icons.calendar_month_outlined,
+                            // //         color: Color(0xff3C3E89),
+                            // //       ),
+                            // //     ],
+                            // //   ),
+                            // // ),
 
                             const SizedBox(height: 17),
                             Row(

@@ -11,7 +11,8 @@ String modelAllProductsToJson(ModelAllProducts data) =>
     json.encode(data.toJson());
 
 class ModelAllProducts {
-  bool status;
+  // bool status;
+  final bool? status;
   String message;
   List<AllProducts> data;
 
@@ -23,7 +24,8 @@ class ModelAllProducts {
 
   factory ModelAllProducts.fromJson(Map<String, dynamic> json) =>
       ModelAllProducts(
-        status: json["status"],
+        // status: json["status"],
+        status: json["status"] ?? false,
         message: json["message"],
         data: List<AllProducts>.from(
             json["data"].map((x) => AllProducts.fromJson(x))),

@@ -434,7 +434,6 @@ class _ScreenProductState extends State<ScreenProduct>
           ],
         ),
       ),
-      
       body: Column(
         children: [
           Container(
@@ -471,7 +470,7 @@ class _ScreenProductState extends State<ScreenProduct>
                       controller: searchController,
                       onChanged: updateSearchQuery,
                       decoration: InputDecoration(
-                        hintText: "Search Product",
+                        hintText: "Search here",
                         hintStyle: TextStyle(color: Colors.white70),
                         border: InputBorder.none, // No underline
                       ),
@@ -778,8 +777,6 @@ class _ScreenProductState extends State<ScreenProduct>
           })
         ],
       ),
-    
     );
-
   }
 }

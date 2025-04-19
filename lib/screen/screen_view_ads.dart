@@ -233,7 +233,7 @@ class _ScreenViewAdsState extends State<ScreenViewAds> {
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(10),
                           child: Image.network(
-                            controllerViewAds.viewAds[index].image,
+                            controllerViewAds.viewAds[index].ads,
                             fit: BoxFit.cover,
                           ),
                           // child: Image.asset(

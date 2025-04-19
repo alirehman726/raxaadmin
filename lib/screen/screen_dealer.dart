@@ -496,7 +496,7 @@ class _ScreenDealerState extends State<ScreenDealer>
                       controller: searchController,
                       onChanged: updateSearchQuery,
                       decoration: InputDecoration(
-                        hintText: "Search Product",
+                        hintText: "Search here",
                         hintStyle: TextStyle(color: Colors.white70),
                         border: InputBorder.none,
                       ),

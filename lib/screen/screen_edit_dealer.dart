@@ -32,6 +32,7 @@ class _ScreenEditDealerState extends State<ScreenEditDealer> {
   final TextEditingController addressController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController usernameController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
@@ -43,6 +44,9 @@ class _ScreenEditDealerState extends State<ScreenEditDealer> {
 
   void toggleEdit() {
     setState(() {
+      print(isEditButton);
+      print(
+          'isEditButtonisEditButton++++++++++++isEditButton++++++++++++++++++++++++');
       isEditButton = !isEditButton;
       if (isEditButton) {
         nameController.text = controllerEditDealer.editDealer[0].name;
@@ -50,6 +54,7 @@ class _ScreenEditDealerState extends State<ScreenEditDealer> {
         addressController.text = controllerEditDealer.editDealer[0].address;
         emailController.text = controllerEditDealer.editDealer[0].email;
         usernameController.text = controllerEditDealer.editDealer[0].username;
+        passwordController.text = "";
       }
     });
   }
@@ -62,6 +67,7 @@ class _ScreenEditDealerState extends State<ScreenEditDealer> {
         "phone": phoneController.text,
         "address": addressController.text,
         "username": usernameController.text,
+        "password": passwordController.text,
       });
       var res = await AuthApis.editDealerAPI(body, id);
 
@@ -264,41 +270,6 @@ class _ScreenEditDealerState extends State<ScreenEditDealer> {
                             ),
                           ),
                         ),
-                        // Row(
-                        //   mainAxisAlignment: MainAxisAlignment.center,
-                        //   children: [
-                        //     isEditButton
-                        //         ? Expanded(
-                        //             child: TextFormField(
-                        //               controller: nameController,
-                        //               decoration:
-                        //                   InputDecoration(labelText: 'Name'),
-                        //             ),
-                        //           )
-                        //         : Expanded(
-                        //             child: Text(
-                        //               controllerEditDealer.editDealer[0].name,
-                        //               textAlign: TextAlign.center,
-                        //               style: TextStyle(
-
-                        //                 fontSize: 20,
-                        //                 fontWeight: FontWeight.bold,
-                        //                 color: Color(0xff3C3E89),
-                        //               ),
-                        //               softWrap:
-                        //                   true, // Text ko automatic next line me shift karne dega
-                        //             ),
-                        //           ),
-                        //     SizedBox(width: 15),
-                        //     InkWell(
-                        //       onTap: toggleEdit,
-                        //       child: Icon(
-                        //         Icons.edit,
-                        //         color: Color(0xff0158FA),
-                        //       ),
-                        //     )
-                        //   ],
-                        // ),
                         SizedBox(height: 30),
                         buildEditableField("Phone no.", phoneController,
                             controllerEditDealer.editDealer[0].phnNumber),
@@ -308,6 +279,12 @@ class _ScreenEditDealerState extends State<ScreenEditDealer> {
                             controllerEditDealer.editDealer[0].email),
                         buildEditableField("Username", usernameController,
                             controllerEditDealer.editDealer[0].username),
+                        isEditButton == true
+                            ? buildEditableField1(
+                                "Password",
+                                passwordController,
+                                controllerEditDealer.editDealer[0].username)
+                            : Container(),
                         SizedBox(height: 30),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -412,6 +389,38 @@ class _ScreenEditDealerState extends State<ScreenEditDealer> {
                   }
                   return null;
                 },
+                decoration: InputDecoration(border: OutlineInputBorder()),
+              )
+            : Text(
+                value,
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xff404042),
+                ),
+              ),
+        SizedBox(height: 30),
+      ],
+    );
+  }
+
+  Widget buildEditableField1(
+      String label, TextEditingController controller, String value) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+            color: Color(0xff737c80),
+          ),
+        ),
+        SizedBox(height: 5),
+        isEditButton
+            ? TextFormField(
+                controller: controller,
                 decoration: InputDecoration(border: OutlineInputBorder()),
               )
             : Text(

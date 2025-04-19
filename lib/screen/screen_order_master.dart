@@ -448,7 +448,7 @@ class _ScreenOrderMasterState extends State<ScreenOrderMaster>
                       controller: searchController,
                       onChanged: updateSearchQuery,
                       decoration: InputDecoration(
-                        hintText: "Search Product",
+                        hintText: "Search here",
                         hintStyle: TextStyle(color: Colors.white70),
                         border: InputBorder.none,
                       ),

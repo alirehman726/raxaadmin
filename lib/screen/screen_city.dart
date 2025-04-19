@@ -438,7 +438,7 @@ class _ScreenCityState extends State<ScreenCity>
                       controller: searchController,
                       onChanged: updateSearchQuery,
                       decoration: InputDecoration(
-                        hintText: "Search Product",
+                        hintText: "Search here",
                         hintStyle: TextStyle(color: Colors.white70),
                         border: InputBorder.none, // No underline
                       ),

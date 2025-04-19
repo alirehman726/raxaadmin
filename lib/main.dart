@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:raxaadmin/Controller/controller.ads.dart';
 import 'package:raxaadmin/Controller/controller_AllDealer.dart';
 import 'package:raxaadmin/Controller/controller_EditDealer.dart';
 import 'package:raxaadmin/Controller/controller_OneProducts.dart';
@@ -29,6 +30,7 @@ void main() async {
 
   // Get.put(DashboardController());
   Get.put(ControllerAllproducts());
+  Get.put(ControllerAds());
   Get.put(ControllerCity());
   Get.put(Controllerproducts());
   Get.put(ControllerOneproducts());
