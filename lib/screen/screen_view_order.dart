@@ -79,12 +79,12 @@ class _ScreenViewOrderState extends State<ScreenViewOrder> {
           textColor: Colors.white,
           fontSize: 16.0,
         );
-
+        String currentMonth = DateTime.now().month.toString();
         Get.offAll(() => ScreenOrderMaster());
 
         final controllerAllOrder = Get.find<ControllerAllOrder>();
 
-        await controllerAllOrder.controllerAllOrder();
+        await controllerAllOrder.controllerAllOrder(month: currentMonth);
         controllerAllOrder.update();
       } else {
         doStartLoader(false);
@@ -135,12 +135,15 @@ class _ScreenViewOrderState extends State<ScreenViewOrder> {
           textColor: Colors.white,
           fontSize: 16.0,
         );
+        String currentMonth = DateTime.now().month.toString();
 
         Get.offAll(() => ScreenOrderMaster());
 
         final controllerAllOrder = Get.find<ControllerAllOrder>();
 
-        await controllerAllOrder.controllerAllOrder();
+        await controllerAllOrder.controllerAllOrder(
+          month: currentMonth,
+        );
         controllerAllOrder.update();
       } else {
         doStartLoader(false);

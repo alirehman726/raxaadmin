@@ -142,7 +142,7 @@ class _ScreenDrawerState extends State<ScreenDrawer>
                   ),
                 ),
                 Positioned(
-                  bottom: -12, // Half container image ke bahar aayega
+                  bottom: -12,
                   left: 25,
                   right: 25,
                   child: Container(

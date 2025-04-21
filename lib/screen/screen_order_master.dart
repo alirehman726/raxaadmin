@@ -33,15 +33,6 @@ class _ScreenOrderMasterState extends State<ScreenOrderMaster>
     });
   }
 
-  @override
-  void initState() {
-    super.initState();
-
-    controllerAllOrder.controllerAllOrder();
-    loadUserData();
-  }
-
-  String selectedValue = "January";
   List<String> options = [
     "January",
     "February",
@@ -56,6 +47,69 @@ class _ScreenOrderMasterState extends State<ScreenOrderMaster>
     "November",
     "December"
   ];
+
+  String selectedValue = ""; // Initialize as empty first
+
+  String currentMonth = DateTime.now().month.toString();
+  // @override
+  // void initState() {
+  //   super.initState();
+
+  //   controllerAllOrder.controllerAllOrder(
+  //     month: currentMonth,
+  //   );
+
+  //   int currentMonthIndex = DateTime.now().month - 1;
+  //   selectedValue = options[currentMonthIndex];
+  //   loadUserData();
+  // }
+  @override
+  void initState() {
+    super.initState();
+
+    int currentMonthIndex = DateTime.now().month - 1;
+    selectedValue = options[currentMonthIndex];
+
+    // Run after first build is completed
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      controllerAllOrder.controllerAllOrder(
+        month: convertMonthToNumber(selectedValue).toString(),
+      );
+    });
+
+    loadUserData();
+  }
+
+  // @override
+  // void initState() {
+  //   super.initState();
+
+  //   int currentMonthIndex = DateTime.now().month - 1;
+  //   selectedValue = options[currentMonthIndex];
+
+  //   controllerAllOrder.controllerAllOrder(
+  //     month: convertMonthToNumber(selectedValue)
+  //         .toString(), // 👈 send "4" if "April"
+  //   );
+
+  //   loadUserData();
+  // }
+
+  // String selectedValue = "January";
+  // List<String> options = [
+  //   "January",
+  //   "February",
+  //   "March",
+  //   "April",
+  //   "May",
+  //   "June",
+  //   "July",
+  //   "August",
+  //   "September",
+  //   "October",
+  //   "November",
+  //   "December"
+  // ];
 
   List<Map<String, dynamic>> orderMasterData = [
     {
@@ -171,11 +225,58 @@ class _ScreenOrderMasterState extends State<ScreenOrderMaster>
     }
   }
 
+  // String convertMonthToNumber(String month) {
+  //   Map<String, String> monthMap = {
+  //     "January": "01",
+  //     "February": "02",
+  //     "March": "03",
+  //     "April": "04",
+  //     "May": "05",
+  //     "June": "06",
+  //     "July": "07",
+  //     "August": "08",
+  //     "September": "09",
+  //     "October": "10",
+  //     "November": "11",
+  //     "December": "12",
+  //   };
+  //   return monthMap[month] ?? "01"; // Default January
+  // }
+
+  int convertMonthToNumber(String month) {
+    Map<String, int> monthMap = {
+      "January": 1,
+      "February": 2,
+      "March": 3,
+      "April": 4,
+      "May": 5,
+      "June": 6,
+      "July": 7,
+      "August": 8,
+      "September": 9,
+      "October": 10,
+      "November": 11,
+      "December": 12,
+    };
+    return monthMap[month] ?? 1; // Default January = 1
+  }
+
+  // Future<void> loadUserData() async {
+  //   final SharedPreferences prefs = await SharedPreferences.getInstance();
+  //   setState(() {
+  //     username = prefs.getString('username') ?? 'ADMIN';
+  //     email = prefs.getString('email') ?? 'example@gmail.com';
+  //   });
+  // }
+
   Future<void> loadUserData() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    setState(() {
-      username = prefs.getString('username') ?? 'ADMIN';
-      email = prefs.getString('email') ?? 'example@gmail.com';
+    // Also delay setState to avoid calling during build
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      setState(() {
+        username = prefs.getString('username') ?? 'ADMIN';
+        email = prefs.getString('email') ?? 'example@gmail.com';
+      });
     });
   }
 
@@ -525,7 +626,19 @@ class _ScreenOrderMasterState extends State<ScreenOrderMaster>
                             setState(() {
                               selectedValue = newValue!;
                             });
+                            controllerAllOrder.controllerAllOrder(
+                              month: convertMonthToNumber(selectedValue)
+                                  .toString(), // 👈 API me number as string
+                            );
                           },
+                          // onChanged: (String? newValue) {
+                          //   setState(() {
+                          //     selectedValue = newValue!;
+                          //   });
+                          //   controllerAllOrder.controllerAllOrder(
+                          //     month: convertMonthToNumber(selectedValue),
+                          //   );
+                          // },
                           icon: Icon(Icons.arrow_drop_down,
                               color: Colors.black), // Dropdown arrow
                           style: TextStyle(color: Colors.black),

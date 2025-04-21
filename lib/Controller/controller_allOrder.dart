@@ -11,14 +11,16 @@ class ControllerAllOrder extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    controllerAllOrder();
+    // controllerAllOrder();
   }
 
-  controllerAllOrder() async {
+  // https://raxaspread.com/API/api/getorder?month=4
+
+  controllerAllOrder({required String month}) async {
     try {
       loading.value = true;
-      var request = http.MultipartRequest(
-          'GET', Uri.parse('https://raxaspread.com/API/api/getorder'));
+      var request = http.MultipartRequest('GET',
+          Uri.parse('https://raxaspread.com/API/api/getorder?month=$month'));
 
       http.Response response =
           await http.Response.fromStream(await request.send());
