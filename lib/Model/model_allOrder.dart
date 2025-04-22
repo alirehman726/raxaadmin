@@ -50,13 +50,13 @@ class AllOrder {
   });
 
   factory AllOrder.fromJson(Map<String, dynamic> json) => AllOrder(
-        id: json["id"],
-        status: json["status"],
-        orderDate: DateTime.parse(json["order_date"]),
-        actionBy: json["action_by"],
-        paymentId: json["payment_id"],
-        colorCode: json["color_code"],
-        time: json["time"],
+        id: json["id"] ?? "",
+        status: json["status"] ?? "",
+        orderDate: DateTime.parse(json["order_date"] ?? ""),
+        actionBy: json["action_by"] ?? "",
+        paymentId: json["payment_id"] ?? "",
+        colorCode: json["color_code"] ?? "",
+        time: json["time"] ?? "",
       );
 
   Map<String, dynamic> toJson() => {
@@ -64,7 +64,6 @@ class AllOrder {
         "status": status,
         "order_date":
             "${orderDate.year.toString().padLeft(4, '0')}-${orderDate.month.toString().padLeft(2, '0')}-${orderDate.day.toString().padLeft(2, '0')}",
-        
         "action_by": actionBy,
         "payment_id": paymentId,
         "color_code": colorCode,

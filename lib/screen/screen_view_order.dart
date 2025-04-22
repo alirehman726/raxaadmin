@@ -59,10 +59,16 @@ class _ScreenViewOrderState extends State<ScreenViewOrder> {
   Future<void> updateOrderstatus(String value, String format, int id) async {
     doStartLoader(true);
 
+    print(id);
+    print(value);
+    print(format);
+
     dio.FormData body = dio.FormData.fromMap({
       "order_id": id.toString(),
       "status": value.toString(),
-      "order_date": format,
+      "order_date": selectedDate == null
+          ? controllerViewProducts.viewOrder[0].orderDate
+          : format,
     });
     var res = await AuthApis.chnageStatusStatusAPI(body);
 
@@ -354,6 +360,7 @@ class _ScreenViewOrderState extends State<ScreenViewOrder> {
                         }),
                       ),
                     ),
+                    
                     const SizedBox(height: 20),
                     controllerViewProducts.viewOrder[0].status == "pending"
                         ? Row(
@@ -700,10 +707,26 @@ class _ScreenViewOrderState extends State<ScreenViewOrder> {
                                       onTap: () {
                                         updateOrderstatus(
                                             selectedValue.value,
-                                            DateFormat('yyyy-MM-dd')
-                                                .format(selectedDate!),
+                                            selectedDate == null
+                                                ? controllerViewProducts
+                                                    .viewOrder[0].orderDate
+                                                    .toString()
+                                                : DateFormat('yyyy-MM-dd')
+                                                    .format(selectedDate!),
                                             controllerViewProducts
                                                 .viewOrder[0].id);
+
+                                        print(controllerViewProducts
+                                            .viewOrder[0].id);
+                                        print("id");
+                                        print(selectedValue.value);
+                                        print("value");
+                                        print(selectedDate == null
+                                            ? controllerViewProducts
+                                                .viewOrder[0].orderDate
+                                            : DateFormat('yyyy-MM-dd')
+                                                .format(selectedDate!));
+                                        print("Date formate");
                                         // Get.back();
                                       },
                                       child: Container(
