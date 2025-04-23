@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "432225153479",
+    "project_id": "gg-delivery-c3a15",
+    "storage_bucket": "gg-delivery-c3a15.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:432225153479:android:64663808d1fa252fcc29e2",
+        "android_client_info": {
+          "package_name": "com.qalbit.helloryapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAvvi4HhzNVPxaUtJ73Eawdaord-ZmCFXc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

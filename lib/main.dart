@@ -1,5 +1,7 @@
 import 'dart:io';
 
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -15,11 +17,17 @@ import 'package:raxaadmin/Controller/controller_city.dart';
 import 'package:raxaadmin/Controller/controller_dealerReport.dart';
 import 'package:raxaadmin/Controller/controller_product.dart';
 import 'package:raxaadmin/Controller/controller_viewAds.dart';
+import 'package:raxaadmin/Notification/local_notification_service.dart';
 import 'package:raxaadmin/screen/LacaleString.dart';
 import 'package:raxaadmin/screen/splash_screen.dart';
 import 'package:raxaadmin/utils/color.dart';
 
 import 'Controller/controller_view_order.dart';
+
+Future<void> backgroundHandler(RemoteMessage message) async {
+  print(message.data.toString());
+  print(message.notification!.title);
+}
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -28,6 +36,10 @@ void main() async {
   await ScreenUtil.ensureScreenSize();
   HttpOverrides.global = MyHttpOverrides();
 
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  FirebaseMessaging.onBackgroundMessage(backgroundHandler);
+  LocalNotificationService.initialize();
   // Get.put(DashboardController());
   Get.put(ControllerAllproducts());
   Get.put(ControllerAds());

@@ -1,10 +1,15 @@
 import 'dart:convert';
+import 'dart:io';
 
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:dio/dio.dart' as dio;
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:raxaadmin/Apis/auth_apis.dart';
+import 'package:raxaadmin/Notification/local_notification_service.dart';
+import 'package:raxaadmin/screen/demo.dart';
 import 'package:raxaadmin/screen/screen_drawer.dart';
 import 'package:raxaadmin/utils/images.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -18,10 +23,102 @@ class _ScreenLoginState extends State<ScreenLogin> {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   bool processLoading = false;
+  String deviceTokenToSendPushNotification = '';
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getDeviceId();
+
+    // 1. This method call when app in terminated state and you get a notification
+    // when you click on notification app open from terminated state and you can get notification data in this method
+
+    FirebaseMessaging.instance.getInitialMessage().then(
+      (message) {
+        print("FirebaseMessaging.instance.getInitialMessage");
+        if (message != null) {
+          print("New Notification");
+          if (message.data['_id'] != null) {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => Demo(
+                  id: message.data['_id'],
+                ),
+              ),
+            );
+          }
+        }
+      },
+    );
+
+    // 2. This method only call when App in forground it mean app must be opened
+    FirebaseMessaging.onMessage.listen(
+      (message) {
+        print("FirebaseMessaging.onMessage.listen");
+        if (message.notification != null) {
+          print(message.notification!.title);
+          print(message.notification!.body);
+          print("message.data11 ${message.data}");
+          LocalNotificationService.createanddisplaynotification(message);
+        }
+      },
+    );
+
+    // 3. This method only call when App in background and not terminated(not closed)
+    // background notification
+    FirebaseMessaging.onMessageOpenedApp.listen(
+      (message) {
+        print("FirebaseMessaging.onMessageOpenedApp.listen");
+        if (message.notification != null) {
+          print(message.notification!.title);
+          print(message.notification!.body);
+          print("message.data22 ${message.data['_id']}");
+        }
+      },
+    );
+  }
+
+  Future<void> getDeviceTokenToSendNotification() async {
+    final FirebaseMessaging _fcm = FirebaseMessaging.instance;
+    final token = await _fcm.getToken();
+    deviceTokenToSendPushNotification = token.toString();
+    print("Token Value $deviceTokenToSendPushNotification");
+  }
+
+  Future<void> getDeviceId() async {
+    final DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+
+    if (Platform.isAndroid) {
+      final androidInfo = await deviceInfo.androidInfo;
+      final id = androidInfo.id;
+      print("Device ID: $id"); // This is the device's hardware ID
+    } else if (Platform.isIOS) {
+      final iosInfo = await deviceInfo.iosInfo;
+      final id = iosInfo.identifierForVendor;
+      print("Device ID: $id"); // This is unique per vendor on iOS
+    }
+  }
+  // Future<void> getDeviceId() async {
+  //   DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+
+  //   if (Platform.isAndroid) {
+  //     AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+  //     print("Android Device ID: ${androidInfo.id}"); // OR
+  //     print(
+  //         "Android Android ID: ${androidInfo.androidId}"); // ✅ This is usually unique
+  //   } else if (Platform.isIOS) {
+  //     IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
+  //     print(
+  //         "iOS Device ID: ${iosInfo.identifierForVendor}"); // ✅ Unique per app/vendor/device
+  //   }
+  // }
+
   @override
   Widget build(BuildContext context) {
+    getDeviceTokenToSendNotification();
     return Scaffold(
       backgroundColor: Color(0xFF01B8FA),
       body: SingleChildScrollView(
@@ -176,6 +273,9 @@ class _ScreenLoginState extends State<ScreenLogin> {
   }
 
   Future<void> loginFun() async {
+    // String? deviceId = await getDeviceId();
+    // print('Device ID: $deviceId');
+
     if (_formKey.currentState!.validate()) {
       SharedPreferences sharedPreferences =
           await SharedPreferences.getInstance();
@@ -184,7 +284,8 @@ class _ScreenLoginState extends State<ScreenLogin> {
       dio.FormData body = dio.FormData.fromMap({
         // "token": appToken,
         "email": emailController.text,
-        "password": passwordController.text
+        "password": passwordController.text,
+        "device_id": deviceTokenToSendPushNotification.toString(),
       });
       var res = await AuthApis.APIlogin(body);
       if (res != null) {
