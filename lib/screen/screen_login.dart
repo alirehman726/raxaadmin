@@ -129,26 +129,63 @@ class _ScreenLoginState extends State<ScreenLogin> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
+                // Padding(
+                //   padding: EdgeInsets.symmetric(horizontal: 10),
+                //   child: Row(
+                //     crossAxisAlignment: CrossAxisAlignment.center,
+                //     children: [
+                //       Expanded(
+                //         child: Text(
+                //           'Welcome to\nRaxa Spread Pvt Ltd.',
+                //           style: TextStyle(
+                //             fontSize: 24,
+                //             fontWeight: FontWeight.bold,
+                //             color: Colors.white,
+                //           ),
+                //         ),
+                //       ),
+                //       SizedBox(width: 10),
+                //       Container(
+                //         child: Image.asset(
+                //           Images.LOGIN_MAIN_ICON,
+                //           height: 150,
+                //         ),
+                //       ),
+                //     ],
+                //   ),
+                // ),
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: 10),
-                  child: Row(
+                  child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Expanded(
-                        child: Text(
-                          'Welcome to\nRaxa Spread Pvt Ltd.',
-                          style: TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
+                      // Expanded(
+                      //   child: Text(
+                      //     'Welcome to\nRaxa Spread Pvt Ltd.',
+                      //     style: TextStyle(
+                      //       fontSize: 24,
+                      //       fontWeight: FontWeight.bold,
+                      //       color: Colors.white,
+                      //     ),
+                      //   ),
+                      // ),
                       SizedBox(width: 10),
                       Container(
+                        alignment: Alignment.center,
                         child: Image.asset(
-                          Images.LOGIN_MAIN_ICON,
+                          // Images.LOGIN_MAIN_ICON,
+                          Images.CENTER_ICON,
                           height: 150,
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      Text(
+                        'रक्षा रक्षती सर्वत्रम',
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
                         ),
                       ),
                     ],
