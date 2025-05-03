@@ -26,7 +26,7 @@ class ControllerAllOrder extends GetxController {
           await http.Response.fromStream(await request.send());
 
       if (response.statusCode == 200) {
-        print('ALL Orders API Call');
+        print('ALL Orders API Call111');
         loading.value = false;
         allOrder.value = modelAllOrderFromJson(response.body).data;
         print(response.body);

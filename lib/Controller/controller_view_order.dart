@@ -25,7 +25,7 @@ class ControllerViewOrder extends GetxController {
           await http.Response.fromStream(await request.send());
 
       if (response.statusCode == 200) {
-        print('ALL Orders API Call');
+        print('ALL Orders API Call222');
         loading.value = false;
         viewOrder.value = [modelViewOrderFromJson(response.body).data];
         order.value = modelViewOrderFromJson(response.body).data.order;

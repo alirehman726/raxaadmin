@@ -418,7 +418,7 @@ class _ScreenAddProductsState extends State<ScreenAddProducts> {
                       Padding(
                         padding: EdgeInsets.only(bottom: 10),
                         child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             // Container(
                             //   height: 150,
@@ -458,41 +458,6 @@ class _ScreenAddProductsState extends State<ScreenAddProducts> {
                             //     ),
                             //   ),
                             // ),
-                            Container(
-                              padding: EdgeInsets.all(5),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    'Mandatory',
-                                    style: TextStyle(
-                                      fontSize: 17,
-                                      fontWeight: FontWeight.bold,
-                                      color: Color(0xff3C3E89),
-                                    ),
-                                  ),
-                                  const SizedBox(height: 10),
-                                  Text(
-                                    'Hight : 500px',
-                                    style: TextStyle(
-                                      fontSize: 13,
-                                      fontWeight: FontWeight.w200,
-                                      color: Color(0xff3C3E89),
-                                    ),
-                                  ),
-                                  const SizedBox(height: 10),
-                                  Text(
-                                    'Weight : 500px',
-                                    style: TextStyle(
-                                      fontSize: 13,
-                                      fontWeight: FontWeight.w200,
-                                      color: Color(0xff3C3E89),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
                           ],
                         ),
                       ),
