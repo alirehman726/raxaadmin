@@ -31,6 +31,7 @@ class _ScreenAddProductsState extends State<ScreenAddProducts> {
   String packingType = '';
   String flavour = '';
   String price = '';
+  String retailer_price = '';
   // String addedDate = 'Select Date';
 
   // Future<void> _pickImage() async {
@@ -120,6 +121,7 @@ class _ScreenAddProductsState extends State<ScreenAddProducts> {
     print(productName);
     print(description);
     print(price);
+    print(retailer_price);
     print(netQuantity);
     print(selectedValue);
     print(weight);
@@ -142,6 +144,7 @@ class _ScreenAddProductsState extends State<ScreenAddProducts> {
         "product_name": productName,
         "discription": description,
         "price": price,
+        "retailer_price": retailer_price,
         "quantity": netQuantity,
         "stock": selectedValue,
         "weight": "${weight}/kg",
@@ -181,6 +184,7 @@ class _ScreenAddProductsState extends State<ScreenAddProducts> {
   //   print(productName);
   //   print(description);
   //   print(price);
+  //   print(retailer_price);
   //   print(netQuantity);
   //   print(selectedValue);
   //   print(weight);
@@ -196,6 +200,7 @@ class _ScreenAddProductsState extends State<ScreenAddProducts> {
   //     "product_name": productName,
   //     "discription": description,
   //     "price": price,
+  //     "retailer_price": retailer_price,
   //     "quantity": netQuantity,
   //     "stock": selectedValue,
   //     "weight": "${weight}/kg",
@@ -668,7 +673,7 @@ class _ScreenAddProductsState extends State<ScreenAddProducts> {
                             ),
                             TextFormField(
                               decoration: InputDecoration(
-                                labelText: "Price",
+                                labelText: "Dealer Price",
                                 enabledBorder: UnderlineInputBorder(
                                   borderSide:
                                       BorderSide(color: Colors.blueAccent),
@@ -682,6 +687,24 @@ class _ScreenAddProductsState extends State<ScreenAddProducts> {
                               },
                               onChanged: (value) {
                                 price = value;
+                              },
+                            ),
+                            TextFormField(
+                              decoration: InputDecoration(
+                                labelText: "Retailer price",
+                                enabledBorder: UnderlineInputBorder(
+                                  borderSide:
+                                      BorderSide(color: Colors.blueAccent),
+                                ),
+                              ),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Please enter Retailer price';
+                                }
+                                return null;
+                              },
+                              onChanged: (value) {
+                                retailer_price = value;
                               },
                             ),
                           ],

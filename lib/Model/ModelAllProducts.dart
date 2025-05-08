@@ -44,6 +44,7 @@ class AllProducts {
   String discription;
   String image;
   int price;
+  int retailerPrice;
   int quantity;
   String stock;
   String weight;
@@ -58,6 +59,7 @@ class AllProducts {
     required this.discription,
     required this.image,
     required this.price,
+    required this.retailerPrice,
     required this.quantity,
     required this.stock,
     required this.weight,
@@ -73,6 +75,8 @@ class AllProducts {
         discription: json["discription"],
         image: json["image"],
         price: json["price"],
+        retailerPrice:
+            json["retailer_price"] == null ? 0 : json["retailer_price"],
         quantity: json["quantity"],
         stock: json["stock"],
         weight: json["weight"],
@@ -88,6 +92,7 @@ class AllProducts {
         "discription": discription,
         "image": image,
         "price": price,
+        "retailer_price": retailerPrice,
         "quantity": quantity,
         "stock": stock,
         "weight": weight,

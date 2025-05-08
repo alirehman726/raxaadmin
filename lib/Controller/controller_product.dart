@@ -9,8 +9,7 @@ class Controllerproducts extends GetxController {
 
   @override
   void onInit() {
-    super.onInit();
-    // 🔥 API कॉल को UI Build के बाद रन कराने के लिए
+    super.onInit(); 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       controllerProducts();
     });

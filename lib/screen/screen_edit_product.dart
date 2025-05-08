@@ -29,6 +29,8 @@ class _ScreenEditProductState extends State<ScreenEditProduct> {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController descriptionController = TextEditingController();
   final TextEditingController priceController = TextEditingController();
+  final TextEditingController retailer_priceController =
+      TextEditingController();
   TextEditingController stockController = TextEditingController();
   final TextEditingController quantityController = TextEditingController();
   final TextEditingController weightController = TextEditingController();
@@ -44,6 +46,7 @@ class _ScreenEditProductState extends State<ScreenEditProduct> {
     nameController.text = widget.product.productName;
     descriptionController.text = widget.product.discription;
     priceController.text = widget.product.price.toString();
+    retailer_priceController.text = widget.product.retailerPrice.toString();
     quantityController.text = widget.product.quantity.toString();
     weightController.text = widget.product.weight;
     packingTypeController.text = widget.product.packingType;
@@ -107,6 +110,7 @@ class _ScreenEditProductState extends State<ScreenEditProduct> {
       request.fields['product_name'] = nameController.text;
       request.fields['discription'] = descriptionController.text;
       request.fields['price'] = priceController.text;
+      request.fields['retailer_price'] = retailer_priceController.text;
       request.fields['quantity'] = quantityController.text;
       request.fields['stock'] = selectedStock;
       request.fields['weight'] = weightController.text;
@@ -650,7 +654,7 @@ class _ScreenEditProductState extends State<ScreenEditProduct> {
                             Align(
                               alignment: Alignment.centerLeft,
                               child: Text(
-                                "Price ",
+                                "Dealer Price ",
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   color: Colors.blue[900],
@@ -661,6 +665,32 @@ class _ScreenEditProductState extends State<ScreenEditProduct> {
                               controller: priceController,
                               validator: (value) =>
                                   value!.isEmpty ? "Enter Price" : null,
+                              decoration: InputDecoration(
+                                hintText: "",
+                                hintStyle:
+                                    TextStyle(fontWeight: FontWeight.bold),
+                                enabledBorder: UnderlineInputBorder(
+                                  borderSide:
+                                      BorderSide(color: Colors.blueAccent),
+                                ),
+                              ),
+                            ),
+                            SizedBox(height: 10),
+                            Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                "Retailer price ",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.blue[900],
+                                ),
+                              ),
+                            ),
+                            TextFormField(
+                              controller: retailer_priceController,
+                              validator: (value) => value!.isEmpty
+                                  ? "Enter Retailer price"
+                                  : null,
                               decoration: InputDecoration(
                                 hintText: "",
                                 hintStyle:
