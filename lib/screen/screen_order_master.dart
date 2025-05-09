@@ -10,6 +10,7 @@ import 'package:raxaadmin/screen/screen_city.dart';
 import 'package:raxaadmin/screen/screen_dealer.dart';
 import 'package:raxaadmin/screen/screen_drawer.dart';
 import 'package:raxaadmin/screen/screen_product.dart';
+import 'package:raxaadmin/screen/screen_user_list.dart';
 import 'package:raxaadmin/screen/screen_view_order.dart';
 import 'package:raxaadmin/utils/color.dart';
 import 'package:raxaadmin/utils/images.dart';
@@ -212,6 +213,11 @@ class _ScreenOrderMasterState extends State<ScreenOrderMaster>
       "title": "Dealer Report",
       "route": () => ScreenCity(),
     },
+    {
+      "icon": Images.DRAWER_3,
+      "title": "User List",
+      "route": () => ScreenUserList(),
+    },
   ];
 
   int selectedIndex = 0;
@@ -290,7 +296,8 @@ class _ScreenOrderMasterState extends State<ScreenOrderMaster>
     return  WillPopScope(
       onWillPop: () async {
         if (Platform.isAndroid) {
-          SystemNavigator.pop();
+          // SystemNavigator.pop();
+          Get.to(() => ScreenDrawer());
         } else if (Platform.isIOS) {
           exit(0);
         }

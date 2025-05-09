@@ -14,6 +14,7 @@ import 'package:raxaadmin/screen/screen_dealer.dart';
 import 'package:raxaadmin/screen/screen_order_master.dart';
 import 'package:raxaadmin/screen/screen_product.dart';
 import 'package:raxaadmin/screen/screen_products_details.dart';
+import 'package:raxaadmin/screen/screen_user_list.dart';
 import 'package:raxaadmin/utils/color.dart';
 import 'package:raxaadmin/utils/images.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -90,6 +91,11 @@ class _ScreenDrawerState extends State<ScreenDrawer>
       "icon": Images.DRAWER_6,
       "title": "City Master",
       "route": () => ScreenCity(),
+    },
+    {
+      "icon": Images.DRAWER_3,
+      "title": "User List",
+      "route": () => ScreenUserList(),
     },
   ];
 

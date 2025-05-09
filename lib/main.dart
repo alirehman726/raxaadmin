@@ -16,6 +16,7 @@ import 'package:raxaadmin/Controller/controller_allProducts.dart';
 import 'package:raxaadmin/Controller/controller_city.dart';
 import 'package:raxaadmin/Controller/controller_dealerReport.dart';
 import 'package:raxaadmin/Controller/controller_product.dart';
+import 'package:raxaadmin/Controller/controller_userList.dart';
 import 'package:raxaadmin/Controller/controller_viewAds.dart';
 import 'package:raxaadmin/Notification/local_notification_service.dart';
 import 'package:raxaadmin/screen/LacaleString.dart';
@@ -53,6 +54,7 @@ void main() async {
   Get.put(ControllerAllDealer());
   Get.put(ControllerEditDealer());
   Get.put(ControllerDealerreport());
+  Get.put(ControllerUserlist());
   runApp(const MyApp());
 }
 

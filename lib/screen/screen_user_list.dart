@@ -1,37 +1,30 @@
-import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 
-import 'package:dio/dio.dart' as dio;
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
-import 'package:raxaadmin/Apis/auth_apis.dart';
-import 'package:raxaadmin/Controller/controller_AllDealer.dart';
+import 'package:raxaadmin/Controller/controller_userList.dart';
 import 'package:raxaadmin/Widgets/logoutDialog.dart';
-import 'package:raxaadmin/screen/screen_add_dealer.dart';
 import 'package:raxaadmin/screen/screen_ads.dart';
 import 'package:raxaadmin/screen/screen_city.dart';
+import 'package:raxaadmin/screen/screen_dealer.dart';
 import 'package:raxaadmin/screen/screen_drawer.dart';
-import 'package:raxaadmin/screen/screen_edit_dealer.dart';
 import 'package:raxaadmin/screen/screen_order_master.dart';
 import 'package:raxaadmin/screen/screen_product.dart';
-import 'package:raxaadmin/screen/screen_user_list.dart';
 import 'package:raxaadmin/utils/color.dart';
 import 'package:raxaadmin/utils/images.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class ScreenDealer extends StatefulWidget {
+class ScreenUserList extends StatefulWidget {
   @override
-  _ScreenDealerState createState() => _ScreenDealerState();
+  _ScreenUserListState createState() => _ScreenUserListState();
 }
 
-class _ScreenDealerState extends State<ScreenDealer>
+class _ScreenUserListState extends State<ScreenUserList>
     with SingleTickerProviderStateMixin {
-  final controllerAllDealer = Get.find<ControllerAllDealer>();
+  final controllerUserlist = Get.find<ControllerUserlist>();
   TextEditingController searchController = TextEditingController();
   RxString searchQuery = "".obs;
 
@@ -45,72 +38,8 @@ class _ScreenDealerState extends State<ScreenDealer>
   void initState() {
     super.initState();
 
-    controllerAllDealer.controllerAllDealer();
+    controllerUserlist.controllerUserlist();
     loadUserData();
-  }
-
-  List<Map<String, dynamic>> dealerData = [
-    {
-      "name": "Aditya Darji",
-      "desc": "RAXADEAL001",
-      "active": 1,
-    },
-    {
-      "name": "Aditya Darji",
-      "desc": "RAXADEAL002",
-      "active": 0,
-    },
-    {
-      "name": "Jay Darji",
-      "desc": "RAXADEAL003",
-      "active": 1,
-    },
-    {
-      "name": "Pratik Darji",
-      "desc": "RAXADEAL004",
-      "active": 0,
-    },
-    {
-      "name": "Bhautik Darji",
-      "desc": "RAXADEAL005",
-      "active": 0,
-    },
-    {
-      "name": "Smit Darji",
-      "desc": "RAXADEAL006",
-      "active": 1,
-    },
-    {
-      "name": "Smit Darji",
-      "desc": "RAXADEAL007",
-      "active": 1,
-    },
-    {
-      "name": "Bhautik Darji",
-      "desc": "RAXADEAL008",
-      "active": 1,
-    },
-    {
-      "name": "Jay Darji",
-      "desc": "RAXADEAL009",
-      "active": 0,
-    },
-    {
-      "name": "Aditya Darji",
-      "desc": "RAXADEAL010",
-      "active": 0,
-    },
-  ];
-
-  String getInitials(String name) {
-    List<String> words = name.trim().split(" ");
-    if (words.length == 1) {
-      return words[0][0]
-          .toUpperCase(); // Sirf ek word hai to uska pehla letter return karega
-    } else {
-      return (words[0][0] + words[1][0])
-          .toUpperCase(); // Pehle aur doosre word ka first letter return karega
-    }
   }
 
   List<Map<String, dynamic>> menuItems = [
@@ -141,7 +70,7 @@ class _ScreenDealerState extends State<ScreenDealer>
     },
     // {
     //   "icon": Images.DRAWER_6,
-    //   "title": "Dealer Report",
+    //   "title": "City Master",
     //   "route": () => ScreenReport(),
     // },
     {
@@ -150,6 +79,7 @@ class _ScreenDealerState extends State<ScreenDealer>
       "route": () => ScreenCity(),
     },
     {
+      // "icon": Images.DRAWER_6,
       "icon": Images.DRAWER_3,
       "title": "User List",
       "route": () => ScreenUserList(),
@@ -158,68 +88,9 @@ class _ScreenDealerState extends State<ScreenDealer>
 
   int selectedIndex = 0;
   bool isSwitched = false;
-  final Color fixedColor = getRandomColor();
-
-  Future<void> doCallAPILogin(int id, String status) async {
-    doStartLoader(true);
-
-    dio.FormData body = dio.FormData.fromMap({
-      "user_id": id.toString(),
-      "status": status.toString(),
-    });
-    var res = await AuthApis.changeStatusAPI(body);
-
-    if (res != null) {
-      Map<String, dynamic> response = json.decode(res.toString());
-      print(response);
-      print(response['status']);
-      if (response['status'] == true) {
-        Fluttertoast.showToast(
-          msg: response['message'].toString(),
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.CENTER,
-          timeInSecForIosWeb: 1,
-          textColor: Colors.white,
-          fontSize: 16.0,
-        );
-      } else {
-        doStartLoader(false);
-        // SnackbarCustom.error("Error", response['message']);
-        Fluttertoast.showToast(
-          msg: response['message'].toString(),
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.CENTER,
-          timeInSecForIosWeb: 1,
-          textColor: Colors.white,
-          fontSize: 16.0,
-        );
-      }
-    } else {
-      doStartLoader(false);
-      Fluttertoast.showToast(
-        msg: "Something Error ",
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.CENTER,
-        timeInSecForIosWeb: 1,
-        textColor: Colors.white,
-        fontSize: 16.0,
-      );
-      // SnackbarCustom.error("Error",
-      //     "Unable_to_login_at_the_moment_Please_try_again_after_sometime");
-    }
-  }
-
-  bool isLoading = false;
-
-  doStartLoader(bool val) {
-    setState(() {
-      isLoading = val;
-    });
-  }
 
   String? username;
   String? email;
-
   void _launchURL() async {
     const url =
         'https://www.design-blitz.com/'; // 👈 Replace with your actual link
@@ -256,7 +127,7 @@ class _ScreenDealerState extends State<ScreenDealer>
           centerTitle: true,
           backgroundColor: Color(0xff01B8FA),
           title: Text(
-            "Dealer Page",
+            "User List",
             style: TextStyle(color: Colors.white, fontWeight: FontWeight.w400),
           ),
           iconTheme: IconThemeData(color: Colors.white),
@@ -359,7 +230,6 @@ class _ScreenDealerState extends State<ScreenDealer>
                           child: ListTile(
                             onTap: () {
                               print(menuItems[index]["route"]());
-
                               print('Rehmanali');
                               Navigator.pop(context);
                               Get.to(menuItems[index]["route"]());
@@ -546,7 +416,7 @@ class _ScreenDealerState extends State<ScreenDealer>
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Show All Dealer’s',
+                            'Show All User List',
                             style: TextStyle(
                               fontSize: 20,
                               fontStyle: FontStyle.italic,
@@ -564,54 +434,18 @@ class _ScreenDealerState extends State<ScreenDealer>
                           )
                         ],
                       ),
-                      InkWell(
-                        onTap: () {
-                          Get.to(() => ScreenAddDealer());
-                        },
-                        child: Container(
-                          padding: EdgeInsets.all(10),
-                          decoration: BoxDecoration(
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(20.0)),
-                            color: Color(0xff3C3E89),
-                          ),
-                          child: Row(
-                            children: [
-                              Container(
-                                decoration: BoxDecoration(
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(20.0)),
-                                  color: Colors.white,
-                                ),
-                                child: Icon(
-                                  Icons.add,
-                                  color: Color(0xff3C3E89),
-                                  size: 20,
-                                ),
-                              ),
-                              const SizedBox(width: 10),
-                              Text(
-                                'ADD NEW DILLER',
-                                style: TextStyle(
-                                    color: Colors.white, fontSize: 11),
-                              ),
-                            ],
-                          ),
-                        ),
-                      )
                     ],
                   ),
                 ],
               ),
             ),
             Obx(() {
-              if (controllerAllDealer.loading.value) {
+              if (controllerUserlist.loading.value) {
                 return Center(
                     child: CircularProgressIndicator(color: Colors.red));
               }
-
-              var filteredProducts = controllerAllDealer.allDealer
-                  .where((dealer) => dealer.name
+              var filteredProducts = controllerUserlist.userList
+                  .where((order) => order.name
                       .trim()
                       .toLowerCase()
                       .contains(searchQuery.value.trim()))
@@ -621,16 +455,15 @@ class _ScreenDealerState extends State<ScreenDealer>
                 // ✅ Ensure search results are shown
                 return Center(
                   child: Text(
-                    "No Dealer data available",
+                    "No User data available",
                     style: TextStyle(color: Colors.red, fontSize: 16),
                   ),
                 );
               }
-
-              // if (controllerAllDealer.allDealer.isEmpty) {
+              // if (controllerAllAds.allAds.isEmpty) {
               //   return Center(
               //     child: Text(
-              //       "No Dealer data available",
+              //       "No Ads data available",
               //       style: TextStyle(color: Colors.red, fontSize: 16),
               //     ),
               //   );
@@ -644,51 +477,16 @@ class _ScreenDealerState extends State<ScreenDealer>
                   margin: const EdgeInsets.only(
                       left: 20, right: 20, top: 10, bottom: 10),
                   padding: const EdgeInsets.only(
-                      left: 20, right: 20, top: 10, bottom: 10),
+                      left: 15, right: 15, top: 10, bottom: 10),
                   child: ListView.builder(
-                    // itemCount: controllerAllDealer.allDealer.length,
+                    // itemCount: controllerAllAds.allAds.length,
                     itemCount: filteredProducts.length,
-
                     itemBuilder: (context, index) {
-                      var dealer = filteredProducts[index];
-
+                      var userList = filteredProducts[index];
                       return Column(
                         children: [
                           Row(
                             children: [
-                              // Expanded(
-                              //   flex: 1,
-                              //   child: Container(
-                              //     height: 60,
-                              //     width: 60,
-                              //     child: CircleAvatar(
-                              //       radius: 60,
-                              //       backgroundColor: (() {
-                              //         Color randomColor = getRandomColor();
-                              //         return randomColor.withOpacity(0.5);
-                              //       })(),
-                              //       child: Padding(
-                              //         padding: const EdgeInsets.all(8),
-                              //         child: ClipOval(
-                              //           child: CircleAvatar(
-                              //             radius: 50,
-                              //             backgroundColor: (() {
-                              //               Color randomColor = getRandomColor();
-                              //               return randomColor;
-                              //             })(),
-                              //             child: Text(
-                              //               'AD',
-                              //               style: TextStyle(
-                              //                   fontSize: 20,
-                              //                   color: Colors.white,
-                              //                   fontWeight: FontWeight.bold),
-                              //             ),
-                              //           ),
-                              //         ),
-                              //       ),
-                              //     ),
-                              //   ),
-                              // ),
                               Expanded(
                                 flex: 1,
                                 child: Container(
@@ -697,29 +495,29 @@ class _ScreenDealerState extends State<ScreenDealer>
                                   child: CircleAvatar(
                                     radius: 60,
                                     backgroundColor: getColorFromHex(
-                                            controllerAllDealer
-                                                .allDealer[index].colorCode)
+                                            controllerUserlist
+                                                .userList[index].colorCode)
                                         .withOpacity(0.5),
-                                    // backgroundColor: fixedColor.withOpacity(
-                                    //     0.5), // Fixed color with opacity
                                     child: Padding(
                                       padding: const EdgeInsets.all(8),
                                       child: ClipOval(
                                         child: CircleAvatar(
                                           radius: 50,
                                           backgroundColor: getColorFromHex(
-                                              controllerAllDealer
-                                                  .allDealer[index].colorCode),
-                                          // backgroundColor:
-                                          //     fixedColor, // Fixed color
+                                              controllerUserlist
+                                                  .userList[index].colorCode),
+                                          // backgroundColor: (() {
+                                          //   Color randomColor = getRandomColor();
+                                          //   return randomColor;
+                                          // })(),
                                           child: Text(
-                                            getInitials(dealer.name),
                                             // 'AD',
+                                            getInitials(controllerUserlist
+                                                .userList[index].name),
                                             style: TextStyle(
-                                              fontSize: 20,
-                                              color: Colors.white,
-                                              fontWeight: FontWeight.bold,
-                                            ),
+                                                fontSize: 20,
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.bold),
                                           ),
                                         ),
                                       ),
@@ -730,38 +528,26 @@ class _ScreenDealerState extends State<ScreenDealer>
                               Expanded(
                                 flex: 2,
                                 child: Container(
-                                  height: 50,
-                                  width: 50,
                                   child: Column(
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween,
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      // Text(
-                                      //   dealer.name,
-                                      //   // dealerData[index]['name'],
-                                      //   style: TextStyle(
-                                      //     fontSize: 17,
-                                      //     fontWeight: FontWeight.bold,
-                                      //     color: Color(0xff3C3E89),
-                                      //   ),
-                                      // ),
                                       Text(
-                                        dealer.name,
+                                        userList.name,
+                                        // orderMasterData[index]['name'],
                                         style: TextStyle(
-                                          fontSize: 15,
+                                          fontSize: 17,
                                           fontWeight: FontWeight.bold,
                                           color: Color(0xff3C3E89),
                                         ),
-                                        maxLines: 1, // Maximum 2 lines
-                                        overflow: TextOverflow
-                                            .ellipsis, // 2nd line ke baad "..."
                                       ),
-
+                                      const SizedBox(height: 15),
                                       Text(
-                                        dealer.username,
-                                        // dealerData[index]['desc'],
+                                        "Phone No : ${controllerUserlist.userList[index].phoneNumber.toString()}",
+                                        // "DATE : ${DateFormat('MM/dd/yyyy').format(controllerAllAds.allAds[index].date)}",
+
                                         style: TextStyle(
                                           fontSize: 14,
                                           fontWeight: FontWeight.w200,
@@ -772,116 +558,52 @@ class _ScreenDealerState extends State<ScreenDealer>
                                   ),
                                 ),
                               ),
-                              Expanded(
-                                flex: 1,
-                                child: Container(
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
-                                      InkWell(
-                                        onTap: () {
-                                          Get.to(() => ScreenEditDealer(
-                                                id: controllerAllDealer
-                                                    .allDealer[index].id,
-                                                colorCode: controllerAllDealer
-                                                    .allDealer[index].colorCode,
-                                              ));
-                                        },
-                                        child: Text(
-                                          "Edit",
-                                          style: TextStyle(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.w100,
-                                            color: Color(0xff3C3E89),
-                                          ),
-                                        ),
-                                      ),
-                                      const SizedBox(height: 10),
-                                      Text(
-                                        controllerAllDealer
-                                                    .allDealer[index].status ==
-                                                "1"
-                                            ? "Active"
-                                            : "Deactive",
-                                        style: TextStyle(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w100,
-                                          color: controllerAllDealer
-                                                      .allDealer[index]
-                                                      .status ==
-                                                  "1"
-                                              ? Color(0xff3C3D86)
-                                              : Color(0xff3C3D86),
-                                        ),
-                                      ),
-                                      Transform.scale(
-                                        scale: 0.8,
-                                        child: Container(
-                                          child: Switch(
-                                            value: controllerAllDealer
-                                                    .allDealer[index].status ==
-                                                "1",
-                                            onChanged: (value) {
-                                              setState(() {
-                                                Get.dialog(
-                                                  AlertDialog(
-                                                    title: Text(
-                                                        'Are You Sure You Want To change status'),
-                                                    //content: Text("This should not be closed automatically"),
-                                                    actions: <Widget>[
-                                                      TextButton(
-                                                        child: Text('Yes'),
-                                                        onPressed: () async {
-                                                          setState(() {
-                                                            controllerAllDealer
-                                                                    .allDealer[
-                                                                        index]
-                                                                    .status =
-                                                                value
-                                                                    ? "1"
-                                                                    : "0";
-                                                            doCallAPILogin(
-                                                                controllerAllDealer
-                                                                    .allDealer[
-                                                                        index]
-                                                                    .id,
-                                                                controllerAllDealer
-                                                                    .allDealer[
-                                                                        index]
-                                                                    .status);
-                                                            Get.back();
-                                                          });
-                                                        },
-                                                      ),
-                                                      TextButton(
-                                                        child: Text('No'),
-                                                        onPressed: () {
-                                                          Get.back();
-                                                        },
-                                                      )
-                                                    ],
-                                                  ),
-                                                  barrierDismissible: false,
-                                                );
-                                              });
-                                            },
-                                            activeColor: Colors.green,
-                                            activeTrackColor: Colors.white,
-                                            inactiveThumbColor:
-                                                Color(0xffADBABF),
-                                            inactiveTrackColor: Colors.white,
-                                            trackOutlineColor:
-                                                MaterialStateProperty.all(
-                                                    Colors.transparent),
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
+                              // Expanded(
+                              //   flex: 1,
+                              //   child: Container(
+                              //     child: Column(
+                              //       mainAxisAlignment: MainAxisAlignment.center,
+                              //       crossAxisAlignment:
+                              //           CrossAxisAlignment.center,
+                              //       children: [
+                              //         InkWell(
+                              //           onTap: () {
+                              //             Get.to(
+                              //               () => ScreenViewAds(
+                              //                 id: controllerUserlist
+                              //                     .userList[index].id,
+                              //                 name: controllerUserlist
+                              //                     .userList[index].name,
+                              //                 date: controllerUserlist
+                              //                     .userList[index].date
+                              //                     .toString(),
+                              //               ),
+                              //             );
+                              //           },
+                              //           child: Text(
+                              //             "View",
+                              //             style: TextStyle(
+                              //               fontSize: 14,
+                              //               fontWeight: FontWeight.w100,
+                              //               color: Color(0xff0158FA),
+                              //             ),
+                              //           ),
+                              //         ),
+                              //         const SizedBox(height: 10),
+                              //         Text(
+                              //           controllerAllAds.allAds[index].status,
+                              //           // "Approve/Reject/Pending",
+                              //           textAlign: TextAlign.center,
+                              //           style: TextStyle(
+                              //             fontSize: 14,
+                              //             fontWeight: FontWeight.w800,
+                              //             color: Color(0xff3C3D86),
+                              //           ),
+                              //         ),
+                              //       ],
+                              //     ),
+                              //   ),
+                              // ),
                             ],
                           ),
                           const SizedBox(height: 10),
@@ -917,6 +639,17 @@ class _ScreenDealerState extends State<ScreenDealer>
     }
 
     return Color(int.parse("0xff$hexColor"));
+  }
+
+  String getInitials(String name) {
+    List<String> words = name.trim().split(" ");
+    if (words.length == 1) {
+      return words[0][0]
+          .toUpperCase(); // Sirf ek word ho to ek letter return kare
+    } else {
+      return (words[0][0] + words[1][0])
+          .toUpperCase(); // Pehla aur dusra letter return kare
+    }
   }
 }
 
