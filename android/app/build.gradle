@@ -29,9 +29,9 @@ android {
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         //orignal applicationId
-        // applicationId = "com.raxaadmin"
+        applicationId = "com.raxaadmin"
         //temparay applicationId
-        applicationId = "com.qalbit.helloryapp"
+        // applicationId = "com.qalbit.helloryapp"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion
@@ -77,11 +77,16 @@ flutter {
     source = "../.."
 }
 
+// dependencies {
+//     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+//     implementation platform('com.google.firebase:firebase-bom:32.1.1')
+//     implementation 'com.google.firebase:firebase-analytics-ktx'
+//     implementation 'com.google.firebase:firebase-messaging-ktx'
+// }
+
+
 dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    
-    // ✅ Firebase
-    implementation platform('com.google.firebase:firebase-bom:32.1.1')
-    implementation 'com.google.firebase:firebase-analytics-ktx'
-    implementation 'com.google.firebase:firebase-messaging-ktx' // If you're using FCM
+    implementation(platform("com.google.firebase:firebase-bom:33.13.0"))
+    implementation("com.google.firebase:firebase-analytics")
+    implementation("com.google.firebase:firebase-messaging")
 }

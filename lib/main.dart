@@ -20,6 +20,7 @@ import 'package:raxaadmin/Controller/controller_userList.dart';
 import 'package:raxaadmin/Controller/controller_viewAds.dart';
 import 'package:raxaadmin/Notification/local_notification_service.dart';
 import 'package:raxaadmin/screen/LacaleString.dart';
+import 'package:raxaadmin/screen/screen_view_order.dart';
 import 'package:raxaadmin/screen/splash_screen.dart';
 import 'package:raxaadmin/utils/color.dart';
 
@@ -32,13 +33,14 @@ Future<void> backgroundHandler(RemoteMessage message) async {
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
   // Screen Util Initialize
   await ScreenUtil.ensureScreenSize();
   HttpOverrides.global = MyHttpOverrides();
 
-  WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
   FirebaseMessaging.onBackgroundMessage(backgroundHandler);
   LocalNotificationService.initialize();
   // Get.put(DashboardController());
@@ -58,6 +60,70 @@ void main() async {
   runApp(const MyApp());
 }
 
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  await Firebase.initializeApp();
+  print("Handling a background message: ${message.messageId}");
+}
+
+// class MyApp extends StatefulWidget {
+//   const MyApp({Key? key}) : super(key: key);
+
+//   @override
+//   State<MyApp> createState() => _MyAppState();
+// }
+
+// class _MyAppState extends State<MyApp> {
+//   @override
+//   Widget build(BuildContext context) {
+//     SystemChrome.setSystemUIOverlayStyle(
+//         const SystemUiOverlayStyle(statusBarColor: Colors.transparent));
+
+//     final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+
+//     @override
+//     void initState() {
+//       super.initState();
+
+//       FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+//         final data = message.data;
+//         if (data['type'] == 'offer') {
+//           navigatorKey.currentState?.push(
+//             MaterialPageRoute(
+//               builder: (_) => ScreenViewOrder(id: data['offerId']),
+//             ),
+//           );
+
+//           //  Get.to(() => ScreenViewOrder(
+//           //                                     id: controllerAllOrder
+//           //                                         .allOrder[index].id));
+//         }
+//       });
+//     }
+
+//     return ScreenUtilInit(
+//       child: GetMaterialApp(
+//         title: "Raxa Admin",
+//         debugShowCheckedModeBanner: false,
+//         translations: LocaleString(),
+//         locale: Locale('en', 'US'),
+//         theme: ThemeData(
+//             fontFamily: "Poppins",
+//             primarySwatch: Colors.grey,
+//             scaffoldBackgroundColor: scaffoldColor,
+//             appBarTheme: AppBarTheme(
+//               color: white,
+//               centerTitle: true,
+//               elevation: 0,
+//             )),
+//         home: SplashScreen(),
+//       ),
+//     );
+//   }
+// }
+
+final GlobalKey<NavigatorState> navigatorKey =
+    GlobalKey<NavigatorState>(); // Global navigatorKey
+
 class MyApp extends StatefulWidget {
   const MyApp({Key? key}) : super(key: key);
 
@@ -67,27 +133,73 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   @override
+  void initState() {
+    super.initState();
+
+    // For foreground/background message click
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+      final data = message.data;
+
+      print('Notification clicked (background/foreground): $data');
+
+      final orderId = data['order_id'];
+      final screen = data['screen'];
+
+      if (screen == "order_view" && orderId != null) {
+        navigatorKey.currentState?.push(
+          MaterialPageRoute(
+            builder: (_) => ScreenViewOrder(id: int.parse(orderId)),
+            // builder: (_) => ScreenViewOrder(id: orderId),
+          ),
+        );
+      }
+    });
+
+    // For terminated state
+    FirebaseMessaging.instance.getInitialMessage().then((message) {
+      if (message != null) {
+        final data = message.data;
+
+        print('Notification clicked (terminated): $data');
+
+        final orderId = data['order_id'];
+        final screen = data['screen'];
+
+        if (screen == "order_view" && orderId != null) {
+          navigatorKey.currentState?.push(
+            MaterialPageRoute(
+              builder: (_) => ScreenViewOrder(id: int.parse(orderId)),
+              // builder: (_) => ScreenViewOrder(id: orderId),
+            ),
+          );
+        }
+      }
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(
         const SystemUiOverlayStyle(statusBarColor: Colors.transparent));
 
     return ScreenUtilInit(
       child: GetMaterialApp(
+        navigatorKey: navigatorKey, // Required for redirection
         title: "Raxa Admin",
         debugShowCheckedModeBanner: false,
         translations: LocaleString(),
-        locale: Locale('en', 'US'),
+        locale: const Locale('en', 'US'),
         theme: ThemeData(
-            fontFamily: "Poppins",
-            primarySwatch: Colors.grey,
-            scaffoldBackgroundColor: scaffoldColor,
-            appBarTheme: AppBarTheme(
-              color: white,
-              centerTitle: true,
-              elevation: 0,
-            )),
+          fontFamily: "Poppins",
+          primarySwatch: Colors.grey,
+          scaffoldBackgroundColor: scaffoldColor,
+          appBarTheme: AppBarTheme(
+            color: white,
+            centerTitle: true,
+            elevation: 0,
+          ),
+        ),
         home: SplashScreen(),
-        // home: ExpandableListView(),
       ),
     );
   }
@@ -99,76 +211,5 @@ class MyHttpOverrides extends HttpOverrides {
     return super.createHttpClient(context)
       ..badCertificateCallback =
           (X509Certificate cert, String host, int port) => true;
-  }
-}
-
-class ExpandableListView extends StatefulWidget {
-  @override
-  _ExpandableListViewState createState() => _ExpandableListViewState();
-}
-
-class _ExpandableListViewState extends State<ExpandableListView> {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Expandable List'),
-      ),
-      body: ListView.builder(
-        itemCount: 5,
-        itemBuilder: (BuildContext context, int index) {
-          return Column(
-            children: <Widget>[
-              GestureDetector(
-                onTap: () {},
-                child: Container(
-                  margin: const EdgeInsets.all(5),
-                  padding: const EdgeInsets.all(10),
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    color: Color(0xffE2EAF2),
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(0),
-                      topRight: Radius.circular(0),
-                    ),
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Expanded(
-                            child: Text('Your Container Content Here'),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          );
-        },
-      ),
-    );
-  }
-}
-
-class ExpandedContainer extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: 100,
-      color: Colors.blue,
-      child: Center(
-        child: Text(
-          'Expanded Container',
-          style: TextStyle(color: Colors.white),
-        ),
-      ),
-    );
   }
 }

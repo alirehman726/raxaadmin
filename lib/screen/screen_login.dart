@@ -24,6 +24,7 @@ class _ScreenLoginState extends State<ScreenLogin> {
   TextEditingController passwordController = TextEditingController();
   bool processLoading = false;
   String deviceTokenToSendPushNotification = '';
+  String final_deviceTokenToSendPushNotification = '';
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
@@ -31,6 +32,7 @@ class _ScreenLoginState extends State<ScreenLogin> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    setupFCM();
     getDeviceId();
 
     // 1. This method call when app in terminated state and you get a notification
@@ -86,6 +88,24 @@ class _ScreenLoginState extends State<ScreenLogin> {
     final token = await _fcm.getToken();
     deviceTokenToSendPushNotification = token.toString();
     print("Token Value $deviceTokenToSendPushNotification");
+  }
+
+  FirebaseMessaging messaging = FirebaseMessaging.instance;
+  void setupFCM() async {
+    // Notification permission (iOS)
+    NotificationSettings settings = await messaging.requestPermission();
+
+    String? token = await messaging.getToken();
+    final_deviceTokenToSendPushNotification = token.toString();
+    print("Final Token Value $final_deviceTokenToSendPushNotification");
+    // Token
+    print("FCM Token: $token");
+
+    // Foreground message listener
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      print('Got a message while in the foreground!');
+      print('Message data: ${message.data}');
+    });
   }
 
   Future<void> getDeviceId() async {
@@ -322,7 +342,8 @@ class _ScreenLoginState extends State<ScreenLogin> {
         // "token": appToken,
         "email": emailController.text,
         "password": passwordController.text,
-        "device_id": deviceTokenToSendPushNotification.toString(),
+        // "device_id": deviceTokenToSendPushNotification.toString(),
+        "device_id": final_deviceTokenToSendPushNotification.toString(),
       });
       var res = await AuthApis.APIlogin(body);
       if (res != null) {

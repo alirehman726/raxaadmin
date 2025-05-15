@@ -1,8 +1,8 @@
+import 'dart:io';
+
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'dart:io';
-import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:raxaadmin/Controller/controller_allOrder.dart';
 import 'package:raxaadmin/Widgets/logoutDialog.dart';
@@ -293,7 +293,7 @@ class _ScreenOrderMasterState extends State<ScreenOrderMaster>
 
   @override
   Widget build(BuildContext context) {
-    return  WillPopScope(
+    return WillPopScope(
       onWillPop: () async {
         if (Platform.isAndroid) {
           // SystemNavigator.pop();
@@ -708,14 +708,14 @@ class _ScreenOrderMasterState extends State<ScreenOrderMaster>
                 return Center(
                     child: CircularProgressIndicator(color: Colors.red));
               }
-      
+
               var filteredProducts = controllerAllOrder.allOrder
                   .where((order) => order.actionBy
                       .trim()
                       .toLowerCase()
                       .contains(searchQuery.value.trim()))
                   .toList();
-      
+
               if (filteredProducts.isEmpty) {
                 // ✅ Ensure search results are shown
                 return Center(
@@ -725,7 +725,7 @@ class _ScreenOrderMasterState extends State<ScreenOrderMaster>
                   ),
                 );
               }
-      
+
               // if (controllerAllOrder.allOrder.isEmpty) {
               //   return Center(
               //     child: Text(
@@ -787,7 +787,7 @@ class _ScreenOrderMasterState extends State<ScreenOrderMaster>
                                   ),
                                 ),
                               ),
-      
+
                               // Expanded(
                               //   flex: 1,
                               //   child: Container(
@@ -798,7 +798,7 @@ class _ScreenOrderMasterState extends State<ScreenOrderMaster>
                               //       backgroundColor: Color(int.parse(
                               //               '0xff${controllerAllOrder.allOrder[index].colorCode}'))
                               //           .withOpacity(0.5),
-      
+
                               //       child: Padding(
                               //         padding: const EdgeInsets.all(8),
                               //         child: ClipOval(
@@ -823,14 +823,15 @@ class _ScreenOrderMasterState extends State<ScreenOrderMaster>
                               //     ),
                               //   ),
                               // ),
-      
+
                               Expanded(
                                 flex: 2,
                                 child: Container(
                                   child: Column(
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween,
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         allOrder.actionBy,
@@ -865,7 +866,8 @@ class _ScreenOrderMasterState extends State<ScreenOrderMaster>
                                 child: Container(
                                   child: Column(
                                     mainAxisAlignment: MainAxisAlignment.center,
-                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
                                     children: [
                                       InkWell(
                                         onTap: () {
