@@ -249,48 +249,48 @@ class _ScreenViewOrderState extends State<ScreenViewOrder> {
               ),
             );
           }
-          return Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(20),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Order Detail :-',
-                              style: TextStyle(
-                                fontSize: 20,
-                                fontStyle: FontStyle.italic,
-                                fontWeight: FontWeight.bold,
-                                color: Color(0xff3C3E89),
+          return SingleChildScrollView(
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Order Detail :-',
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  fontStyle: FontStyle.italic,
+                                  fontWeight: FontWeight.bold,
+                                  color: Color(0xff3C3E89),
+                                ),
                               ),
-                            ),
-                            SizedBox(
-                              width: 100,
-                              child: Divider(
-                                color: Color(0xff01B8FA),
-                                height: 2,
-                                thickness: 3,
-                              ),
-                            )
-                          ],
-                        ),
-                      ],
-                    ),
-                  ],
+                              SizedBox(
+                                width: 100,
+                                child: Divider(
+                                  color: Color(0xff01B8FA),
+                                  height: 2,
+                                  thickness: 3,
+                                ),
+                              )
+                            ],
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-              Padding(
-                padding: EdgeInsets.all(20),
-                child: SingleChildScrollView(
+                Padding(
+                  padding: EdgeInsets.all(20),
                   child: Column(
                     children: [
                       Container(
@@ -891,8 +891,8 @@ class _ScreenViewOrderState extends State<ScreenViewOrder> {
                     ],
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           );
         },
       ),
